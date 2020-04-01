@@ -9,7 +9,7 @@ const vehiclesRoute = require('./routes/vehicles');
 const rentalLocationsRoute = require('./routes/rentalLocations');
 const reservationsRoute = require('./routes/reservations');
 
-mongoose.connect('mongodb+srv://brian80433:<asdzxc0603>@cmpe202-mymln.gcp.mongodb.net/test?retryWrites=true&w=majority',{ useNewUrlParser: true, useUnifiedTopology: true },() => console.log('Connected to DB!'));
+mongoose.connect('mongodb+srv://brian80433:<40iXXjeSUabmeEha>@cmpe202-mymln.gcp.mongodb.net/test?retryWrites=true&w=majority',{ useNewUrlParser: true, useUnifiedTopology: true },() => console.log('Connected to DB!'));
 
 
 app.use(bodyParser.json());

@@ -19,8 +19,8 @@ router.post('/', async (req,res) => {
      name: req.body.name,
      address: req.body.address,
      capacity: req.body.capacity,
-     numOfCars: req.body.numOfCars,
-     vehicle_id: req.body.vehicle_id
+     numOfVehicles: req.body.numOfVehicles,
+     vehicles: req.body.vehicles
 
     });
     try{
@@ -62,7 +62,8 @@ router.patch('/:rentalLocationId', async (req, res) => {
             {_id: req.params.rentalLocationId},
             { $set: {
                
-                vehicle_id: req.body.vehicle_id
+                vehicles: req.body.vehicles,
+                numOfVehicles: req.body.numOfVehicles
 
             }}
         );

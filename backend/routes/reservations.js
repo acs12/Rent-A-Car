@@ -16,8 +16,8 @@ router.get('/', async (req,res) => {
 //create a user
 router.post('/', async (req,res) => {
     const reservation = new Reservation({
-        user_id: req.body.user_Id,
-        vehicle_id: req.body.vehicle_Id,
+        user: req.body.user,
+        vehicle: req.body.vehicle,
         pickupLocation: req.body.pickupLocation,
         returnLocation: req.body.returnLocation,
         pickupTime: req.body.pickupTime, 
@@ -62,7 +62,7 @@ router.patch('/:reservationId', async (req, res) => {
     try {
         const updatedReservation = await Reservation.updateOne(
             {_id: req.params.reservationId},
-            { $set: {returnTime: req.body.returnTime}}
+            { $set: {lengthOfRental: req.body.lengthOfRental}}
         );
         res.json(updatedReservation);
     }

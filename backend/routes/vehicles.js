@@ -68,6 +68,8 @@ router.patch('/:vehicleId', async (req, res) => {
             {_id: req.params.vehicleId},
             { $set: {
                 currentMileage: req.body.currentMileage,
+                condition: req.body.condition,
+                timeLastServiced: req.body.timeLastServiced
               
             }}
         );

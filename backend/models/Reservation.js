@@ -5,10 +5,10 @@ const Vehicle = require('./Vehicle')
 const Schema = mongoose.Schema
 const reservationSchema = new Schema({
      
-     user_id:{type: Schema.Types.ObjectId, ref: 'User', required: true },
-     vehicle_id: {type: Schema.Types.ObjectId, ref: 'Vehicle', required: true },
-     pickupLocation:{type: String, required: true},
-     returnLocation:{type: String, required: true},
+     user:{type: Schema.Types.ObjectId, ref: 'User', required: true },
+     vehicle: {type: Schema.Types.ObjectId, ref: 'Vehicle', required: true },
+     pickupLocation:{type:Schema.Types.ObjectId, ref:'RentalLocation', required: true},
+     returnLocation:{type: Schema.Types.ObjectId, ref:'RentalLocation', required: true},
      pickupTime:{ type: Date, required: true}, 
      returnTime:{ type: Date, required: true},
      lengthOfRental:{ type: Number, required: true}

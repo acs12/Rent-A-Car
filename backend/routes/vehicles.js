@@ -25,8 +25,6 @@ router.post('/',  (req,res) => {
         currentMileage: req.body.currentMileage,
         condition: req.body.condition,
         timeLastServiced: req.body.timeLastServiced
-        
-      
     });
 
     try{

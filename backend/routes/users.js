@@ -15,6 +15,8 @@ router.get('/', async (req,res) => {
 
 //create a user
 router.post('/', async (req,res) => {
+    /** Validation for user name,  */
+
     const user = new User({
         username: req.body.username,
         password: req.body.password,
@@ -23,7 +25,6 @@ router.post('/', async (req,res) => {
         emailAddress: req.body.emailAddress,
         creditCardInfo: req.body.creditCardInfo,
         residenceAddress: req.body.residenceAddress
-
     });
     try{
         const savedUser =  await user.save();
@@ -32,7 +33,6 @@ router.post('/', async (req,res) => {
     catch (err) {
         res.json({message:err});
     }
-
 });
 
 //get a specific user 
@@ -67,7 +67,6 @@ router.patch('/:userId', async (req, res) => {
                 emailAddress: req.body.emailAddress,
                 creditCardInfo: req.body.creditCardInfo,
                 residenceAddress: req.body.residenceAddress
-        
             }}
         );
         res.json(updatedUser);

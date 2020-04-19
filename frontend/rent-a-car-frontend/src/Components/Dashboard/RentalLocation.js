@@ -1,33 +1,31 @@
 import React from 'react'
 import Navigationbar from '../Common/Navigation-Related/Navigation'
+import LocationBrowser from '../Dashboard/LocationBrowser'
 import ItemFactory from '../Common/Navigation-Related/NavItemFactory'
-import VehicleBrowser from '../Dashboard/VehicleBrowser'
-import {
-    MDBCard
-  } from "mdbreact";
+import "../../styles/dashboard.styles.css";
 
-
-class Dashboard extends React.Component {
+class RentalLocation extends React.Component {
     render(){
         let tempItems = [{
             name : 'Vehicles', 
             to : '/dashboard', 
-            active : true, 
+            active : false, 
         },{
             name : 'Rental Locations', 
             to : '/locations',
-            active : false, 
+            active : true, 
         }]
         let items = ItemFactory(tempItems);
         return(
             <div>
             <Navigationbar navItems = {items}/>            
             <div className = "vehicleBrowser">
-            <VehicleBrowser title = {'San Jose'}/>
+            <LocationBrowser />
             </div>
+            
             </div>
         )
     }
 }
 
-export default Dashboard
+export default RentalLocation

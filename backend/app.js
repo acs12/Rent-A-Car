@@ -12,18 +12,17 @@ const rentalLocationsRoute = require('./routes/rentalLocations');
 const reservationsRoute = require('./routes/reservations');
 const loginRouter=require('./routes/loginRouter');
 
-
 app.use(bodyParser.json());
-app.use('/users',usersRoute)
-app.use('/vehicles',vehiclesRoute)
-app.use('/rentalLocations',rentalLocationsRoute)
-app.use('/reservations',reservationsRoute)
+
+app.use('/users', usersRoute)
+app.use('/vehicles', vehiclesRoute)
+app.use('/rentalLocations', rentalLocationsRoute)
+app.use('/reservations', reservationsRoute)
+app.use('/login',loginRouter)
 
 app.get('/',(req,res) => {
     res.send('Home');
 });
-
-app.use('/login',loginRouter)
 
 mongoose.set('useCreateIndex', true);
 

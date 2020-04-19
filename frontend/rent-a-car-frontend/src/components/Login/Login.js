@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import '../../App.css';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Redirect } from 'react-router';
 import { MDBContainer, MDBRow, MDBCol } from "mdbreact";
+import {connect} from 'react-redux';
+import {login} from '../../redux/actions/actionSignin';
+
 
 
 
@@ -30,22 +31,25 @@ class Login extends Component {
     }
 
     //submit Login handler to send a request to the node backend
-    submitLogin = (e) => {
+    submitLogin = async(e) => {
 
         e.preventDefault();
-        const Login = {
-            email: this.state.email,
+        const data = {
+            emailAddress: this.state.email,
             password: this.state.password
         }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
-        //make a post request with the user data
-        axios.post('', Login)
-            .then(response => {
-                console.log(response)
-            }).catch((error) => {
-                console.log(error)
-            })
+        await this.props.login(data,res =>{
+            console.log("Res",res);
+            if(res === "Error: Request failed with status code 403"){
+                console.log("unauthorized")
+            }
+            else if(res === "Error: Request failed with status code 401"){
+                console.log("Invalid Credentials")
+            }
+            else if(res.status === 200){
+                console.log("Success")
+            }
+        })
     }
 
     render() {
@@ -111,4 +115,4 @@ class Login extends Component {
     }
 }
 //export Login Component
-export default Login;
+export default connect(null,{login})(Login);

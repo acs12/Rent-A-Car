@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import '../../App.css';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Redirect } from 'react-router';
 import { MDBContainer, MDBRow, MDBCol, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from "mdbreact";
+import {connect} from 'react-redux';
+import {signup} from '../../redux/actions/actionSignin';
 
 
 
@@ -16,7 +16,7 @@ class Signup extends Component {
         //maintain the state required for this component
         this.state = {
             type: "I'M",
-            username: "",
+            name: "",
             email: "",
             password: "",
             phoneNumber: "",
@@ -26,6 +26,7 @@ class Signup extends Component {
         }
         //Bind the handlers to this class
         this.changeHandler = this.changeHandler.bind(this);
+        this.changeFileHandler =this.changeFileHandler.bind(this)
         this.typeHandler = this.typeHandler.bind(this)
         this.submitSignup = this.submitSignup.bind(this);
     }
@@ -42,29 +43,56 @@ class Signup extends Component {
         })
     }
 
+    changeFileHandler = (e) => {
+        this.setState({
+            [e.target.name]: e.target.files[0],
+        })
+    }
+
     //submit Signup handler to send a request to the node backend
-    submitSignup = (e) => {
+    submitSignup = async (e) => {
 
         e.preventDefault();
-        const Signup = {
-            type: this.state.type,
-            username: this.state.username,
-            email: this.state.email,
-            password: this.state.password,
-            phoneNumber: this.state.phoneNumber,
-            drivingLicense: this.state.drivingLicense,
-            address: this.state.address,
-            creditCard: this.state.creditCard
-        }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
-        //make a post request with the user data
-        axios.post('', Signup)
-            .then(response => {
-                console.log(response)
-            }).catch((error) => {
-                console.log(error)
+        if(this.state.type === "Admin"){
+            const data = {
+                admin: true,
+                manager : false,
+                emailAddress: this.state.email,
+                password: this.state.password,
+            }
+            await this.props.signup(data,res=>{
+                console.log(res)
             })
+        }
+        else if(this.state.type === "Manager"){
+            const data = {
+                manager: true,
+                admin : false,
+                emailAddress: this.state.email,
+                password: this.state.password,
+            }
+            await this.props.signup(data,res=>{
+                console.log(res)
+            })
+        }
+        else{
+            const data = {
+                admin: false,
+                manager : false,
+                name : this.state.name,
+                emailAddress: this.state.email,
+                password: this.state.password,
+                phoneNumber: this.state.phoneNumber,
+                drivingLicense: this.state.drivingLicense,
+                residenceAddress: this.state.address,
+                creditCardInfo: this.state.creditCard
+            }
+            await this.props.signup(data,res=>{
+                console.log(res)
+            })
+        }
+       
+
     }
 
     render() {
@@ -118,8 +146,8 @@ class Signup extends Component {
                         onChange={this.changeHandler}
                         type="text"
                         className="form-control"
-                        name="username"
-                        placeholder="Enter Username "
+                        name="name"
+                        placeholder="Enter Name "
                         required
                     />
                 </div>
@@ -138,7 +166,7 @@ class Signup extends Component {
                 <div className="form-group">
                     Enter Picture of Driving License
                     <input
-                        onChange={this.changeHandler}
+                        onChange={this.changeFileHandler}
                         type="file"
                         className="form-control"
                         name="drivingLicense"
@@ -163,7 +191,7 @@ class Signup extends Component {
                         onChange={this.changeHandler}
                         type="number"
                         className="form-control"
-                        name="creditCardNumber"
+                        name="creditCard"
                         placeholder="Enter Credit Card Number"
                         required
                     />
@@ -233,4 +261,4 @@ class Signup extends Component {
     }
 }
 //export Signup Component
-export default Signup;
+export default connect(null,{signup})(Signup);

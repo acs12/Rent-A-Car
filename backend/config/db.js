@@ -8,6 +8,7 @@ const connectDB = async () => {
             useCreateIndex: true
         });
         console.log('MongoDB Conected...');
+        console.log('MongoDB Connected...');
     } catch(err) {
         console.error(err.message);
         //Exit process with failure

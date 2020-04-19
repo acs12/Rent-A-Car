@@ -36,7 +36,6 @@ class VehicleBrowser extends React.Component {
               placeholder="Search for Vehicles"
               aria-label="Search"
             />
-            <button type="button" class="btn btn-primary btn-sm">Search</button>
             <div>
             <DropDown items = {items}/>
             </div>

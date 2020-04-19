@@ -15,8 +15,6 @@ class LocationBrowser extends React.Component {
                     placeholder="Search by location"
                     aria-label="Search"
                   />
-                  <button type="button" class="btn btn-primary btn-sm">Search</button>
-                  
                 </div>
                 <LocationCell/>
               </div>

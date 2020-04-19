@@ -4,14 +4,15 @@ const Schema = mongoose.Schema
 
 const userSchema = new Schema({
 
-    username:{ type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    admin: {type:Boolean},
-    dlState: { type: String, required: true},
-    dlNumber: { type: Number, required: true, unique: true },
     emailAddress: { type: String, required: true, unique: true },
-    creditCardInfo: { type: Number, required: true},
-    residenceAddress:{ type: String, required: true}
+    password: { type: String, required: true },
+    name : {type : String},
+    admin: {type:Boolean},
+    manager : {type : Boolean},
+    dlImage: { type: String },
+    creditCardInfo: { type: Number},
+    residenceAddress:{ type: String},
+    phoneNumber:{type: Number}
 });
 
 module.exports = mongoose.model('User',userSchema);

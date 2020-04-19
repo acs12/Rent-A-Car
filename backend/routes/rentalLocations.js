@@ -5,7 +5,7 @@ const RentalLocation = require('../models/RentalLocation');
 //get all user
 router.get('/', async (req,res) => {
     try{
-        const rentalLocations = await rentalLocations.find();
+        const rentalLocations = await RentalLocation.find();
         res.json(rentalLocations);
     }
     catch(err){

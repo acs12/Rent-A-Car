@@ -3,8 +3,26 @@ import Navigationbar from '../Common/Navigation-Related/Navigation'
 import LocationBrowser from '../Dashboard/LocationBrowser'
 import ItemFactory from '../Common/Navigation-Related/NavItemFactory'
 import "../../styles/dashboard.styles.css";
+import axios from 'axios'
+import config from '../../Config/url.helper'
 
 class RentalLocation extends React.Component {
+
+    constructor(props) {
+        super(props)
+        this.getAllLocations()
+    }
+
+    getAllLocations(){
+        axios.get(config.baseURL + 'rentalLocations').then((response) => {
+            if (response.status === 200) {
+                console.log(response.data);
+            }
+        }).catch((error) => {
+
+        })
+    }
+
     render(){
         let tempItems = [{
             name : 'Vehicles', 
@@ -22,7 +40,6 @@ class RentalLocation extends React.Component {
             <div className = "vehicleBrowser">
             <LocationBrowser />
             </div>
-            
             </div>
         )
     }

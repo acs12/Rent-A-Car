@@ -5,9 +5,26 @@ import VehicleBrowser from '../Dashboard/VehicleBrowser'
 import {
     MDBCard
   } from "mdbreact";
-
+import axios from 'axios'
+import config from '../../Config/url.helper'
 
 class Dashboard extends React.Component {
+
+    constructor(props) {
+        super(props)
+        this.getAllVehicles()
+    }
+
+    getAllVehicles(){
+        axios.get(config.baseURL + 'vehicles').then((response) => {
+            if (response.status === 200) {
+                console.log(response.data);
+            }
+        }).catch((error) => {
+
+        })
+    }
+
     render(){
         let tempItems = [{
             name : 'Vehicles', 

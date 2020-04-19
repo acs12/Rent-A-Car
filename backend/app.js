@@ -3,8 +3,10 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
+const cors = require('cors');
 
 connectDB();
+app.use(cors({ origin: 'http://localhost:5000', credentials: true }));
 
 const usersRoute = require('./routes/users');
 const vehiclesRoute = require('./routes/vehicles');

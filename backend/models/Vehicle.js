@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema
 const vehicleSchema = new Schema({
-
+     carname : { type: String, required: true},
      type: { type: String, required: true},
      price: { type: Number, required: true}, // price varies in different sessions
      make: { type: String, required: true},

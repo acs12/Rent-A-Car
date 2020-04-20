@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import Main from './components/Main';
+import Main from './Components/Main';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux'
 import promise from "redux-promise";
@@ -16,10 +16,8 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        {/* Use Browser Router to route to different pages */}
         <BrowserRouter>
           <div>
-            {/* App Component Has a Child Component called Main*/}
             <Main />
           </div>
         </BrowserRouter>

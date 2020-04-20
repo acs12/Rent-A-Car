@@ -5,14 +5,10 @@ const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
 const cors = require('cors');
 var cookieParser = require('cookie-parser');
-var cors = require('cors');
 var session = require('express-session');
 
 
-
 connectDB();
-app.use(cors({ origin: 'http://localhost:5000', credentials: true }));
-
 app.use(cors({ origin: 'http://localhost:5000', credentials: true }));
 
 //use express session to maintain session data

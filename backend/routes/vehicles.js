@@ -3,7 +3,6 @@ const router = express.Router();
 const Vehicle = require('../models/Vehicle');
 
 
-
 //get all vehicles
 router.get('/', async (req,res) => {
     try{

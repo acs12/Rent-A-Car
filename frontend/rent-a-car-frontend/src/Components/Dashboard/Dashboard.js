@@ -1,50 +1,46 @@
-import React from 'react'
-import Navigationbar from '../Common/Navigation-Related/Navigation'
-import ItemFactory from '../Common/Navigation-Related/NavItemFactory'
-import VehicleBrowser from '../Dashboard/VehicleBrowser'
-import {
-    MDBCard
-  } from "mdbreact";
-import axios from 'axios'
-import config from '../../Config/url.helper'
+import React from "react";
+import Navigationbar from "../Common/Navigation-Related/Navigation";
+import ItemFactory from "../Common/Navigation-Related/NavItemFactory";
+import VehicleBrowser from "../Dashboard/VehicleBrowser";
+import { fetchVehicles } from "../../redux/actions/fetchAction";
+
+import { connect } from "react-redux";
 
 class Dashboard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.getAllVehicles();
+  }
 
-    constructor(props) {
-        super(props)
-        this.getAllVehicles()
-    }
+  async getAllVehicles() {
+    await this.props.fetchVehicles(result => {
+      console.log(result);
+    });
+  }
 
-    getAllVehicles(){
-        axios.get(config.baseURL + 'vehicles').then((response) => {
-            if (response.status === 200) {
-                console.log(response.data);
-            }
-        }).catch((error) => {
-
-        })
-    }
-
-    render(){
-        let tempItems = [{
-            name : 'Vehicles', 
-            to : '/dashboard', 
-            active : true, 
-        },{
-            name : 'Rental Locations', 
-            to : '/locations',
-            active : false, 
-        }]
-        let items = ItemFactory(tempItems);
-        return(
-            <div>
-            <Navigationbar navItems = {items}/>            
-            <div className = "vehicleBrowser">
-            <VehicleBrowser title = {'San Jose'}/>
-            </div>
-            </div>
-        )
-    }
+  render() {
+    let tempItems = [
+      {
+        name: "Vehicles",
+        to: "/dashboard",
+        active: true
+      },
+      {
+        name: "Rental Locations",
+        to: "/locations",
+        active: false
+      }
+    ];
+    let items = ItemFactory(tempItems);
+    return (
+      <div>
+        <Navigationbar navItems={items} />
+        <div className="vehicleBrowser">
+          <VehicleBrowser title={"San Jose"} />
+        </div>
+      </div>
+    );
+  }
 }
 
-export default Dashboard
+export default connect(null, { fetchVehicles })(Dashboard);

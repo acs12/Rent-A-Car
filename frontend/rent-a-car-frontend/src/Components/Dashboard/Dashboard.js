@@ -43,4 +43,10 @@ class Dashboard extends React.Component {
   }
 }
 
-export default connect(null, { fetchVehicles })(Dashboard);
+const mapStateToProps = state => {
+  return {
+    selectedLocation: state.locations.selectedLocation
+  };
+};
+
+export default connect(mapStateToProps, { fetchVehicles })(Dashboard);

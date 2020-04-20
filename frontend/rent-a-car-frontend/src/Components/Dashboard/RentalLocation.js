@@ -14,7 +14,7 @@ class RentalLocation extends React.Component {
     }
 
     async getAllLocations(){
-        await this.props.fetchLocations(result => {
+        await this.props.fetchLocations('', result => {
             console.log(result);
           });
     }

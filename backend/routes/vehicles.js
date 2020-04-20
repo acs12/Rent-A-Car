@@ -5,6 +5,7 @@ const Vehicle = require('../models/Vehicle');
 
 //get all vehicles
 router.get('/', async (req,res) => {
+    
     try{
         const vehicles = await Vehicle.find();
         res.json(vehicles);
@@ -13,6 +14,7 @@ router.get('/', async (req,res) => {
         res.json({message:err});
     }
 });
+
 
 //create a user
 router.post('/',  (req,res) => {

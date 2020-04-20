@@ -1,9 +1,11 @@
 import { FETCHLOCATIONS } from "../types/typeFetch";
 import { SEARCHLOCATIONS } from "../types/typeSearch";
+import { SELECTLOCATION } from "../types/typeSelect";
 
 const initialState = {
   data: [],
-  searchText: ""
+  searchText: "", 
+  selectedLocation : {}
 };
 
 const locationReducer = (state = initialState, action) => {
@@ -17,6 +19,11 @@ const locationReducer = (state = initialState, action) => {
       return {
         ...state,
         searchText: action.payload
+      };
+      case SELECTLOCATION:
+      return {
+        ...state,
+        selectedLocation: action.payload
       };
 
     default:

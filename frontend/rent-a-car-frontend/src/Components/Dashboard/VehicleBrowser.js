@@ -4,12 +4,16 @@ import VehicleCell from "../Dashboard/Cells/VehicleCell";
 import DropDown from "../Common/Navigation-Related/DropDownComponent";
 import DDFactory from "../Common/Navigation-Related/DropDownItemFactory";
 import { setVehicleSearchText } from "../../redux/actions/searchAction";
+import { fetchLocations , fetchVehicleForLocationWithID} from "../../redux/actions/fetchAction";
+import { setCurrentLocation } from "../../redux/actions/setAction";
 import { connect } from "react-redux";
 
 class VehicleBrowser extends React.Component {
   constructor(props) {
     super(props);
     this.handleSearchText = this.handleSearchText.bind(this);
+    this.handleDropDownSearchText = this.handleDropDownSearchText.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleSearchText(e) {
@@ -17,14 +21,30 @@ class VehicleBrowser extends React.Component {
     this.props.setVehicleSearchText(e.target.value);
   }
 
+  handleDropDownSearchText(text) {
+    this.props.fetchLocations(text, result => {
+      console.log(result);
+    });
+  }
+
   handleClick(e) {
-    console.log(e.target.value);
+    // this.props.setCurrentLocation(e.target.value);
+    this.props.fetchVehicleForLocationWithID(e.target.value, (result) => {
+      console.log(result)
+    })
   }
 
   render() {
-    let temp = [
-      { value: "Ankit", displayValue: "Ankit", clicked: this.handleClick }
-    ];
+    let temp = [];
+    this.props.locations.forEach(element => {
+      let tempElememt = {
+        value: element._id,
+        displayValue: element.name,
+        clicked: this.handleClick
+      };
+      temp.push(tempElememt);
+    });
+
     let items = DDFactory(temp);
     return (
       <div>
@@ -38,10 +58,13 @@ class VehicleBrowser extends React.Component {
               type="text"
               placeholder="Search for Vehicles"
               aria-label="Search"
-              onChange = {this.handleSearchText}
+              onChange={this.handleSearchText}
             />
             <div>
-              <DropDown items={items} />
+              <DropDown
+                items={items}
+                searchHandler={this.handleDropDownSearchText}
+              />
             </div>
           </div>
           <div>
@@ -56,20 +79,25 @@ class VehicleBrowser extends React.Component {
 }
 
 const mapStateToProps = state => {
-  const {searchText} = state.vehicles;
-  if(searchText.length > 0) {
-    let searchedVehicles = state.vehicles.data.filter((v) => {
-        return v.type.toUpperCase().includes(searchText.toUpperCase())
-    })
+  const { searchText } = state.vehicles;
+  if (searchText.length > 0) {
+    let searchedVehicles = state.vehicles.data.filter(v => {
+      return v.type.toUpperCase().includes(searchText.toUpperCase());
+    });
     return {
-      vehicles: searchedVehicles
+      vehicles: searchedVehicles,
+      locations: state.locations.data
     };
   }
   return {
-    vehicles: state.vehicles.data
+    vehicles: state.vehicles.data,
+    locations: state.locations.data
   };
 };
 
-export default connect(mapStateToProps, { setVehicleSearchText })(
-  VehicleBrowser
-);
+export default connect(mapStateToProps, {
+  setVehicleSearchText,
+  fetchLocations,
+  setCurrentLocation, 
+  fetchVehicleForLocationWithID
+})(VehicleBrowser);

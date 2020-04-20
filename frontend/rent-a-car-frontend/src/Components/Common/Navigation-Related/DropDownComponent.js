@@ -9,6 +9,16 @@ import {
 
 class DropDown extends React.Component {
 
+  constructor(props){
+    super(props)
+    this.watchSearchText = this.watchSearchText.bind(this)
+  }
+
+  watchSearchText(e){
+    e.preventDefault()
+    this.props.searchHandler(e.target.value)
+  }
+
   clicked(e) {
     console.log(e.target.value);
   }
@@ -24,6 +34,7 @@ class DropDown extends React.Component {
               type="text"
               placeholder="Search"
               aria-label="Search"
+              onChange = {this.watchSearchText}
             />
           </div>
           {this.props.items}

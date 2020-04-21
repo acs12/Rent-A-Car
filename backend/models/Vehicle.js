@@ -10,7 +10,8 @@ const vehicleSchema = new Schema({
      modelYear: { type: Number, required: true},
      currentMileage: { type: Number, required: true},
      condition: { type: String, required: true},
-     timeLastServiced:{ type: Date}
+     timeLastServiced:{ type: Date},
+     ratings : {type : mongoose.Types.ObjectId, ref : 'Rating'}
 });
 
 module.exports = mongoose.model('Vehicle',vehicleSchema);

@@ -21,9 +21,7 @@ router.post('/', async (req,res) => {
         pickupLocation: req.body.pickupLocation,
         returnLocation: req.body.returnLocation,
         pickupTime: req.body.pickupTime, 
-        returnTime: req.body.returnTime,
-        lengthOfRental: req.body.lengthOfRental
-
+        expectedReturnTime : req.body.expectedReturnTime,
     });
     try{
         const savedReservation = await reservation.save();

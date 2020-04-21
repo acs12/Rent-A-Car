@@ -26,7 +26,7 @@ class DropDown extends React.Component {
   render() {
     return (
       <MDBDropdown>
-        <MDBDropdownToggle caret>Choose Location</MDBDropdownToggle>
+        <MDBDropdownToggle caret>{this.props.title}</MDBDropdownToggle>
         <MDBDropdownMenu>
           <div class="md-form">
             <input

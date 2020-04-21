@@ -5,7 +5,7 @@ const DropDownItemFactory = itemList => {
   let itemArray = [];
   itemList.forEach(element => {
     let itemObject = (
-        <MDBDropdownItem value = {element.value} onClick={element.clicked}>{element.displayValue}</MDBDropdownItem>
+        <MDBDropdownItem name = {element.name} value = {element.value} onClick={element.clicked}>{element.displayValue}</MDBDropdownItem>
     );
     itemArray.push(itemObject);
   });

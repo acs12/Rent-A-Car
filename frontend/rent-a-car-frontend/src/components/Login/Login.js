@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router';
 import { MDBContainer, MDBRow, MDBCol } from "mdbreact";
 import {connect} from 'react-redux';
 import {login} from '../../redux/actions/actionSignin';
@@ -40,22 +41,35 @@ class Login extends Component {
         }
         await this.props.login(data,res =>{
             console.log("Res",res);
-            if(res === "Error: Request failed with status code 403"){
-                console.log("unauthorized")
-            }
-            else if(res === "Error: Request failed with status code 401"){
-                console.log("Invalid Credentials")
-            }
-            else if(res.status === 200){
+            if(res.status === 200){
                 console.log("Success")
+                localStorage.setItem("id", res.data._id)
+                localStorage.setItem("admin",res.data.admin)
+                localStorage.setItem("manager",res.data.manager)
+            }
+            else{
+                console.log("error")
             }
         })
     }
 
     render() {
+        let redirectVar = null
+        if(localStorage.getItem("id")){
+            if(localStorage.getItem("admin") === "true"){
+                redirectVar = <Redirect to="/type" />
+            }
+            else if(localStorage.getItem("manager") === "true"){
+                redirectVar = <Redirect to = ""/>
+            }
+            else{
+                redirectVar = <Redirect to = "" />
+            }
+        }
         return (
             <div>
                 <MDBContainer>
+                    {redirectVar}
                     <MDBRow>
                         <MDBCol md="3">
 

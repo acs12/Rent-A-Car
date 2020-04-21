@@ -45,13 +45,15 @@ const vehiclesRoute = require('./routes/vehicles');
 const rentalLocationsRoute = require('./routes/rentalLocations');
 const reservationsRoute = require('./routes/reservations');
 const loginRouter=require('./routes/loginRouter');
+const vehicleTypeRoute = require('./routes/vehicleTypeRouter')
 
 
-app.use(bodyParser.json());
-app.use('/users',usersRoute)
-app.use('/vehicles',vehiclesRoute)
-app.use('/rentalLocations',rentalLocationsRoute)
-app.use('/reservations',reservationsRoute)
+app.use('/users', usersRoute)
+app.use('/vehicles', vehiclesRoute)
+app.use('/rentalLocations', rentalLocationsRoute)
+app.use('/reservations', reservationsRoute)
+app.use('/login',loginRouter)
+app.use('/vehicleType',vehicleTypeRoute)
 
 app.get('/',(req,res) => {
     res.send('Home');

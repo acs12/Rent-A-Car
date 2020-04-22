@@ -13,4 +13,4 @@ const rentalLocationSchema =  new Schema({
    
 });
 
-module.exports = mongoose.model('Rental Location',rentalLocationSchema);
+module.exports = mongoose.model('RentalLocation',rentalLocationSchema);

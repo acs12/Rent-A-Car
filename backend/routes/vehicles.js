@@ -3,17 +3,18 @@ const router = express.Router();
 const Vehicle = require('../models/Vehicle');
 
 
-
 //get all vehicles
 router.get('/', async (req,res) => {
+    
     try{
-        const vehicles = await vehicles.find();
+        const vehicles = await Vehicle.find();
         res.json(vehicles);
     }
     catch(err){
         res.json({message:err});
     }
 });
+
 
 //create a user
 router.post('/',  (req,res) => {
@@ -24,9 +25,9 @@ router.post('/',  (req,res) => {
         modelYear: req.body.modelYear,
         currentMileage: req.body.currentMileage,
         condition: req.body.condition,
-        timeLastServiced: req.body.timeLastServiced
-        
-      
+        timeLastServiced: req.body.timeLastServiced,
+        availability : {type: Boolean, required: true}
+
     });
 
     try{
@@ -69,7 +70,9 @@ router.patch('/:vehicleId', async (req, res) => {
             { $set: {
                 currentMileage: req.body.currentMileage,
                 condition: req.body.condition,
-                timeLastServiced: req.body.timeLastServiced
+                timeLastServiced: req.body.timeLastServiced,
+                availability: req.body.availability
+
               
             }}
         );

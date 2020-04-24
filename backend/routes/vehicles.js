@@ -79,5 +79,16 @@ router.patch('/:vehicleId', async (req, res) => {
     }
 });
 
+//get vehicle Name
+router.get('/allVehicles/IDs', async (req,res) => {
+    try{
+        const vehicleNames = await Vehicle.find().select("carname");
+        res.json(vehicleNames);
+    }
+    catch (err){
+        res.json({ message: err});
+    }
+});
+
 
 module.exports = router;

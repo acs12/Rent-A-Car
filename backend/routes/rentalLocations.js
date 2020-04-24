@@ -77,4 +77,15 @@ router.patch("/:rentalLocationId", async (req, res) => {
   }
 });
 
+//get Location Names
+router.get('/allLocations/IDs', async (req,res) => {
+  try{
+      const LocationNames = await RentalLocation.find().select("name");
+      res.json(LocationNames);
+  }
+  catch (err){
+      res.json({ message: err});
+  }
+});
+
 module.exports = router;

@@ -29,11 +29,11 @@ router.post('/', async (req,res) => {
 
         v = Vehicle.findById(vehicle)
        
-        if(v[availability] == true){
+        if(v.availability == true){
 
      try{
         const savedReservation = await reservation.save();
-        v[availability] = false
+        v.availability = false
         res.json(savedReservation);
     }
      catch (err) {
@@ -42,10 +42,10 @@ router.post('/', async (req,res) => {
 }
         else{
             print("The Car you chose is already booked, here are some alternatives at other locations")
-            alter = Vehicle.find({ type: v[type] })
+            alter = Vehicle.find({ type: v.type })
             alters = []
             for( i=0; i++; i < alter.length())
-             if ((alter[i])[availability] == true){
+             if ((alter[i]).availability == true){
                  alters.append(alter[i])
              }
 

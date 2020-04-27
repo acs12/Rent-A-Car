@@ -11,7 +11,8 @@ const vehicleSchema = new Schema({
      condition: { type: String, required: true},
      timeLastServiced:{ type: Date},
      ratings : {type : mongoose.Types.ObjectId, ref : 'Rating'},
-     rentalLocation : {type : Schema.Types.ObjectId , ref : "RentalLocation"}
+     rentalLocation :  {type : Schema.Types.ObjectId , ref : "RentalLocation"},
+     availability : {type: Boolean, required: true}
 });
 
 module.exports = mongoose.model('Vehicle',vehicleSchema);

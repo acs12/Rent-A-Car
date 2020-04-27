@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Reservation = require('../models/Reservation');
+const Vehicle = require('../models/Vehicle');
 
 //get all user
 router.get('/', async (req,res) => {
@@ -22,13 +23,38 @@ router.post('/', async (req,res) => {
         returnLocation: req.body.returnLocation,
         pickupTime: req.body.pickupTime, 
         expectedReturnTime : req.body.expectedReturnTime,
-    });
-    try{
+        });
+
+    if (pickupTime - Date.now < 86,400,000){  //24hr = 86400000 miliseconds
+
+        v = Vehicle.findById(vehicle)
+       
+        if(v.availability == true){
+
+     try{
         const savedReservation = await reservation.save();
+        v.availability = false
         res.json(savedReservation);
     }
-    catch (err) {
+     catch (err) {
         res.json({message:err});
+    }
+}
+        else{
+            print("The Car you chose is already booked, here are some alternatives at other locations")
+            alter = Vehicle.find({ type: v.type })
+            alters = []
+            for( i=0; i++; i < alter.length())
+             if ((alter[i]).availability == true){
+                 alters.append(alter[i])
+             }
+
+            return alters
+        };
+   
+    }
+    else{
+        print("Reservation rejected, please book one day before pickup time")
     }
 
 });

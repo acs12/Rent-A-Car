@@ -13,7 +13,8 @@ const reservationSchema = new Schema({
      returnTime:{ type: Date},
      status : {type : String},
      totalPrice : {type : Number},
-     expectedReturnTime:{ type: Date, required: true}
+     expectedReturnTime:{ type: Date, required: true},
+     
      
 });
 

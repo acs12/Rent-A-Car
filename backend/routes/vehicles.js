@@ -4,75 +4,105 @@ const Vehicle = require('../models/Vehicle');
 
 
 //get all vehicles
-router.get('/', async (req,res) => {
-    
-    try{
-        const vehicles = await Vehicle.find();
-        res.json(vehicles);
+router.get('/', async (req, res) => {
+
+    try {
+        Vehicle.find()
+            .exec()
+            .then(result => {
+                res.send(result)
+            })
     }
-    catch(err){
-        res.json({message:err});
+    catch (err) {
+        res.json({ message: err });
     }
 });
 
 
 //create a user
-router.post('/',  (req,res) => {
-    const vehicle = new Vehicle({
+router.post('/', (req, res) => {
+    new Vehicle({
+        carname: req.body.carname,
         type: req.body.type,
         price: req.body.price,
         make: req.body.make,
         modelYear: req.body.modelYear,
         currentMileage: req.body.currentMileage,
         condition: req.body.condition,
-        timeLastServiced: req.body.timeLastServiced
-    });
+        timeLastServiced: req.body.timeLastServiced,
+        availability: req.body.availability,
+        rentalLocation: req.body.locationId
 
-    try{
-        const savedVehicle =  vehicle.save();
-        res.json(savedVehicle);
-    }
-    catch (err) {
-        res.json({message:err});
-    }
+    }).save()
+        .then(result => {
+            Vehicle.find()
+                .exec()
+                .then(result => {
+                    res.send(result)
+                })
+        })
+        .catch(err => {
+            res.send(err)
+        })
 
 });
 
 //get a specific user 
-router.get('/:vehicleId', async (req,res) => {
-    try{
+router.get('/:vehicleId', async (req, res) => {
+    try {
         const vehicle = await Vehicle.findById(req.params.vehicleId);
         res.json(vehicle);
     }
-    catch (err){
-        res.json({ message: err});
+    catch (err) {
+        res.json({ message: err });
     }
 });
 
 //delete a user
-router.delete('/:vehicleId', async (req, res) => {
-    try{
-        const removedVehicle = await Vehicle.remove({_id: req.params.vehicleId});
-        res.json(removedVehicle);
+router.post('/delete', async (req, res) => {
+    try {
+        Vehicle.remove({ _id: req.body._id })
+            .exec()
+            .then(result => {
+                Vehicle.find()
+                    .exec()
+                    .then(result => {
+                        res.send(result)
+                    })
+            })
     }
     catch (err) {
-        res.json({message: err});
+        res.json({ message: err });
     }
 });
 
 //update a user 
-router.patch('/:vehicleId', async (req, res) => {
+router.post('/upate', async (req, res) => {
     try {
-        const updatedVehicle = await Vehicle.updateOne(
-            {_id: req.params.vehicleId},
-            { $set: {
-                currentMileage: req.body.currentMileage,
-                condition: req.body.condition,
-                timeLastServiced: req.body.timeLastServiced
-              
-            }}
-        );
-        res.json(updatedVehicle);
+        Vehicle.updateOne(
+            { _id: req.body._id },
+            {
+                $set: {
+                    carname: req.body.carname,
+                    type: req.body.type,
+                    price: req.body.price,
+                    make: req.body.make,
+                    modelYear: req.body.modelYear,
+                    currentMileage: req.body.currentMileage,
+                    condition: req.body.condition,
+                    timeLastServiced: req.body.timeLastServiced,
+                    availability: req.body.availability,
+                    rentalLocation: req.body.locationId
+                }
+            }
+        ).exec()
+            .then(result => {
+                Vehicle.find()
+                    .exec()
+                    .then(result => {
+                        res.send(result)
+                    })
+            })
     }
     catch (err) {
         req.json({ message: err });
@@ -80,14 +110,20 @@ router.patch('/:vehicleId', async (req, res) => {
 });
 
 //get vehicle Name
-router.get('/allVehicles/IDs', async (req,res) => {
-    try{
-        const vehicleNames = await Vehicle.find().select("carname");
-        res.json(vehicleNames);
-    }
-    catch (err){
-        res.json({ message: err});
-    }
+router.post('/allVehicles/IDs', async (req, res) => {
+    console.log("inside", req.body)
+    await Vehicle.find(
+        {
+            rentalLocation: {$ne: req.body.locationId}
+        }
+    ).select("carname").exec()
+        .then(result => {
+            console.log(result)
+            res.send(result)
+        })
+        .catch(err => {
+            res.send(err)
+        })
 });
 
 

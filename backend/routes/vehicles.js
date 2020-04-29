@@ -6,32 +6,29 @@ const Vehicle = require('../models/Vehicle');
 //get all vehicles
 router.get('/', async (req, res) => {
 
-    try {
-        Vehicle.find()
-            .exec()
-            .then(result => {
-                res.send(result)
-            })
-    }
-    catch (err) {
-        res.json({ message: err });
-    }
+    Vehicle.find().populate('type').populate('rentalLocation')
+        .then(result => {
+            res.send(result)
+        })
+        .catch(err => {
+            res.send(err)
+        })
 });
 
 
 //create a user
 router.post('/', (req, res) => {
+    console.log("req for adding vehicle", req.body)
     new Vehicle({
         carname: req.body.carname,
         type: req.body.type,
-        price: req.body.price,
         make: req.body.make,
         modelYear: req.body.modelYear,
         currentMileage: req.body.currentMileage,
         condition: req.body.condition,
         timeLastServiced: req.body.timeLastServiced,
-        availability: req.body.availability,
-        rentalLocation: req.body.locationId
+        availability: true,
+        rentalLocation: req.body.rentalLocation
 
     }).save()
         .then(result => {
@@ -77,35 +74,121 @@ router.post('/delete', async (req, res) => {
 });
 
 //update a user 
-router.post('/upate', async (req, res) => {
-    try {
-        Vehicle.updateOne(
-            { _id: req.body._id },
-            {
-                $set: {
-                    carname: req.body.carname,
-                    type: req.body.type,
-                    price: req.body.price,
-                    make: req.body.make,
-                    modelYear: req.body.modelYear,
-                    currentMileage: req.body.currentMileage,
-                    condition: req.body.condition,
-                    timeLastServiced: req.body.timeLastServiced,
-                    availability: req.body.availability,
-                    rentalLocation: req.body.locationId
+router.post('/update', async (req, res) => {
+    console.log("vehicle update api", req.body)
+    if (req.body.rentalLocation && req.body.type) {
+        try {
+            Vehicle.updateOne(
+                { _id: req.body._id },
+                {
+                    $set: {
+                        carname: req.body.carname,
+                        type: req.body.type,
+                        make: req.body.make,
+                        modelYear: req.body.modelYear,
+                        currentMileage: req.body.currentMileage,
+                        condition: req.body.condition,
+                        timeLastServiced: req.body.timeLastServiced,
+                        rentalLocation: req.body.rentalLocation
+                    }
                 }
-            }
-        ).exec()
-            .then(result => {
-                Vehicle.find()
-                    .exec()
-                    .then(result => {
-                        res.send(result)
-                    })
-            })
+            ).exec()
+                .then(result => {
+                    Vehicle.find().populate('rentalLocation').populate('type')
+                        .exec()
+                        .then(result => {
+                            res.send(result)
+                        })
+                })
+        }
+        catch (err) {
+            req.json({ message: err });
+        }
     }
-    catch (err) {
-        req.json({ message: err });
+    else if (req.body.rentalLocation) {
+
+        try {
+            Vehicle.updateOne(
+                { _id: req.body._id },
+                {
+                    $set: {
+                        carname: req.body.carname,
+                        make: req.body.make,
+                        modelYear: req.body.modelYear,
+                        currentMileage: req.body.currentMileage,
+                        condition: req.body.condition,
+                        timeLastServiced: req.body.timeLastServiced,
+                        rentalLocation: req.body.rentalLocation
+                    }
+                }
+            ).exec()
+                .then(result => {
+                    Vehicle.find().populate('rentalLocation').populate('type')
+                        .exec()
+                        .then(result => {
+                            res.send(result)
+                        })
+                })
+        }
+        catch (err) {
+            req.json({ message: err });
+        }
+    }
+    else if (req.body.type) {
+        try {
+            Vehicle.updateOne(
+                { _id: req.body._id },
+                {
+                    $set: {
+                        carname: req.body.carname,
+                        type: req.body.type,
+                        make: req.body.make,
+                        modelYear: req.body.modelYear,
+                        currentMileage: req.body.currentMileage,
+                        condition: req.body.condition,
+                        timeLastServiced: req.body.timeLastServiced,
+                    }
+                }
+            ).exec()
+                .then(result => {
+                    Vehicle.find().populate('rentalLocation').populate('type')
+                        .exec()
+                        .then(result => {
+                            res.send(result)
+                        })
+                })
+        }
+        catch (err) {
+            req.json({ message: err });
+        }
+    }
+    else {
+
+        try {
+            Vehicle.updateOne(
+                { _id: req.body._id },
+                {
+                    $set: {
+                        carname: req.body.carname,
+                        make: req.body.make,
+                        modelYear: req.body.modelYear,
+                        currentMileage: req.body.currentMileage,
+                        condition: req.body.condition,
+                        timeLastServiced: req.body.timeLastServiced,
+                    }
+                }
+            ).exec()
+                .then(result => {
+                    Vehicle.find().populate('rentalLocation').populate('type')
+                        .exec()
+                        .then(result => {
+                            res.send(result)
+                        })
+                })
+        }
+        catch (err) {
+            req.json({ message: err });
+        }
     }
 });
 
@@ -114,7 +197,7 @@ router.post('/allVehicles/IDs', async (req, res) => {
     console.log("inside", req.body)
     await Vehicle.find(
         {
-            rentalLocation: {$ne: req.body.locationId}
+            rentalLocation: { $ne: req.body.locationId }
         }
     ).select("carname").exec()
         .then(result => {

@@ -7,7 +7,7 @@ const rentalLocationSchema =  new Schema({
      name:{ type: String, required: true},
      address:{ type: String, required: true}, 
      capacity:{ type: Number, required: true},
-     numOfVehicles:{ type: Number},
+     numOfVehicles:{ type: Number, required: true},
      // vehicles:[{ type: Schema.Types.ObjectId, ref: 'Vehicle'}]
 
    

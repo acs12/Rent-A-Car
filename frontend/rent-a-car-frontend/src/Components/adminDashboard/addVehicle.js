@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import '../../App.css';
 import axios from 'axios';
 import { MDBContainer, MDBRow, MDBCol, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from "mdbreact";
-// import { addVehicleType, getVehicleType } from '../../redux'
+import { addVehicle, getVehicle, getLocation, getVehicleType } from '../../redux'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router';
-import EditVehicleType from './editVehicleType';
+import EditVehicle from './editVehicle';
 
 //Define a Login Component
-class VehicleType extends Component {
+class Vehicle extends Component {
     //call the constructor method
     constructor(props) {
         //Call the constrictor of Super class i.e The Component
@@ -28,25 +28,38 @@ class VehicleType extends Component {
         }
         //Bind the handlers to this class
         this.changeHandler = this.changeHandler.bind(this);
-        this.typeHandler = this.typeHandler.bind(this)
+        // this.typeHandler = this.typeHandler.bind(this)
         this.changeToggle = this.changeToggle.bind(this)
         this.addVehicle = this.addVehicle.bind(this)
     }
 
     componentDidUpdate(prevProps, prevState) {
         console.log("VEHICLE : componentDidUpdate CALLED")
-        if (prevProps.vehicles !== this.props.vehicles) {
-            this.setState({ vehicles: this.props.vehicles })
+        if (prevProps.vehicle !== this.props.vehicle) {
+            this.setState({ vehicles: this.props.vehicle })
         }
     }
 
-    componentDidMount = () => {
-        // this.props.getVehicleType(res => {
-        //     console.log(res)
-        // })
+    componentDidMount = async() => {
+
+        await this.props.getVehicle(res => {
+            console.log(res)
+        })
+
+        await this.props.getLocation(res => {
+            console.log(res)
+        })
+
+        await this.props.getVehicleType(res => {
+            console.log(res)
+        })
+
+        
+
     }
 
     changeHandler = (e) => {
+        e.preventDefault()
         this.setState({
             [e.target.name]: e.target.value,
         })
@@ -67,20 +80,21 @@ class VehicleType extends Component {
 
         }
         console.log("data", data)
-        // await this.props.addVehicleType(data, res => {
-        //     console.log(res)
-        //     if (this.state.toggle === true) {
-        //         this.setState({
-        //             toggle: false
-        //         })
-        //     }
-        //     else {
-        //         this.setState({
-        //             toggle: true
-        //         })
-        //     }
-        //     this.componentDidUpdate(this.props.vehicleTypes)
-        // })
+        await this.props.addVehicle(data, res => {
+            console.log(res)
+            if (this.state.toggle === true) {
+                this.setState({
+                    toggle: false
+                })
+            }
+            else {
+                this.setState({
+                    toggle: true
+                })
+            }
+            this.componentDidMount()
+            this.componentDidUpdate(this.props.vehicle)        
+        })
     }
 
     changeToggle = (e) => {
@@ -98,10 +112,30 @@ class VehicleType extends Component {
     }
 
     render() {
+        console.log("State", this.state)
+        console.log("location",this.props.location)
+        let rentalLocationButton = <div>
+            {this.props.location.map(x => {
+                if (x.numOfVehicles < x.capacity) {
+                    return (
+                        <button className="btn btn-info" onClick={this.changeHandler} name="rentalLocation" value={x._id}>{x.name}</button>
+                    )
+                }
+            }
+            )}
+        </div>
 
+        let vehicleTypeButton = <div>
+            {this.props.vehicleTypes.map(x => {
+                return (
+                    <button className="btn btn-info" onClick={this.changeHandler} name="type" value={x._id}>{x.category}</button>
+                )
+            }
+            )}
+        </div>
         let vehicleDetails = null
         if (this.state.toggle === false) {
-            if (this.props.vehicles.length === 0) {
+            if (this.state.vehicles.length === 0) {
                 vehicleDetails = <div>
                     <br></br>
                     <h3>No Vehicle to display</h3>
@@ -190,6 +224,7 @@ class VehicleType extends Component {
                     </div>
 
                     <div className="form-group">
+                    Enter when was car vehicle last serviced :
                         <input
                             onChange={this.changeHandler}
                             type="date"
@@ -200,31 +235,19 @@ class VehicleType extends Component {
                         <br></br>
                     </div>
 
-                    <div className="form-group">
-                        <input
-                            onChange={this.changeHandler}
-                            type="text"
-                            className="form-control"
-                            name="rentalLocation"
-                            placeholder="Enter rental location ID."
-                        />
+                    <div>
+                        Select any location from below :
+                        {rentalLocationButton}
                         <br></br>
                     </div>
 
-
-                    <div className="form-group">
-                        <input
-                            onChange={this.changeHandler}
-                            type="text"
-                            className="form-control"
-                            name="type"
-                            placeholder="Enter type of car."
-                        />
+                    <div>
+                        Select any vehicle type from below:
+                        {vehicleTypeButton}
                         <br></br>
                     </div>
 
-
-                    <button type="submit" className="btn btn-primary">Save</button>
+                    <button type="submit" className="btn btn-success">Save</button>
                     <br></br><br></br>
 
                 </form>
@@ -251,9 +274,11 @@ class VehicleType extends Component {
 
 const mapStateToProps = state => {
     return {
+        vehicle: state.adminVehicle.data,
+        location: state.adminLocation.data,
         vehicleTypes: state.vehicleTypes.data
     }
 }
 
 //export Login Component
-export default connect(mapStateToProps, { addVehicleType, getVehicleType })(VehicleType);
+export default connect(mapStateToProps, { addVehicle, getVehicle, getLocation, getVehicleType })(Vehicle);

@@ -27,16 +27,19 @@ router.get("/", async (req, res) => {
 
 //create a user
 router.post("/", async (req, res) => {
+  console.log("req",req)
   const rentalLocation = new RentalLocation({
     name: req.body.name,
     address: req.body.address,
-    capacity: req.body.capacity
+    capacity: req.body.capacity,
+    numOfVehicles : 0
   });
   await rentalLocation.save()
     .then(result => {
       RentalLocation.find()
         .exec()
         .then(result => {
+          console.log("inside result",result)
           res.send(result);
         })
     })

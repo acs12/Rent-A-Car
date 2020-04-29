@@ -57,8 +57,6 @@ class AdminLocation extends Component {
             name: this.state.name,
             address: this.state.address,
             capacity: this.state.capacity,
-            numOfVehicles: this.state.numOfVehicles,
-            vehicles: this.state.vehicles
         }
         console.log("data", data)
         await this.props.addLocation(data, res => {
@@ -108,7 +106,7 @@ class AdminLocation extends Component {
             else {
                 locationDetails = <div>
                     <br></br>
-                    {this.state.location.map(x => <EditLocation key={x._id} item={x} action={this.update}></EditLocation>)}
+                    {this.props.location.map(x => <EditLocation key={x._id} item={x} action={this.update}></EditLocation>)}
                     <br></br>
                     <button onClick={this.changeToggle} style={{ textAlign: "center" }} className="btn btn-primary">Add Location</button>
                     <br></br>

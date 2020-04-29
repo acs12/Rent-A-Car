@@ -31,12 +31,12 @@ class EditLocation extends Component {
         // this.getVehicleNames = this.getVehicleNames.bind(this)
     }
 
-    componentDidMount = () => {
+    componentDidMount = async() => {
         let data = {
             locationId: this.props.item._id
         }
-        this.props.vehicleNames(data, res => {
-            
+        await this.props.vehicleNames(data, async res => {
+            console.log("re vehicle names",res)
             let arr = ""
             res.data.forEach(element => {
                 if(element.carname !== undefined){
@@ -45,7 +45,7 @@ class EditLocation extends Component {
             });
             console.log("Arr",arr)
             console.log("length",Object.keys(res.data).length)
-            this.setState({ 
+            await this.setState({ 
                 vehicleArray: arr,
                 numOfVehicles : Object.keys(res.data).length
             })

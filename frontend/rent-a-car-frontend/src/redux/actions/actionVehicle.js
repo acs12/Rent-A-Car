@@ -36,7 +36,6 @@ export function getVehicle(callback) {
 
     return (dispatch) => {
         request.then((res) => {
-
             dispatch({
                 type: GET_VEHICLE,
                 payload: res.data

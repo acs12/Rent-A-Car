@@ -1,4 +1,5 @@
-import { SIGNUP, LOGIN } from "../types/typeSignin";
+import { SIGNUP, LOGIN, UPDATEUSER } from "../types/typeSignin";
+import { FETCHUSER } from "../types/typeFetch";
 
 const initialState = {
   data: [],
@@ -36,6 +37,14 @@ const singin = (state = initialState, action) => {
         phoneNumber: action.payload.phoneNumber
       });
 
+    case FETCHUSER:
+      return {
+        ...action.payload
+      }
+      case UPDATEUSER:
+          return {
+            ...action.payload
+          } 
     default:
       return state;
   }

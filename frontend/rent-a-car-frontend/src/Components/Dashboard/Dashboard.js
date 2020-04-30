@@ -3,19 +3,24 @@ import Navigationbar from "../Common/Navigation-Related/Navigation";
 import ItemFactory from "../Common/Navigation-Related/NavItemFactory";
 import VehicleBrowser from "../Dashboard/VehicleBrowser";
 import { fetchVehicles } from "../../redux/actions/fetchAction";
-
 import { connect } from "react-redux";
+import ReactPaginate from 'react-paginate';
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
-    this.getAllVehicles();
+    this.getAllVehicles(0);
   }
 
-  async getAllVehicles() {
-    await this.props.fetchVehicles(result => {
+  async getAllVehicles(pageNum) {
+    await this.props.fetchVehicles(pageNum, result => {
       console.log(result);
     });
+  }
+
+  handlePageClick = (data) => {
+    const { selected } = data;
+    this.getAllVehicles(selected);
   }
 
   render() {
@@ -29,6 +34,11 @@ class Dashboard extends React.Component {
         name: "Rental Locations",
         to: "/locations",
         active: false
+      },
+      {
+        name: "My Reservations",
+        to: "/reservations",
+        active: false
       }
     ];
     let items = ItemFactory(tempItems);
@@ -37,6 +47,19 @@ class Dashboard extends React.Component {
         <Navigationbar navItems={items} />
         <div className="vehicleBrowser">
           <VehicleBrowser title={"San Jose"} />
+          <ReactPaginate
+          previousLabel="Prev"
+          nextLabel="Next"
+          breakLabel="..."
+          breakClassName="break-me"
+          pageCount={this.props.totalVehicles/20.0}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={0}
+          onPageChange={this.handlePageClick}
+          containerClassName="pagination"
+          subContainerClassName="pages pagination"
+          activeClassName="active"
+        />
         </div>
       </div>
     );
@@ -45,7 +68,8 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    selectedLocation: state.locations.selectedLocation
+    selectedLocation: state.locations.selectedLocation,
+    totalVehicles : state.vehicles.total
   };
 };
 

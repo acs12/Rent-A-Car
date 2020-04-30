@@ -4,7 +4,10 @@ import VehicleCell from "../Dashboard/Cells/VehicleCell";
 import DropDown from "../Common/Navigation-Related/DropDownComponent";
 import DDFactory from "../Common/Navigation-Related/DropDownItemFactory";
 import { setVehicleSearchText } from "../../redux/actions/searchAction";
-import { fetchLocations , fetchVehicleForLocationWithID} from "../../redux/actions/fetchAction";
+import {
+  fetchLocations,
+  fetchVehicleForLocationWithID
+} from "../../redux/actions/fetchAction";
 import { setCurrentLocation } from "../../redux/actions/setAction";
 import { connect } from "react-redux";
 
@@ -28,10 +31,10 @@ class VehicleBrowser extends React.Component {
   }
 
   handleClick(e) {
-    // this.props.setCurrentLocation(e.target.value);
-    this.props.fetchVehicleForLocationWithID(e.target.value, (result) => {
-      console.log(result)
-    })
+    this.props.setCurrentLocation(e.target.value)
+    this.props.fetchVehicleForLocationWithID(e.target.value, result => {
+      console.log(result);
+    });
   }
 
   render() {
@@ -49,9 +52,9 @@ class VehicleBrowser extends React.Component {
     return (
       <div>
         <div className="list-container">
-          <h2 align={"center"}>
+          <h1 align={"center"}>
             <b>{this.props.title}</b>
-          </h2>
+          </h1>
           <div className="md-form my-0 vehicleBox finderBox">
             <input
               class="form-inline d-flex justify-content-center md-form form-sm mt-0"
@@ -62,6 +65,7 @@ class VehicleBrowser extends React.Component {
             />
             <div>
               <DropDown
+                title = {this.props.selectedLocation.name}
                 items={items}
                 searchHandler={this.handleDropDownSearchText}
               />
@@ -82,22 +86,27 @@ const mapStateToProps = state => {
   const { searchText } = state.vehicles;
   if (searchText.length > 0) {
     let searchedVehicles = state.vehicles.data.filter(v => {
-      return v.type.toUpperCase().includes(searchText.toUpperCase());
+      return (
+        v.type.category.toUpperCase().includes(searchText.toUpperCase()) ||
+        v.carname.toUpperCase().includes(searchText.toUpperCase())
+      );
     });
     return {
       vehicles: searchedVehicles,
-      locations: state.locations.data
+      locations: state.locations.data,
+      selectedLocation : state.locations.selectedLocation
     };
   }
   return {
     vehicles: state.vehicles.data,
-    locations: state.locations.data
+    locations: state.locations.data, 
+    selectedLocation : state.locations.selectedLocation
   };
 };
 
 export default connect(mapStateToProps, {
   setVehicleSearchText,
   fetchLocations,
-  setCurrentLocation, 
+  setCurrentLocation,
   fetchVehicleForLocationWithID
 })(VehicleBrowser);

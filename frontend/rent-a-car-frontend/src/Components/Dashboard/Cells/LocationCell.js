@@ -18,7 +18,7 @@ class LocationCell extends React.Component {
         </div>
         <div className="vehicleBox">
           <label>Available Vehicles</label>
-          <h4>{this.props.location.vehicles.length}</h4>
+          <h4>{this.props.location.numOfVehicles}</h4>
         </div>
         <div className="vehicleBox">
           <button className="btn btn-primary">View</button>

@@ -1,24 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const RentalLocation = require("../models/RentalLocation");
-
+const Vehicles = require("../models/Vehicle");
+const paginated = 20
 //get all user
 router.get("/", async (req, res) => {
-  const { searchText } = req.query;
+  const { searchText, pageNum } = req.query;
+  const skipCount = pageNum * paginated;
   try {
     if (searchText) {
-      await RentalLocation.find({ "name": { $regex: searchText, $options: 'i' } })
-        .exec()
-        .then(result => {
-          res.send(result);
-        })
-
+      const locations = await RentalLocation.find({ "name": { $regex: searchText, $options: 'i' } }).skip(skipCount).limit(paginated);          
+      const total = await RentalLocation.find({ "name": { $regex: searchText, $options: 'i' } }).countDocuments();
+      res.send({total : total, locations : locations});
     } else {
-      await RentalLocation.find()
-        .exec()
-        .then(result => {
-          res.send(result);
-        })
+      const locations = await RentalLocation.find().skip(skipCount).limit(paginated);          
+      const total = await RentalLocation.countDocuments();
+      res.send({total : total, locations : locations});
     }
   } catch (err) {
     res.json({ message: err });
@@ -52,10 +49,8 @@ router.post("/", async (req, res) => {
 //get a specific user
 router.get("/:rentalLocationId", async (req, res) => {
   try {
-    const rentalLocation = await RentalLocation.findById(
-      req.params.rentalLocationId
-    ).populate('vehicles');
-    res.json(rentalLocation);
+    const rentalLocationVehicles = await Vehicles.find({rentalLocation : req.params.rentalLocationId}).populate("type").populate("rentalLocation");
+  return res.send({ total: rentalLocationVehicles.length, vehicles: rentalLocationVehicles });
   } catch (err) {
     res.json({ message: err });
   }

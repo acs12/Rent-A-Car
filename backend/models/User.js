@@ -11,6 +11,7 @@ const userSchema = new Schema({
     manager : {type : Boolean},
     dlImage: { type: String },
     creditCardInfo: { type: Number},
+    accountExpiry : {type : Date, default : () => new Date(+new Date() + 180*24*60*60*1000) }, //Add 6 Months
     residenceAddress:{ type: String},
     phoneNumber:{type: Number}
 });

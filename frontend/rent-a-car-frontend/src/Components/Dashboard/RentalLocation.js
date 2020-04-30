@@ -5,19 +5,25 @@ import ItemFactory from '../Common/Navigation-Related/NavItemFactory'
 import "../../styles/dashboard.styles.css";
 import { fetchLocations } from "../../redux/actions/fetchAction";
 import { connect } from "react-redux";
+import ReactPaginate from 'react-paginate';
 
 class RentalLocation extends React.Component {
 
     constructor(props) {
         super(props)
-        this.getAllLocations()
+        this.getAllLocations('', 0)
     }
 
-    async getAllLocations(){
-        await this.props.fetchLocations('', result => {
+    async getAllLocations(searchText, pageNum){
+        await this.props.fetchLocations(searchText, pageNum, result => {
             console.log(result);
           });
     }
+
+    handlePageClick = (data) => {
+        const { selected } = data;
+        this.getAllLocations('',selected);
+      }
 
     render(){
         let tempItems = [{
@@ -28,6 +34,11 @@ class RentalLocation extends React.Component {
             name : 'Rental Locations', 
             to : '/locations',
             active : true, 
+        },
+        {
+          name: "My Reservations",
+          to: "/reservations",
+          active: false
         }]
         let items = ItemFactory(tempItems);
         return(
@@ -35,10 +46,29 @@ class RentalLocation extends React.Component {
             <Navigationbar navItems = {items}/>            
             <div className = "vehicleBrowser">
             <LocationBrowser />
+            <ReactPaginate
+          previousLabel="Prev"
+          nextLabel="Next"
+          breakLabel="..."
+          breakClassName="break-me"
+          pageCount={this.props.totalLocations/20.0}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={0}
+          onPageChange={this.handlePageClick}
+          containerClassName="pagination"
+          subContainerClassName="pages pagination"
+          activeClassName="active"
+        />
             </div>
             </div>
         )
     }
 }
 
-export default connect(null, {fetchLocations})(RentalLocation);
+const mapStateToProps = state => {
+    return {
+        totalLocations : state.locations.total 
+    }
+}
+
+export default connect(mapStateToProps, {fetchLocations})(RentalLocation);

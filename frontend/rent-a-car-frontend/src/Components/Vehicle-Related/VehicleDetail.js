@@ -9,11 +9,12 @@ import DropDown from "../Common/Navigation-Related/DropDownComponent";
 import { fetchLocations } from "../../redux/actions/fetchAction";
 import { book } from "../../redux/actions/bookingAction";
 import DDFactory from "../Common/Navigation-Related/DropDownItemFactory";
+import VehicleCell from "../Dashboard/Cells/VehicleCell";
 
 class VehicleDetail extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {error : ''};
     this.getVehicle();
     this.handleDropDownSearchText = this.handleDropDownSearchText.bind(this);
     this.submitBooking = this.submitBooking.bind(this);
@@ -33,8 +34,6 @@ class VehicleDetail extends React.Component {
 
   handleAction(e) {
     e.preventDefault();
-    console.log(e.target.name);
-    console.log(e.target.value);
     this.setState({
       [e.target.name]: e.target.value
     });
@@ -43,15 +42,18 @@ class VehicleDetail extends React.Component {
   submitBooking(e) {
     e.preventDefault();
     let values = {
-      user: "5e9c05a9ba82c590345093ee",
+      user: "5ea947d90c22745e488eba33",
       vehicle: this.props.match.params.vid,
       pickupLocation: this.state.pickupLocationID,
       returnLocation: this.state.returnLocationID,
       pickupTime: this.state.pickupTime,
       expectedReturnTime: this.state.expectedReturnTime
     };
-    console.log(values);
-    // this.props.book(values, result => {});
+    this.props.book(values, result => {
+        if(result.data !== undefined && result.data.message) {
+          this.setState({error : result.data.message})
+        }
+    });
   }
 
   handleDropDownSearchText(text) {
@@ -95,6 +97,11 @@ class VehicleDetail extends React.Component {
         name: "Rental Locations",
         to: "/locations",
         active: false
+      },
+      {
+        name: "My Reservations",
+        to: "/reservations",
+        active: false
       }
     ];
     let items = ItemFactory(tempItems);
@@ -137,18 +144,23 @@ class VehicleDetail extends React.Component {
               <MDBInput
                 name="expectedReturnTime"
                 type="date"
-                label="Start Date"
+                label="End Date"
                 onChange={this.handleAction}
                 outline
               />
             </div>
           )}
-
-          {this.state.expectedReturnTime !== undefined && (
+            <h4>{this.state.error}</h4>
+          {this.state.error.length === 0 && this.state.expectedReturnTime !== undefined && (
             <button className="btn btn-primary" onClick={this.submitBooking}>
               Book
             </button>
           )}
+
+          {this.props.vehicles.map(v => {
+            return <VehicleCell vehicle={v} />;
+          })}
+
         </div>
       </div>
     );
@@ -158,7 +170,8 @@ class VehicleDetail extends React.Component {
 const matchStateToProps = state => {
   return {
     selectedVehicle: state.vehicles.selectedVehicle,
-    locations: state.locations.data
+    locations: state.locations.data,
+    vehicles : state.vehicles.data
   };
 };
 

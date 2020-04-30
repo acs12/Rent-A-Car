@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../../App.css';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { MDBContainer, MDBRow, MDBCol, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from "mdbreact";
 import {connect} from 'react-redux';
 import {signup} from '../../redux/actions/actionSignin';
@@ -22,7 +22,8 @@ class Signup extends Component {
             phoneNumber: "",
             drivingLicense: "",
             address: "",
-            creditCard: ""
+            creditCard: "", 
+            error : ""
         }
         //Bind the handlers to this class
         this.changeHandler = this.changeHandler.bind(this);
@@ -61,7 +62,11 @@ class Signup extends Component {
                 password: this.state.password,
             }
             await this.props.signup(data,res=>{
-                console.log(res)
+                if(res.data.message) {
+                    this.setState({error : res.data.message})
+                }else {
+                    this.setState({redirectVar : <Redirect to="dashboard"/>})
+                }
             })
         }
         else if(this.state.type === "Manager"){
@@ -72,7 +77,11 @@ class Signup extends Component {
                 password: this.state.password,
             }
             await this.props.signup(data,res=>{
-                console.log(res)
+                if(res.data.message) {
+                    this.setState({error : res.data.message})
+                }else {
+                    this.setState({redirectVar : <Redirect to="dashboard"/>})
+                }
             })
         }
         else{
@@ -88,11 +97,17 @@ class Signup extends Component {
                 creditCardInfo: this.state.creditCard
             }
             await this.props.signup(data,res=>{
-                console.log(res)
+                if(res.status === 200) {
+                    if(res.data.message) {
+                        this.setState({error : res.data.message})
+                    }else {
+                        this.setState({redirectVar : <Redirect to="dashboard"/>})
+                    }
+                }else {
+
+                }
             })
         }
-       
-
     }
 
     render() {
@@ -216,6 +231,7 @@ class Signup extends Component {
         }
         return (
             <div>
+                {this.state.redirectVar}
                 <MDBContainer>
                     <MDBRow>
                         <MDBCol md="3">
@@ -244,7 +260,7 @@ class Signup extends Component {
                                 {formElement}
 
                                 <br></br><br></br>
-
+                                <h4>{this.state.error}</h4>
                                 <h5>Already have an account? Go to <Link to="/"> Login Page</Link></h5>
                                 <br></br>
 

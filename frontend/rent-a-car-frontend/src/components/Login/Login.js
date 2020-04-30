@@ -39,9 +39,7 @@ class Login extends Component {
             password: this.state.password
         }
         await this.props.login(data,res =>{
-            console.log("Res",res);
             if(res.status === 200){
-                console.log("Success")
                 localStorage.setItem("id", res.data._id)
                 localStorage.setItem("admin",res.data.admin)
                 localStorage.setItem("manager",res.data.manager)
@@ -62,7 +60,7 @@ class Login extends Component {
                 redirectVar = <Redirect to = ""/>
             }
             else{
-                redirectVar = <Redirect to = "" />
+                redirectVar = <Redirect to = "/dashboard" />
             }
         }
         return (

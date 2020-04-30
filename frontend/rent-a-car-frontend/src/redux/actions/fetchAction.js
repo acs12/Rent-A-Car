@@ -1,11 +1,11 @@
-import { FETCHVEHICLES, FETCHLOCATIONS, FETCHCURRENTVEHICLE, FETCHLOCATIONVEHICLES } from '../types/typeFetch';
+import { FETCHVEHICLES, FETCHLOCATIONS, FETCHCURRENTVEHICLE, FETCHLOCATIONVEHICLES, FETCHUSER } from '../types/typeFetch';
 import axios from 'axios';
 import URL from '../../constants';
 
-export function fetchVehicles(callback) {
+export function fetchVehicles(pageNum, callback) {
     axios.defaults.withCredentials = true;
     const request = axios
-        .get(`${URL}/vehicles`);
+        .get(`${URL}/vehicles?pageNum=${pageNum}`);
 
     return (dispatch) => {
         request.then((res) => {
@@ -20,8 +20,6 @@ export function fetchVehicles(callback) {
         })
     }
 }
-
-
 
 export function fetchVehicle(vid, callback) {
     axios.defaults.withCredentials = true;
@@ -42,11 +40,13 @@ export function fetchVehicle(vid, callback) {
     }
 }
 
-export function fetchLocations(searchText, callback) {
+export function fetchLocations(searchText, pageNum, callback) {
     axios.defaults.withCredentials = true;
     let locationURL = `${URL}/rentalLocations`
     if (searchText.length > 0) {
-        locationURL += `?searchText=${searchText}`
+        locationURL += `?searchText=${searchText}&pageNum=${pageNum}`
+    }else {
+        locationURL += `?pageNum=${pageNum}`
     }
     const request = axios
         .get(locationURL);
@@ -57,10 +57,14 @@ export function fetchLocations(searchText, callback) {
                 type: FETCHLOCATIONS,
                 payload: res.data
             });
-            callback(res)
+            if (callback){
+                callback(res)
+            }
         })
         request.catch((error) => {
-            callback(error)
+            if (callback){
+                callback(error)
+            }
         })
     }
 }
@@ -75,6 +79,26 @@ export function fetchVehicleForLocationWithID(id, callback) {
         request.then((res) => {
             dispatch({
                 type: FETCHLOCATIONVEHICLES,
+                payload: res.data
+            });
+            callback(res)
+        })
+        request.catch((error) => {
+            callback(error)
+        })
+    }
+}
+
+export function fetchUser(id, callback) {
+    axios.defaults.withCredentials = true;
+    let locationURL = `${URL}/users/${id}`
+    const request = axios
+        .get(locationURL);
+
+    return (dispatch) => {
+        request.then((res) => {
+            dispatch({
+                type: FETCHUSER,
                 payload: res.data
             });
             callback(res)

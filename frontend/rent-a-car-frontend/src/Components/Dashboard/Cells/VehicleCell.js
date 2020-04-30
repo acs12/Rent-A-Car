@@ -2,6 +2,7 @@ import React from "react";
 import { setCurrentVehicle } from "../../../redux/actions/setAction";
 import { connect } from "react-redux";
 import {Redirect} from 'react-router-dom'
+import "../../../styles/dashboard.styles.css";
 
 class VehicleCell extends React.Component {
 
@@ -27,23 +28,25 @@ class VehicleCell extends React.Component {
       navLink = <Redirect to = {`vehicledetail/${this.props.vehicle._id}`} />
     }
     return (
+      <div>
       <div className="vehicleCell">
       {navLink}
         <div className="vehicleBox">
           <label>Name</label>
-          <h4>{this.props.vehicle.carname === undefined && "Buggati"}</h4>
+          <h4>{this.props.vehicle.carname}</h4>
         </div>
         <div className="vehicleBox">
           <label>Type</label>
-          <h4>{this.props.vehicle.type}</h4>
+          <h4>{this.props.vehicle.type.category}</h4>
         </div>
         <div className="vehicleBox">
           <label>Rent</label>
-          <h4>{this.props.vehicle.price}</h4>
+          <h4>{this.props.vehicle.type.hourlyRate}</h4>
         </div>
-        <div className="vehicleBox">
+        <div className="vehicleButton">
           <button className="btn btn-primary" onClick = {this.moveToVehicleSelection}>Book</button>
-        </div>
+        </div>        
+      </div>
       </div>
     );
   }

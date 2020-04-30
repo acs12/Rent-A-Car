@@ -1,10 +1,11 @@
 import { FETCHVEHICLES, FETCHCURRENTVEHICLE, FETCHLOCATIONVEHICLES } from "../types/typeFetch";
 import { SEARCHVEHICLES } from "../types/typeSearch";
-import { SELECTCURRENTVEHICLE} from '../types/typeSelect'
+import { SELECTCURRENTVEHICLE, CONFIRMBOOKING} from '../types/typeSelect'
 const initialState = {
   data: [],
+  total: 0,
   searchText: '',
-  selectedVehicle : {}
+  selectedVehicle : {}, 
 };
 
 const vehicleReducer = (state = initialState, action) => {
@@ -13,7 +14,8 @@ const vehicleReducer = (state = initialState, action) => {
     case FETCHVEHICLES:
       return {
         ...state,
-        data: action.payload
+        data: action.payload.vehicles,
+        total : action.payload.total
       };
     case SEARCHVEHICLES:
       return {
@@ -24,13 +26,26 @@ const vehicleReducer = (state = initialState, action) => {
       case SELECTCURRENTVEHICLE:
         return {
           ...state,
-          selectedVehicle: action.payload
+          selectedVehicle: action.payload,
+          data : []
         };
         case FETCHLOCATIONVEHICLES:
         return {
           ...state,
-          data: action.payload.vehicles
+          data: action.payload.vehicles,
+          total : action.payload.total
         };
+        case CONFIRMBOOKING:
+          if(action.payload.vehicles === undefined) {
+            return {
+              ...state,
+            };
+          }else {
+            return {
+              ...state,
+              data: action.payload.vehicles
+            };
+          }
     default:
       return state;
   }

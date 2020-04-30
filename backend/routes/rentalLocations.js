@@ -7,11 +7,18 @@ router.get("/", async (req, res) => {
   const { searchText } = req.query;
   try {
     if (searchText) {
-      const rentalLocations = await RentalLocation.find({ "name" : { $regex: searchText , $options: 'i' } });
-      res.json(rentalLocations);
+      await RentalLocation.find({ "name": { $regex: searchText, $options: 'i' } })
+        .exec()
+        .then(result => {
+          res.send(result);
+        })
+
     } else {
-      const rentalLocations = await RentalLocation.find();
-      res.json(rentalLocations);
+      await RentalLocation.find()
+        .exec()
+        .then(result => {
+          res.send(result);
+        })
     }
   } catch (err) {
     res.json({ message: err });
@@ -20,20 +27,27 @@ router.get("/", async (req, res) => {
 
 //create a user
 router.post("/", async (req, res) => {
+  console.log("req",req)
   const rentalLocation = new RentalLocation({
     name: req.body.name,
     address: req.body.address,
     capacity: req.body.capacity,
-    numOfVehicles: req.body.numOfVehicles,
-    vehicles: req.body.vehicles
+    numOfVehicles : 0
   });
-  try {
-    const savedRentalLocation = await rentalLocation.save();
-    res.json(savedRentalLocation);
-  } catch (err) {
-    res.json({ message: err });
-  }
-});
+  await rentalLocation.save()
+    .then(result => {
+      RentalLocation.find()
+        .exec()
+        .then(result => {
+          console.log("inside result",result)
+          res.send(result);
+        })
+    })
+    .catch(err => {
+      res.send(err)
+    })
+}
+);
 
 //get a specific user
 router.get("/:rentalLocationId", async (req, res) => {
@@ -48,33 +62,60 @@ router.get("/:rentalLocationId", async (req, res) => {
 });
 
 //delete a user
-router.delete("/:rentalLocationId", async (req, res) => {
+router.post("/delete", async (req, res) => {
   try {
-    const removedRentalLocation = await RentalLocation.remove({
-      _id: req.params.rentalLocationId
-    });
-    res.json(removedRentalLocation);
+    await RentalLocation.remove({
+      _id: req.body._id
+    })
+      .exec()
+      .then(result => {
+        RentalLocation.find()
+          .exec()
+          .then(result => {
+            res.send(result);
+          })
+      })
   } catch (err) {
     res.json({ message: err });
   }
 });
 
 //update a user
-router.patch("/:rentalLocationId", async (req, res) => {
-  try {
-    const updatedRentalLocation = await RentalLocation.updateOne(
-      { _id: req.params.rentalLocationId },
-      {
-        $set: {
-          vehicles: req.body.vehicles,
-          numOfVehicles: req.body.numOfVehicles
-        }
+router.post("/update", async (req, res) => {
+  console.log("req", req.body)
+  await RentalLocation.updateOne(
+    { _id: req.body._id },
+    {
+      $set: {
+        name: req.body.name,
+        address: req.body.address,
+        capacity: req.body.capacity,
+        numOfVehicles: req.body.numOfVehicles
       }
-    );
-    res.json(updatedRentalLocation);
-  } catch (err) {
-    req.json({ message: err });
-  }
+    }
+  )
+    .exec()
+    .then(result => {
+      RentalLocation.find()
+        .exec()
+        .then(result => {
+          res.send(result);
+        })
+    })
+
+});
+
+//get Location Names
+router.get('/allLocations/IDs', async (req, res) => {
+  RentalLocation.find().select("name")
+    .exec()
+    .then(result => {
+      console.log(result)
+      res.send(result)
+    })
+    .catch(err => {
+      res.send(err)
+    })
 });
 
 module.exports = router;

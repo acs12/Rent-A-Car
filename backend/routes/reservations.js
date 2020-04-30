@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Reservation = require('../models/Reservation');
 const Vehicle = require('../models/Vehicle');
+const RentalLocation = require('../models/RentalLocation');
+const VehicleType = require('../models/VehicleType');
+const Rating= require('../models/Rating');
 
 //get all user
 router.get('/', async (req,res) => {
@@ -23,17 +26,17 @@ router.post('/', async (req,res) => {
         returnLocation: req.body.returnLocation,
         pickupTime: req.body.pickupTime, 
         expectedReturnTime : req.body.expectedReturnTime,
+        returned: false
         });
 
     if (pickupTime - Date.now < 86,400,000){  //24hr = 86400000 miliseconds
 
-        v = Vehicle.findById(vehicle)
-       
-        if(v.availability == true){
+      if(v.availability == true){
 
      try{
         const savedReservation = await reservation.save();
-        v.availability = false
+        RentalLocation.findByIdAndUpdate(req.body.rentalLocation,{$inc:{numOfVehicles:-1}});  
+        Vehicle.findByIdAndUpdate(req.body.vehicle,{$set:{availability: false}});   
         res.json(savedReservation);
     }
      catch (err) {
@@ -41,20 +44,22 @@ router.post('/', async (req,res) => {
     }
 }
         else{
-            print("The Car you chose is already booked, here are some alternatives at other locations")
-            alter = Vehicle.find({ type: v.type })
-            alters = []
+            alter = Vehicle.find({ type: v.type });
+            alters = [];
             for( i=0; i++; i < alter.length())
              if ((alter[i]).availability == true){
-                 alters.append(alter[i])
+                 alters.append(alter[i]);
              }
-
-            return alters
-        };
-   
+            res.json({message:"The Car you chose is already booked, here are some alternatives at other locations"});
+            res.json(alters);
+        }
+        r = RentalLocation.findById(req.body.rentalLocation);
+        if(r.numOfVehicles == r.capacity){
+            res.json({message:"The park of this return location is full now, please choose another one"})
+        }
     }
     else{
-        print("Reservation rejected, please book one day before pickup time")
+        res.json({message:"Reservation rejected, please book one day before pickup time"})
     }
 
 });
@@ -83,16 +88,41 @@ router.delete('/:reservationId', async (req, res) => {
 
 //update a user 
 router.patch('/:reservationId', async (req, res) => {
+    
+   
     try {
         const updatedReservation = await Reservation.updateOne(
             {_id: req.params.reservationId},
-            { $set: {lengthOfRental: req.body.lengthOfRental}}
-        );
-        res.json(updatedReservation);
+            { $set: {returned: true}});
+
+            new Rating({
+                rating: req.body.rating,
+                comment: req.body.comment,
+                vehicle: r.vehicle
+            });
+
+       
     }
     catch (err) {
         req.json({ message: err });
     }
+
+  
+   
+    v = Vehicle.findById(r.vehicle);
+    f = VehicleType.findById(v.type);
+    if (Date.now > r.expectedReturnTime){
+        
+        res.json({message:"Successfully Return!"});
+        res.json({message:"Your late return fee is" + String(((Date.now - r.expectedReturnTime)/86400000)* f.lateFee)})
+        res.json({message:"Thank you! See you next time!"});
+    }
+    else{
+        res.json({message:"Successfully Return!"});
+        res.json({message:"Thank you! See you next time!"});
+    }
+
+    
 });
 
 

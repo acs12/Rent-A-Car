@@ -31,13 +31,13 @@ router.post('/', async (req,res) => {
 
     try{
         
-    if((req.body.pickupTime.getTime()-Date.now()) < 86400000){
+    if(req.body.pickupTime - Date.now() <86400000){
              
      const v = await Vehicle.findById(req.body.vehicle);
 
      if(v.availability == true){
         
-        const r = await RentalLocation.findById(req.body.rentalLocation);
+        const r = await RentalLocation.findById(req.body.returnLocation);
 
         if(r.numOfVehicles == r.capacity){
             res.json({message:"The park of this return location is full now, please choose another one"})
@@ -45,7 +45,7 @@ router.post('/', async (req,res) => {
         else{    
 
         const savedReservation = await reservation.save();
-        await RentalLocation.findByIdAndUpdate(req.body.rentalLocation,{$inc:{numOfVehicles:-1}});  
+        await RentalLocation.findByIdAndUpdate(req.body.returnLocation,{$inc:{numOfVehicles:-1}});  
         await Vehicle.findByIdAndUpdate(req.body.vehicle,{$set:{availability: false}});   
         res.json(savedReservation);
        }
@@ -115,12 +115,12 @@ router.patch('/:reservationId', async (req, res) => {
             
            if (Date.now - r.expectedReturnTime > 0){
                 
-                res.json({message:"Successfully Return!" + "\n" + "Your late return fee is" + 
-                String(((Date.now - r.expectedReturnTime.getTime())/86400000)* f.lateFee)+ "Thank you! See you next time!"})
+                res.json({message:"Successfully Return!", 
+                          lateFee: (((Date.now - r.expectedReturnTime.getTime())/86400000)* f.lateFee)})
                
             }
             else{
-                res.json({message:"Successfully Return!" + "\n" + "Thank you! See you next time!"});
+                res.json({message:"Successfully Return!" + "See you next time!"});
                 
             }
 

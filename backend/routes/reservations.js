@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const Reservation = require("../models/Reservation");
-const Vehicle = require("../models/Vehicle");
 const mongoose = require("mongoose");
+const Reservation = require('../models/Reservation');
+const Vehicle = require('../models/Vehicle');
+const RentalLocation = require('../models/RentalLocation');
+const VehicleType = require('../models/VehicleType');
+const Rating= require('../models/Rating');
 
 router.get("/", async (req, res) => {
   try {
@@ -85,17 +88,41 @@ router.delete("/:reservationId", async (req, res) => {
     res.json({ message: err });
   }
 });
+//update a user 
+router.patch('/:reservationId', async (req, res) => {
+    
+   
+    try {
+        const updatedReservation = await Reservation.updateOne(
+            {_id: req.params.reservationId},
+            { $set: {returned: true}});
 
-router.patch("/:reservationId", async (req, res) => {
-  try {
-    const updatedReservation = await Reservation.updateOne(
-      { _id: req.params.reservationId },
-      { $set: { lengthOfRental: req.body.lengthOfRental } }
-    );
-    res.json(updatedReservation);
-  } catch (err) {
-    req.json({ message: err });
-  }
+            new Rating({
+                rating: req.body.rating,
+                comment: req.body.comment,
+                vehicle: r.vehicle
+            });
+
+       
+    }
+    catch (err) {
+        req.json({ message: err });
+    }
+
+  
+   
+    v = Vehicle.findById(r.vehicle);
+    f = VehicleType.findById(v.type);
+    if (Date.now > r.expectedReturnTime){
+        
+        res.json({message:"Successfully Return!"});
+        res.json({message:"Your late return fee is" + String(((Date.now - r.expectedReturnTime)/86400000)* f.lateFee)})
+        res.json({message:"Thank you! See you next time!"});
+    }
+    else{
+        res.json({message:"Successfully Return!"});
+        res.json({message:"Thank you! See you next time!"});
+    }
 });
 
 module.exports = router;

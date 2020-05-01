@@ -36,9 +36,11 @@ class Vehicle extends Component {
     componentDidUpdate(prevProps, prevState) {
         console.log("VEHICLE : componentDidUpdate CALLED")
         if (prevProps.vehicle !== this.props.vehicle) {
-            this.setState({ vehicles: this.props.vehicle })
+            this.setState({
+                 vehicles: this.props.vehicle
+                 },()=>{alert("hello")})
         }
-    }
+    } 
 
     componentDidMount = async() => {
 
@@ -92,8 +94,8 @@ class Vehicle extends Component {
                     toggle: true
                 })
             }
-            this.componentDidMount()
-            this.componentDidUpdate(this.props.vehicle)        
+            // this.componentDidMount()
+            // this.componentDidUpdate(this.props.vehicle)        
         })
     }
 
@@ -140,7 +142,7 @@ class Vehicle extends Component {
                     <br></br>
                     <h3>No Vehicle to display</h3>
                     <br></br>
-                    <button onClick={this.changeToggle} style={{ textAlign: "center" }} className="btn btn-primary">Add Vehicle Type</button>
+                    <button onClick={this.changeToggle} style={{ textAlign: "center" }} className="btn btn-primary">Add Vehicle</button>
                     <br></br>
                     <br></br>
                 </div>
@@ -148,7 +150,7 @@ class Vehicle extends Component {
             else {
                 vehicleDetails = <div>
                     <br></br>
-                    {this.state.vehicles.map(x => <EditVehicle key={x._id} item={x} action={this.update}></EditVehicle>)}
+                    {this.state.vehicles.map(x => <EditVehicle key={x._id} item={x} ></EditVehicle>)}
                     <br></br>
                     <button onClick={this.changeToggle} style={{ textAlign: "center" }} className="btn btn-primary">Add Vehicle</button>
                     <br></br>

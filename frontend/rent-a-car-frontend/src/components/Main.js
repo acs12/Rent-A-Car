@@ -9,6 +9,7 @@ import VehicleType from './adminDashboard/vehicleType'
 import AdminLocation from './adminDashboard/addLocation'
 import AdminVehicle from './adminDashboard/addVehicle'
 import MyProfile from './User-Profile/UserProfile'
+import User from './adminDashboard/updateUser'
 
 class Main extends Component {
     render(){
@@ -24,6 +25,7 @@ class Main extends Component {
                 <Route exact path = "/adminLocation" component={AdminLocation}/>
                 <Route exact path = "/adminVehicle" component={AdminVehicle}/>
                 <Route exact path = "/myProfile" component={MyProfile}/>
+                <Route exact path = "/adminUser" component={User}/>
             </div>
         )
     }

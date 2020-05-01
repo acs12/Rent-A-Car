@@ -10,7 +10,7 @@ const vehicleSchema = new Schema({
      currentMileage: { type: Number, required: true},
      condition: { type: String, required: true},
      timeLastServiced:{ type: Date},
-     ratings : {type : mongoose.Types.ObjectId, ref : 'Rating'},
+     ratings : [{type : Schema.Types.ObjectId, ref : 'Rating'}],
      rentalLocation :  {type : Schema.Types.ObjectId , ref : "RentalLocation"},
      availability : {type: Boolean, required: true}
 });

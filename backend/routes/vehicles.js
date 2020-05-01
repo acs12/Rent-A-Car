@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Vehicle = require('../models/Vehicle');
+const RentalLocation = require('../models/RentalLocation');
 
 
 //get all vehicles
@@ -17,9 +18,9 @@ router.get('/', async (req, res) => {
 
 
 //create a user
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     console.log("req for adding vehicle", req.body)
-    new Vehicle({
+    v = new Vehicle({
         carname: req.body.carname,
         type: req.body.type,
         make: req.body.make,
@@ -30,19 +31,33 @@ router.post('/', (req, res) => {
         availability: true,
         rentalLocation: req.body.rentalLocation
 
-    }).save()
+    })
+
+    r = RentalLocation.findById(req.body.rentalLocation);
+    
+    if (r.capacity > r.numOfVehicles)
+    {
+        v.save()
         .then(result => {
             Vehicle.find()
                 .exec()
                 .then(result => {
                     res.send(result)
                 })
-        })
-        .catch(err => {
+        }) 
+            .catch(err => {
             res.send(err)
         })
 
-});
+       await RentalLocation.findByIdAndUpdate(req.body.rentalLocation,
+            
+        {$inc:{numOfVehicles:1}})
+       }
+    else{
+        res.json({message : "The park of this rental location is full now, please add to another location"})
+    }
+        
+    });
 
 //get a specific user 
 router.get('/:vehicleId', async (req, res) => {

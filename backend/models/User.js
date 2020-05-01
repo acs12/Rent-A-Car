@@ -12,7 +12,8 @@ const userSchema = new Schema({
     dlImage: { type: String },
     creditCardInfo: { type: Number},
     residenceAddress:{ type: String},
-    phoneNumber:{type: Number}
+    phoneNumber:{type: Number},
+    isValidated : {type : Boolean}
 });
 
 module.exports = mongoose.model('User',userSchema);

@@ -8,6 +8,7 @@ import VehicleDetail from './Vehicle-Related/VehicleDetail'
 import VehicleType from './adminDashboard/vehicleType'
 import AdminLocation from './adminDashboard/addLocation'
 import AdminVehicle from './adminDashboard/addVehicle'
+import User from './adminDashboard/updateUser'
 
 
 class Main extends Component {
@@ -23,6 +24,7 @@ class Main extends Component {
                 <Route exct path = "/vehicledetail/:vid" component={VehicleDetail}/>
                 <Route exact path = "/adminLocation" component={AdminLocation}/>
                 <Route exact path = "/adminVehicle" component={AdminVehicle}/>
+                <Route exact path = "/adminUser" component={User}/>
             </div>
         )
     }

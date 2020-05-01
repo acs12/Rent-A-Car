@@ -137,20 +137,22 @@ class EditVehicle extends Component {
 
         let existVehicleDetails = null
         if (this.state.existingLocationStatus === false) {
-            console.log("Inside if in change existing location details")
-            existVehicleDetails = <div>
-                <div className="card">
-                    <div className="card-body" style={{ textAlign: "left" }}>
-                        <button type="button" className="btn btn-danger" style={{ float: "right" }} onClick={this.delete}>Delete</button>
-                        <br></br>
-                        <h4 className="card-title"> Name : {this.props.item.carname}</h4>
-                        <h5 className="card-subtitle mb-2 text-muted">Location : {this.props.item.rentalLocation.name}</h5>
-                        <h5 className="card-subtitle mb-2 text-muted">Type : {this.props.item.type.category}</h5>
-                        <button type="button" className="btn btn-primary" onClick={this.changeExistingTypeToggle}>Edit</button>
-                        <br></br>
+            if (this.props.item.rentalLocation !== null) {
+                console.log("Inside if in change existing location details")
+                existVehicleDetails = <div>
+                    <div className="card">
+                        <div className="card-body" style={{ textAlign: "left" }}>
+                            <button type="button" className="btn btn-danger" style={{ float: "right" }} onClick={this.delete}>Delete</button>
+                            <br></br>
+                            <h4 className="card-title"> Name : {this.props.item.carname}</h4>
+                            <h5 className="card-subtitle mb-2 text-muted">Location : {this.props.item.rentalLocation.name}</h5>
+                            <h5 className="card-subtitle mb-2 text-muted">Type : {this.props.item.type.category}</h5>
+                            <button type="button" className="btn btn-primary" onClick={this.changeExistingTypeToggle}>Edit</button>
+                            <br></br>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         }
         else {
             console.log("Inside else in location details")

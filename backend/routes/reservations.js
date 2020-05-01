@@ -19,7 +19,7 @@ router.get('/', async (req,res) => {
 
 //create a user
 router.post('/', async (req,res) => {
-    const reservation = new Reservation({
+        const reservation = new Reservation({
         user: req.body.user,
         vehicle: req.body.vehicle,
         pickupLocation: req.body.pickupLocation,
@@ -29,22 +29,30 @@ router.post('/', async (req,res) => {
         returned: false
         });
 
-    if (pickupTime - Date.now < 86,400,000){  //24hr = 86400000 miliseconds
+    try{
 
-      if(v.availability == true){
+     if((req.body.pickupTime - Date.now) < 86400000){
+       
+     const v = await Vehicle.findById(req.body.vehicle);
 
-     try{
+     if(v.availability == true){
+        
+        const r = await RentalLocation.findById(req.body.rentalLocation);
+
+        if(r.numOfVehicles == r.capacity){
+            res.json({message:"The park of this return location is full now, please choose another one"})
+        }
+        else{    
+
         const savedReservation = await reservation.save();
-        RentalLocation.findByIdAndUpdate(req.body.rentalLocation,{$inc:{numOfVehicles:-1}});  
-        Vehicle.findByIdAndUpdate(req.body.vehicle,{$set:{availability: false}});   
+        await RentalLocation.findByIdAndUpdate(req.body.rentalLocation,{$inc:{numOfVehicles:-1}});  
+        await Vehicle.findByIdAndUpdate(req.body.vehicle,{$set:{availability: false}});   
         res.json(savedReservation);
+       }
     }
-     catch (err) {
-        res.json({message:err});
-    }
-}
-        else{
-            alter = Vehicle.find({ type: v.type });
+
+     else{
+            const alter = await Vehicle.find({ type: v.type });
             alters = [];
             for( i=0; i++; i < alter.length())
              if ((alter[i]).availability == true){
@@ -53,16 +61,18 @@ router.post('/', async (req,res) => {
             res.json({message:"The Car you chose is already booked, here are some alternatives at other locations"});
             res.json(alters);
         }
-        r = RentalLocation.findById(req.body.rentalLocation);
-        if(r.numOfVehicles == r.capacity){
-            res.json({message:"The park of this return location is full now, please choose another one"})
-        }
+      
     }
-    else{
-        res.json({message:"Reservation rejected, please book one day before pickup time"})
+    
+     else{
+        res.json({message:"Reservation rejected, please book one day before pickup time"});
     }
-
+}
+    catch(err){
+        res.json({message:err});
+    }
 });
+
 
 //get a specific user 
 router.get('/:reservationId', async (req,res) => {
@@ -95,35 +105,36 @@ router.patch('/:reservationId', async (req, res) => {
             {_id: req.params.reservationId},
             { $set: {returned: true}});
 
-            new Rating({
+            updatedReservation.save();
+
+           const v = await Vehicle.findById(r.vehicle);
+           const f = await VehicleType.findById(v.type);
+            if (Date.now - r.expectedReturnTime > 0){
+                
+                res.json({message:"Successfully Return!"});
+                res.json({message:"Your late return fee is" + String(((Date.now - r.expectedReturnTime)/86400000)* f.lateFee)})
+                res.json({message:"Thank you! See you next time!"});
+            }
+            else{
+                res.json({message:"Successfully Return!"});
+                res.json({message:"Thank you! See you next time!"});
+            }
+
+            const rating = new Rating({
                 rating: req.body.rating,
                 comment: req.body.comment,
                 vehicle: r.vehicle
             });
-
+            await rating.save();
+            res.json({message:"Thank oyu for your feedback!"});
+        
        
     }
     catch (err) {
         req.json({ message: err });
     }
 
-  
-   
-    v = Vehicle.findById(r.vehicle);
-    f = VehicleType.findById(v.type);
-    if (Date.now > r.expectedReturnTime){
-        
-        res.json({message:"Successfully Return!"});
-        res.json({message:"Your late return fee is" + String(((Date.now - r.expectedReturnTime)/86400000)* f.lateFee)})
-        res.json({message:"Thank you! See you next time!"});
-    }
-    else{
-        res.json({message:"Successfully Return!"});
-        res.json({message:"Thank you! See you next time!"});
-    }
-
-    
-});
+  });
 
 
 module.exports = router;

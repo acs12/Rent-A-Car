@@ -30,9 +30,9 @@ router.post('/', async (req,res) => {
         });
 
     try{
-
-     if((req.body.pickupTime - Date.now) < 86400000){
-       
+        
+    if((req.body.pickupTime.getTime()-Date.now()) < 86400000){
+             
      const v = await Vehicle.findById(req.body.vehicle);
 
      if(v.availability == true){
@@ -58,15 +58,17 @@ router.post('/', async (req,res) => {
              if ((alter[i]).availability == true){
                  alters.append(alter[i]);
              }
-            res.json({message:"The Car you chose is already booked, here are some alternatives at other locations"});
-            res.json(alters);
+            res.json({message:"The Car you chose is already booked, here are some alternatives at other locations",
+                      alternatives: alters});
+            
         }
       
     }
     
      else{
-        res.json({message:"Reservation rejected, please book one day before pickup time"});
+        res.json({message:"Reservation rejected, please book one day before pickup time!"});
     }
+
 }
     catch(err){
         res.json({message:err});
@@ -74,7 +76,6 @@ router.post('/', async (req,res) => {
 });
 
 
-//get a specific user 
 router.get('/:reservationId', async (req,res) => {
     try{
         const reservation = await Reservation.findById(req.params.reservationId);
@@ -85,7 +86,6 @@ router.get('/:reservationId', async (req,res) => {
     }
 });
 
-//delete a user
 router.delete('/:reservationId', async (req, res) => {
     try{
         const removedReservation = await Reservation.remove({_id: req.params.reservationId});
@@ -96,28 +96,32 @@ router.delete('/:reservationId', async (req, res) => {
     }
 });
 
-//update a user 
+// return a vehicle
 router.patch('/:reservationId', async (req, res) => {
     
    
     try {
         const updatedReservation = await Reservation.updateOne(
             {_id: req.params.reservationId},
-            { $set: {returned: true}});
+            { $set: {returned: true}});    // Return a vehicle and set its "returned" to True
 
-            updatedReservation.save();
+            r = await Reservation.findById(req.params.reservationId);
+            await RentalLocation.findByIdAndUpdate(r.returnLocation,
+            
+                {$inc:{numOfVehicles:1}})   // the number of vehicles at the return location + 1
 
            const v = await Vehicle.findById(r.vehicle);
            const f = await VehicleType.findById(v.type);
-            if (Date.now - r.expectedReturnTime > 0){
+            
+           if (Date.now - r.expectedReturnTime > 0){
                 
-                res.json({message:"Successfully Return!"});
-                res.json({message:"Your late return fee is" + String(((Date.now - r.expectedReturnTime)/86400000)* f.lateFee)})
-                res.json({message:"Thank you! See you next time!"});
+                res.json({message:"Successfully Return!" + "\n" + "Your late return fee is" + 
+                String(((Date.now - r.expectedReturnTime.getTime())/86400000)* f.lateFee)+ "Thank you! See you next time!"})
+               
             }
             else{
-                res.json({message:"Successfully Return!"});
-                res.json({message:"Thank you! See you next time!"});
+                res.json({message:"Successfully Return!" + "\n" + "Thank you! See you next time!"});
+                
             }
 
             const rating = new Rating({
@@ -126,7 +130,6 @@ router.patch('/:reservationId', async (req, res) => {
                 vehicle: r.vehicle
             });
             await rating.save();
-            res.json({message:"Thank oyu for your feedback!"});
         
        
     }

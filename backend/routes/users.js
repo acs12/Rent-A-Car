@@ -25,7 +25,7 @@ app.use('../uploads', express.static(path.join(__dirname, '/uploads')));
 //get all user
 router.get('/', async (req, res) => {
     try {
-        const users = await users.find();
+        const users = await User.find();
         res.json(users);
     }
     catch (err) {
@@ -167,6 +167,32 @@ router.patch('/:userId', async (req, res) => {
     catch (err) {
         req.json({ message: err });
     }
+});
+
+
+//validate user
+router.post('/isValid', (req, res) => {
+    console.log("req",req.body)
+    User.updateOne({
+        _id : req.body._id
+    },{
+        $set : {
+            isValidated : req.body.isValidated
+        }
+    }).exec()
+    .then(result =>{
+            User.find().exec()
+            .then(result => {
+                console.log("inside Final")
+                res.send(result)
+            })
+            .catch(err=>{
+                res.send(err)
+            })
+    })
+    .catch(err =>{
+        res.json({message : err})
+    })
 });
 
 

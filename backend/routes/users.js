@@ -19,9 +19,11 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
-  storage: storage
-});
-app.use("../uploads", express.static(path.join(__dirname, "/uploads")));
+    storage: storage,
+})
+
+app.use('../uploads', express.static(path.join(__dirname, '/uploads')));
+
 
 //get all user
 router.get('/', async (req, res) => {
@@ -35,79 +37,96 @@ router.get('/', async (req, res) => {
 });
 
 //create a user
-router.post("/", upload.single("drivingLicense"), async (req, res) => {
-  console.log(req.body);
-  User.findOne({
-    emailAddress: req.body.emailAddress
-  })
-    .exec()
-    .then(result => {
-      console.log(result);
-      if (result) {
-        res.json({ message: "Id Already Exists" });
-      } else {
-        console.log("Result is null");
-        const salt = bcrypt.genSaltSync(10);
-        const password = bcrypt.hashSync(req.body.password, salt);
-        console.log(req.body);
-        if (req.body.admin === true) {
-          const user = new User({
-            emailAddress: req.body.emailAddress,
-            password: password,
-            admin: true,
-            manager: false
-          });
-          try {
-            const savedUser = user.save();
-            res.json(savedUser);
-          } catch (err) {
-            res.json({ message: err });
-          }
-        } else if (req.body.manager === true) {
-          const user = new User({
-            emailAddress: req.body.emailAddress,
-            password: password,
-            manager: true,
-            admin: false
-          });
-          try {
-            const savedUser = user.save();
-            res.json(savedUser);
-          } catch (err) {
-            res.json({ message: err });
-          }
-        } else {
-          var host = req.hostname;
-          console.log("Hostname", host);
-          console.log("File", req.file);
-          var filepath = req.protocol + "://" + host + ":5001/" + req.file.path;
-          req.body.dlImage = filepath;
-          console.log("Req Body", req.body);
+router.post('/', upload.single("drivingLicense"), async (req, res) => {
+    console.log(req.body)
+    User.findOne
+        (
+            {
+                emailAddress: req.body.emailAddress
+            }
+        )
+        .exec()
+        .then(result => {
+            console.log(result)
+            if (result) {
+                console.log("Id Already Exist")
+                res.json("Id Already Exists")
+            }
+            else {
+                console.log("Result is null")
+                const salt = bcrypt.genSaltSync(10);
+                const password = bcrypt.hashSync(req.body.password, salt);
+                console.log(req.body)
+                if (req.body.admin === true) {
+                    console.log("inside admin signup")
+                    const user = new User({
+                        emailAddress: req.body.emailAddress,
+                        password: password,
+                        admin: true,
+                        manager: false
 
-          const user = new User({
-            admin: req.body.admin,
-            manager: req.body.manager,
-            name: req.body.name,
-            password: password,
-            dlImage: req.body.dlImage,
-            emailAddress: req.body.emailAddress,
-            creditCardInfo: req.body.creditCardInfo,
-            residenceAddress: req.body.residenceAddress,
-            phoneNumber: req.body.phoneNumber
-          });
-          try {
-            const savedUser = user.save();
-            res.json(savedUser);
-          } catch (err) {
-            res.json({ message: err });
-          }
-        }
-      }
-    })
-    .catch(err => {
-      console.log(err);
-      res.json(err);
-    });
+                    });
+                    try {
+                        const savedUser = user.save();
+                        res.json(savedUser);
+                    }
+                    catch (err) {
+                        res.json({ message: err });
+                    }
+                }
+                else if (req.body.manager === true) {
+                    const user = new User({
+                        emailAddress: req.body.emailAddress,
+                        password: password,
+                        manager: true,
+                        admin: false
+
+                    });
+                    try {
+                        const savedUser = user.save();
+                        res.json(savedUser);
+                    }
+                    catch (err) {
+                        res.json({ message: err });
+                    }
+                }
+                else {
+
+                    var host = req.hostname;
+                    console.log("Hostname", host)
+                    console.log("File", req.file)
+                    var filepath = req.protocol + "://" + host + ':5000/' + req.file.path;
+                    req.body.dlImage = filepath
+                    console.log("Req Body", req.body)
+
+                    const user = new User({
+                        admin: req.body.admin,
+                        manager: req.body.manager,
+                        name: req.body.name,
+                        password: password,
+                        dlImage: req.body.dlImage,
+                        emailAddress: req.body.emailAddress,
+                        creditCardInfo: req.body.creditCardInfo,
+                        residenceAddress: req.body.residenceAddress,
+                        phoneNumber: req.body.phoneNumber,
+                        isValidated : false
+
+                    });
+                    try {
+                        const savedUser = user.save();
+                        res.json(savedUser);
+                    }
+                    catch (err) {
+                        res.json({ message: err });
+                    }
+                }
+
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.json(err)
+        })
 });
 
 //get a specific user

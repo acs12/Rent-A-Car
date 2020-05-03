@@ -9,6 +9,7 @@ import VehicleType from './adminDashboard/vehicleType'
 import AdminLocation from './adminDashboard/addLocation'
 import AdminVehicle from './adminDashboard/addVehicle'
 import User from './adminDashboard/updateUser'
+import ApproveUser from './Manager/approveUser'
 
 
 class Main extends Component {
@@ -25,6 +26,7 @@ class Main extends Component {
                 <Route exact path = "/adminLocation" component={AdminLocation}/>
                 <Route exact path = "/adminVehicle" component={AdminVehicle}/>
                 <Route exact path = "/adminUser" component={User}/>
+                <Route exact path = "/approveUser" component={ApproveUser}/>
             </div>
         )
     }

@@ -32,24 +32,24 @@ class EditLocation extends Component {
     }
 
     componentDidMount = async() => {
-        let data = {
-            locationId: this.props.item._id
-        }
-        await this.props.vehicleNames(data, async res => {
-            console.log("re vehicle names",res)
-            let arr = ""
-            res.data.forEach(element => {
-                if(element.carname !== undefined){
-                    arr = arr.concat(element.carname + ",")
-                }
-            });
-            console.log("Arr",arr)
-            console.log("length",Object.keys(res.data).length)
-            await this.setState({ 
-                vehicleArray: arr,
-                numOfVehicles : Object.keys(res.data).length
-            })
-        })
+        // let data = {
+        //     locationId: this.props.item._id
+        // }
+        // await this.props.vehicleNames(data, async res => {
+        //     console.log("re vehicle names",res)
+        //     let arr = ""
+        //     res.data.forEach(element => {
+        //         if(element.carname !== undefined){
+        //             arr = arr.concat(element.carname + ",")
+        //         }
+        //     });
+        //     console.log("Arr",arr)
+        //     console.log("length",Object.keys(res.data).length)
+        //     await this.setState({ 
+        //         vehicleArray: arr,
+        //         numOfVehicles : Object.keys(res.data).length
+        //     })
+        // })
     }
 
     changeHandler = (e) => {
@@ -133,7 +133,7 @@ class EditLocation extends Component {
                         <h4 className="card-title"> Name : {this.props.item.name}</h4>
                         <h5 className="card-subtitle mb-2 text-muted">Address : {this.props.item.address}</h5>
                         <h5 className="card-subtitle mb-2 text-muted">Capacity : {this.state.capacity}</h5>
-                        <h5 className="card-subtitle mb-2 text-muted">Vehicles Assigned : {this.state.vehicleArray}</h5>
+                        <h5 className="card-subtitle mb-2 text-muted">Vehicles Assigned : {this.state.numOfVehicles}</h5>
                         <button type="button" className="btn btn-primary" onClick={this.changeExistingTypeToggle}>Edit</button>
                         <br></br>
                     </div>

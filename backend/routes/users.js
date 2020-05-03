@@ -19,6 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage,
 })
+
 app.use('../uploads', express.static(path.join(__dirname, '/uploads')));
 
 
@@ -92,7 +93,7 @@ router.post('/', upload.single("drivingLicense"), async (req, res) => {
                     var host = req.hostname;
                     console.log("Hostname", host)
                     console.log("File", req.file)
-                    var filepath = req.protocol + "://" + host + ':5001/' + req.file.path;
+                    var filepath = req.protocol + "://" + host + ':5000/' + req.file.path;
                     req.body.dlImage = filepath
                     console.log("Req Body", req.body)
 
@@ -105,7 +106,8 @@ router.post('/', upload.single("drivingLicense"), async (req, res) => {
                         emailAddress: req.body.emailAddress,
                         creditCardInfo: req.body.creditCardInfo,
                         residenceAddress: req.body.residenceAddress,
-                        phoneNumber: req.body.phoneNumber
+                        phoneNumber: req.body.phoneNumber,
+                        isValidated : false
 
                     });
                     try {

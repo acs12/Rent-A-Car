@@ -17,6 +17,16 @@
   border-radius: 8px;
 }
 
+.carContainer {
+  width: 40%;
+  margin: 8px auto;
+  padding: 8px;
+}
+
+.carDetails {
+  margin: 16px;
+}
+
 .list-container {
     width: 100%;
     overflow-y:auto;

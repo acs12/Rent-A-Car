@@ -1,4 +1,4 @@
-import { FETCHVEHICLES, FETCHLOCATIONS, FETCHCURRENTVEHICLE, FETCHLOCATIONVEHICLES, FETCHUSER } from '../types/typeFetch';
+import { FETCHVEHICLES, FETCHLOCATIONS, FETCHCURRENTVEHICLE, FETCHLOCATIONVEHICLES, FETCHUSER, FETCHBOOKINGS } from '../types/typeFetch';
 import axios from 'axios';
 import URL from '../../constants';
 
@@ -99,6 +99,27 @@ export function fetchUser(id, callback) {
         request.then((res) => {
             dispatch({
                 type: FETCHUSER,
+                payload: res.data
+            });
+            callback(res)
+        })
+        request.catch((error) => {
+            callback(error)
+        })
+    }
+}
+
+
+export function fetchMyBookings(id, callback) {
+    axios.defaults.withCredentials = true;
+    let bookingsURL = `${URL}/reservations/userReservations/${id}`
+    const request = axios
+        .get(bookingsURL);
+
+    return (dispatch) => {
+        request.then((res) => {
+            dispatch({
+                type: FETCHBOOKINGS,
                 payload: res.data
             });
             callback(res)

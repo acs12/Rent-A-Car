@@ -6,6 +6,7 @@ import vehicleTypeReducer from './vehicleType'
 import adminLocationReducer from './location'
 import adminVehicleReducer from './vehicle'
 import adminUserUpdate from './userReducer'
+import bookingReducer from './booking.reducer'
 
 const rootReducer = combineReducers({
     signin : signin, 
@@ -14,8 +15,8 @@ const rootReducer = combineReducers({
     vehicleTypes : vehicleTypeReducer,
     adminLocation : adminLocationReducer,
     adminVehicle : adminVehicleReducer,
-    adminUser : adminUserUpdate
-
+    adminUser : adminUserUpdate,
+    reservations : bookingReducer
 })
 
 

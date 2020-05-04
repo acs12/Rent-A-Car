@@ -10,6 +10,7 @@ import AdminLocation from './adminDashboard/addLocation'
 import AdminVehicle from './adminDashboard/addVehicle'
 import MyProfile from './User-Profile/UserProfile'
 import User from './adminDashboard/updateUser'
+import Booking from './Vehicle-Related/VehicleBookings'
 
 class Main extends Component {
     render(){
@@ -26,6 +27,8 @@ class Main extends Component {
                 <Route exact path = "/adminVehicle" component={AdminVehicle}/>
                 <Route exact path = "/myProfile" component={MyProfile}/>
                 <Route exact path = "/adminUser" component={User}/>
+                <Route exact path = "/reservations" component={Booking}/>
+
             </div>
         )
     }

@@ -5,8 +5,6 @@ const hardCount = 20;
 const Vehicle = require('../models/Vehicle');
 const RentalLocation = require('../models/RentalLocation');
 
-
-
 //get all vehicles
 router.get("/", async (req, res) => {
   try {
@@ -80,7 +78,7 @@ router.post('/', async (req, res) => {
 //get a specific user
 router.get("/:vehicleId", async (req, res) => {
   try {
-    const vehicle = await Vehicle.findById(req.params.vehicleId);
+    const vehicle = await Vehicle.findById(req.params.vehicleId).populate("rentalLocation").populate("type");
     res.json(vehicle);
   } catch (err) {
     res.json({ message: err });

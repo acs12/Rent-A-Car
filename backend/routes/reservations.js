@@ -17,6 +17,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+
 router.get("/userReservations/:userID/", async (req, res) => {
   try {
     const { userID } = { ...req.params, ...req.query };
@@ -106,25 +107,27 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/:reservationId", async (req, res) => {
-  try {
-    const reservation = await Reservation.findById(req.params.reservationId);
-    res.json(reservation);
-  } catch (err) {
-    res.json({ message: err });
-  }
+
+router.get('/:reservationId', async (req,res) => {
+    try{
+        const reservation = await Reservation.findById(req.params.reservationId);
+        res.json(reservation);
+    }
+    catch (err){
+        res.json({ message: err});
+    }
 });
 
-router.delete("/:reservationId", async (req, res) => {
-  try {
-    const removedReservation = await Reservation.remove({
-      _id: req.params.reservationId
-    });
-    res.json(removedReservation);
-  } catch (err) {
-    res.json({ message: err });
-  }
+router.delete('/:reservationId', async (req, res) => {
+    try{
+        const removedReservation = await Reservation.remove({_id: req.params.reservationId});
+        res.json(removedReservation);
+    }
+    catch (err) {
+        res.json({message: err});
+    }
 });
+
 
 router.put("/cancelReservation/:reservationId", async (req, res) => {
   try {
@@ -149,7 +152,6 @@ router.put("/cancelReservation/:reservationId", async (req, res) => {
     }
     await reservation.save()
     res.json({message : "Reservation Cancelled!", reservation})
-
   } catch (error) {}
 });
 
@@ -185,5 +187,6 @@ router.patch("/:reservationId", async (req, res) => {
     res.json({ message: "Thank you! See you next time!" });
   }
 });
+
 
 module.exports = router;

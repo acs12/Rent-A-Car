@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
 const cors = require('cors');
+const multer = require('multer');
+var path = require('path');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 
@@ -36,6 +38,24 @@ app.use(function (req, res, next) {
     res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, content-type");
     next();
 });
+
+
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, 'uploads/')
+//     },
+//     filename: function (req, file, callback) {
+//         callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+//     }
+// });
+
+// const upload = multer({
+//     storage: storage,
+// })
+
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+
 
 
 const usersRoute = require('./routes/users');

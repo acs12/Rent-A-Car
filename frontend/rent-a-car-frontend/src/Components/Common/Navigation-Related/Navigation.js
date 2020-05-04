@@ -16,7 +16,7 @@ const Navigationbar = props => {
       <MDBNavbarNav left={true}>{props.navItems}</MDBNavbarNav>
       <MDBNavbarNav right={true}>
         <MDBNavItem avatar ml-auto nav-flex-icons>
-          <MDBNavLink to="/myProfile">
+          <MDBNavLink to='/myProfile'>
             <img
               src="https://mdbootstrap.com/img/Photos/Avatars/avatar-1.jpg"
               class="rounded-circle z-depth-0"

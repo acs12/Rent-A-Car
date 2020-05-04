@@ -49,16 +49,13 @@ router.post('/', upload.single("drivingLicense"), async (req, res) => {
         .then(result => {
             console.log(result)
             if (result) {
-                console.log("Id Already Exist")
-                res.json("Id Already Exists")
+                res.json({ message : "Id Already Exists"})
             }
             else {
-                console.log("Result is null")
                 const salt = bcrypt.genSaltSync(10);
                 const password = bcrypt.hashSync(req.body.password, salt);
                 console.log(req.body)
                 if (req.body.admin === true) {
-                    console.log("inside admin signup")
                     const user = new User({
                         emailAddress: req.body.emailAddress,
                         password: password,
@@ -93,11 +90,8 @@ router.post('/', upload.single("drivingLicense"), async (req, res) => {
                 else {
 
                     var host = req.hostname;
-                    console.log("Hostname", host)
-                    console.log("File", req.file)
                     var filepath = req.protocol + "://" + host + ':5000/' + req.file.path;
                     req.body.dlImage = filepath
-                    console.log("Req Body", req.body)
 
                     const user = new User({
                         admin: req.body.admin,

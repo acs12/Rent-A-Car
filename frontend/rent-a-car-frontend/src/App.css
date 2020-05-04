@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+.entryPages {
+  width: 40%;
+  margin : 64px auto;
+  padding : 16px;
+}
+
+body {
+  background-image: url('/cp-car.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}

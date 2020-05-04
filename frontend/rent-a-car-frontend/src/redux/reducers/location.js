@@ -1,7 +1,10 @@
 import { ADD_LOCATION, GET_LOCATION, EDIT_LOCATION, DELETE_LOCATION, VEHICLE_NAMES } from "../types/locationType";
 
 const initialState = {
-  data: [],
+  data: {
+    total : 0,
+    locations : []
+  },
   vehicleNames: []
 };
 

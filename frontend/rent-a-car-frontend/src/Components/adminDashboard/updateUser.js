@@ -4,6 +4,8 @@ import axios from 'axios';
 import { deleteUser, getUser } from '../../redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import Navigationbar from "../Common/Navigation-Related/Navigation";
+import ItemFactory from "../Common/Navigation-Related/NavItemFactory";
 
 //Define a Login Component
 class User extends Component {
@@ -59,6 +61,30 @@ class User extends Component {
         // }
         let userDetails = null
 
+        let tempItems = [
+            {
+              name: "Rental Locations",
+              to: "/adminLocation",
+              active: false
+            },
+            {
+              name: "Rental Vehicles",
+              to: "/adminVehicle",
+              active: false
+            },
+            {
+              name: "Vehicle Types",
+              to: "/type",
+              active: false
+            },
+            {
+              name: "All Users",
+              to: "/adminUser",
+              active: true
+            }
+          ];
+          let items = ItemFactory(tempItems);
+
         userDetails =
             <div>
                 {this.state.user.map(x => {
@@ -106,6 +132,7 @@ class User extends Component {
 
         return (
             <div>
+                <Navigationbar navItems = {items} />
                 {redirectVar}
                 {userDetails}
 

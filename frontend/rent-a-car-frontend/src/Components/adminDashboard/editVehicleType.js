@@ -121,14 +121,11 @@ class EditVehicleType extends Component {
 
         let existTypeDetails = null
         if (this.state.existingVehicleTypeStatus === false) {
-            console.log("Inside if in change existing vehicle Type details")
+
             existTypeDetails = <div>
                 <div className="card">
                     <div className="card-body" style={{ textAlign: "left" }}>
                         <button type="button" className="btn btn-danger" style={{ float: "right" }} onClick={this.delete}>Delete</button>
-                        <br></br>
-                        <br></br>
-                        <br></br>
                         <h4 className="card-title"> Category : {this.props.item.category}</h4>
                         <h5 className="card-subtitle mb-2 text-muted">Hourly Rate : {this.props.item.hourlyRate}</h5>
                         <h5 className="card-subtitle mb-2 text-muted">Hours (1-5) : {this.state.hour1}</h5>
@@ -146,9 +143,11 @@ class EditVehicleType extends Component {
             </div>
         }
         else {
-            console.log("Inside else in exp details")
+
             existTypeDetails =
-                <div>
+            <div className="card" style={{ padding: 16, margin: 16 }}>
+            <div style={{ width: "40%", margin: "16px auto" }}>
+                
                     <br></br>
                     <form onSubmit={this.updateVehicleType}>
                         <button type="button" className="btn btn-danger" style={{ float: "right" }} onClick={this.changeExistingTypeToggle}>X</button>
@@ -270,6 +269,7 @@ class EditVehicleType extends Component {
                         <button type="submit" className="btn btn-primary">Save</button>
                         <br></br>
                     </form>
+                </div>
                 </div>
 
         }

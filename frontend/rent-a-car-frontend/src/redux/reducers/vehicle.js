@@ -1,7 +1,10 @@
 import { ADD_VEHICLE, GET_VEHICLE, EDIT_VEHICLE, DELETE_VEHICLE } from "../types/vehicle";
 
 const initialState = {
-  data: []
+  data: {
+    total : 0,
+    vehicles : []
+  }
 };
 
 const adminVehicleReducer = (state = initialState, action) => {

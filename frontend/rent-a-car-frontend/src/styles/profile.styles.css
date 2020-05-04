@@ -7,3 +7,7 @@
 .userDetails {
     margin: 16px;
 }
+
+.buttonContainer {
+    border-top : 0.5 solid black;
+}

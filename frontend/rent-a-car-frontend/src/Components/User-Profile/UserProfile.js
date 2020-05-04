@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import "../../styles/profile.styles.css";
 import { fetchUser } from "../../redux/actions/fetchAction";
 import { updateUser } from "../../redux/actions/setAction";
+import { Redirect } from 'react-router-dom'
+
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -13,6 +15,7 @@ class UserProfile extends React.Component {
     this.onEditClick = this.onEditClick.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
     this.onSubmitClick = this.onSubmitClick.bind(this);
+    this.onLogoutClick = this.onLogoutClick.bind(this);
     this.props.fetchUser(localStorage.getItem("id"), result => {
       console.log(result);
     });
@@ -35,15 +38,28 @@ class UserProfile extends React.Component {
     });
   }
 
+  onLogoutClick(e) {
+    e.preventDefault();
+    localStorage.removeItem('id')
+    localStorage.removeItem('admin')
+    localStorage.removeItem('manager')
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        shouldLogout: <Redirect to= "/" />
+      };
+    });
+  }
+
   onSubmitClick(e) {
     e.preventDefault();
-    let formData = {userId: localStorage.getItem("id")};
+    let formData = { userId: localStorage.getItem("id") };
     if (e.target.name === "extend-card") {
       formData = { ...formData, extendCard: true };
     } else {
       formData = { ...formData, ...this.state };
     }
-    if (this.state.shouldEdit){
+    if (this.state.shouldEdit) {
       this.props.updateUser(formData, result => {
         this.onEditClick(e);
       });
@@ -83,6 +99,24 @@ class UserProfile extends React.Component {
         <button className="btn btn-success" onClick={this.onEditClick}>
           Edit
         </button>
+        <button className="btn btn-red" onClick={this.onLogoutClick}>
+          Logout
+        </button>
+
+        <div className = 'buttonContainer'>
+
+        <button
+          name="extend-card"
+          className="btn btn-warn"
+          onClick={this.onSubmitClick}
+        >
+          Extend Membership by 6 Months?
+        </button>
+
+        <button name="terminate-card" className="btn btn-warning">
+          Terminate Membership
+        </button>
+        </div>
       </div>
     );
 
@@ -146,24 +180,10 @@ class UserProfile extends React.Component {
 
     return (
       <div>
-        <Navigationbar navItems={items} />
+        {this.state.shouldLogout}
+        <Navigationbar navItems={items} profileAction = {'/myProfile'}/>
         <div className="userContainer card">
           {this.state.shouldEdit ? editLayout : displayLayout}
-
-          <button
-            name="extend-card"
-            className="btn btn-success"
-            onClick={this.onSubmitClick}
-          >
-            Extend Membership by 6 Months?
-          </button>
-
-          <button
-            name="terminate-card"
-            className="btn btn-warning"
-          >
-            Terminate Membership
-          </button>
         </div>
       </div>
     );

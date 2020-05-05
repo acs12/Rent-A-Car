@@ -12,7 +12,7 @@ import MyProfile from './User-Profile/UserProfile'
 import User from './adminDashboard/updateUser'
 import Booking from './Vehicle-Related/VehicleBookings'
 import ApproveUser from './Manager/approveUser'
-
+import LocationDetails from './Location-Related/LocationDetail'
 
 class Main extends Component {
     render(){
@@ -31,7 +31,8 @@ class Main extends Component {
                 <Route exact path = "/adminUser" component={User}/>
                 <Route exact path = "/reservations" component={Booking}/>
                 <Route exact path = "/approveUser" component={ApproveUser}/>
-
+                <Route exact path = "/locations/:locationID" component={LocationDetails}/>
+                
             </div>
         )
     }

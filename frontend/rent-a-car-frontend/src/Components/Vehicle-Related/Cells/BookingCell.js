@@ -118,6 +118,10 @@ export default function SimpleCard(props) {
           <Typography className={classes.pos} variant="body2" component="p">
             {props.reservation.returned && <b>{props.reservation.status}</b> } 
           </Typography>
+          <Typography className={classes.pos} variant="body2" component="p">
+          {props.reservation.returned && 'You Paid' && <b>${props.reservation.totalPrice}</b> } 
+        </Typography>
+
         </CardContent>
       </div>
       <CardActions>

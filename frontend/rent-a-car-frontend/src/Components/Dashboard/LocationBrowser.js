@@ -4,11 +4,15 @@ import LocationCell from "./Cells/LocationCell";
 import { setLocationSearchText } from "../../redux/actions/searchAction";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
+import {Redirect} from 'react-router-dom'
+
 
 class LocationBrowser extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {}
     this.handleSearchText = this.handleSearchText.bind(this);
+    this.moveToLocationDetail = this.moveToLocationDetail.bind(this)
   }
 
   handleSearchText(e) {
@@ -16,9 +20,16 @@ class LocationBrowser extends React.Component {
     this.props.setLocationSearchText(e.target.value);
   }
 
+  moveToLocationDetail(e){
+    this.setState({
+      redirectVar : <Redirect to = {`/locations/${e._id}`} />
+    })
+  }
+
   render() {
     return (
       <div>
+      {this.state.redirectVar}
         <div className="list-container">
         <h1 align={"center"} style={{ margin: "16px 0px" }}>
         <b>{this.props.title}</b>
@@ -36,7 +47,7 @@ class LocationBrowser extends React.Component {
           
             <Grid container spacing={4}>
             {this.props.locations.map(l => {
-              return <div style={{ margin: "8px" }}><LocationCell location={l} /></div>
+              return <div style={{ margin: "8px" }}><LocationCell location={l} moveToLocationDetail = {this.moveToLocationDetail} /></div>
             })}
             </Grid>
           

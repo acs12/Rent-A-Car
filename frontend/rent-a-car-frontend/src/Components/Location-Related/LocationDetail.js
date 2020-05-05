@@ -2,7 +2,7 @@ import React from "react";
 import Navigationbar from "../Common/Navigation-Related/Navigation";
 import ItemFactory from "../Common/Navigation-Related/NavItemFactory";
 import VehicleBrowser from "../Dashboard/VehicleBrowser";
-import { fetchVehicles } from "../../redux/actions/fetchAction";
+import {  fetchVehicleForLocationWithID } from "../../redux/actions/fetchAction";
 import { connect } from "react-redux";
 import ReactPaginate from 'react-paginate';
 import Pagination from "@material-ui/lab/Pagination";
@@ -10,11 +10,11 @@ import Pagination from "@material-ui/lab/Pagination";
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
-    this.getAllVehicles(0);
+    this.getAllVehiclesForID(this.props.match.params.locationID);
   }
 
-  async getAllVehicles(pageNum) {
-    await this.props.fetchVehicles(pageNum, result => {
+  async getAllVehiclesForID(id) {
+    await this.props.fetchVehicleForLocationWithID(id, result => {
       console.log(result);
     });
   }
@@ -29,12 +29,12 @@ class Dashboard extends React.Component {
       {
         name: "Vehicles",
         to: "/dashboard",
-        active: true
+        active: false
       },
       {
         name: "Rental Locations",
         to: "/locations",
-        active: false
+        active: true
       },
       {
         name: "My Reservations",
@@ -47,7 +47,7 @@ class Dashboard extends React.Component {
       <div>
         <Navigationbar navItems={items} />
         <div className="list-container">
-          <VehicleBrowser title={"San Jose"} noFilter = {false}/>
+          <VehicleBrowser title={'Vehicle List'} noFilter = {true}/>
           <Pagination
               count={Math.floor(this.props.totalVehicles/20.0)}
               variant="outlined"
@@ -68,4 +68,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, { fetchVehicles })(Dashboard);
+export default connect(mapStateToProps, { fetchVehicleForLocationWithID })(Dashboard);

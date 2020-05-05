@@ -149,7 +149,7 @@ class VehicleBooking extends React.Component {
           <Grid container spacing={1}>
           {this.props.reservationHistory.length !== 0 &&
             this.props.reservationHistory.map(rh => {
-              return <BookingCell key={rh._id} reservation={rh} cancelBooking = {this.handleCancelBooking} handleReturnClick = {this.handleReturnClick}/>;
+              return <div style={{ margin: "8px" }}><BookingCell key={rh._id} reservation={rh} cancelBooking = {this.handleCancelBooking} handleReturnClick = {this.handleReturnClick}/></div>
             })}
             </Grid>
           </div>

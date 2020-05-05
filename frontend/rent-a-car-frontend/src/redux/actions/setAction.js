@@ -4,12 +4,13 @@ import {UPDATEUSER} from '../types/typeSignin'
 import axios from 'axios';
 import URL from '../../constants';
 
-export function setCurrentVehicle(vehicle) {
+export function setCurrentVehicle(vehicle, callback) {
     return dispatch => {
       dispatch({
         type: SELECTCURRENTVEHICLE,
         payload: vehicle
       });
+      callback()
     };
   }
 

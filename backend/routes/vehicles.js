@@ -16,7 +16,13 @@ router.get("/", async (req, res) => {
         .skip(skipCount)
         .limit(hardCount)
         .populate("type")
-        .populate("rentalLocation");
+        .populate("rentalLocation").populate({ 
+          path: 'rentalLocation',
+          populate: {
+            path: 'address',
+            model: 'Address'
+          } 
+       });
       const total = await Vehicle.countDocuments();
       return res.send({ total: total, vehicles: vehicles });
     } else {
@@ -24,7 +30,13 @@ router.get("/", async (req, res) => {
         .skip(skipCount)
         .limit(hardCount)
         .populate("type")
-        .populate("rentalLocation");
+        .populate("rentalLocation").populate({ 
+          path: 'rentalLocation',
+          populate: {
+            path: 'address',
+            model: 'Address'
+          } 
+       });
       const total = await Vehicle.countDocuments();
       return res.send({ total: total, vehicles: vehicles });
     }

@@ -60,9 +60,9 @@ const useStyles = makeStyles({
 export default function SimpleCard(props) {
   const classes = useStyles();
   
-  const vehicleCellClicked = (e) => {
+  const locationCellClicked = (e) => {
     e.preventDefault()
-    props.moveToVehicleSelection(props.vehicle)
+    props.moveToLocationDetail(props.location)
   }
 
   return (
@@ -85,7 +85,7 @@ export default function SimpleCard(props) {
       </CardContent>
       </div>
       <CardActions>
-        <Button size="small" color="primary" onClick={vehicleCellClicked}>View</Button>
+        <Button size="small" color="primary" onClick={locationCellClicked}>View</Button>
       </CardActions>
     </Card>
   );

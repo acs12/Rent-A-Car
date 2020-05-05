@@ -58,13 +58,21 @@ router.post("/", async (req, res) => {
       expectedReturnTime: req.body.expectedReturnTime,
       status: "Reserved"
     });
-    let v = await Vehicle.findOne(reservation.vehicle);
+    let v = await Vehicle.findOne(reservation.vehicle).populate("type")
+    .populate("rentalLocation").populate({ 
+      path: 'rentalLocation',
+      populate: {
+        path: 'address',
+        model: 'Address'
+      } 
+   });
+   
     let message = "";
-    console.log(v);
     if (reservation.pickupTime - Date.now() < 86400000) {
+      
       if (v.availability === true) {
         if (
-          mongoose.Types.ObjectId(v.rentalLocation).equals(
+          mongoose.Types.ObjectId(v.rentalLocation._id).equals(
             reservation.pickupLocation
           )
         ) {
@@ -77,21 +85,35 @@ router.post("/", async (req, res) => {
             "The Car you chose is not available at this location, here are some alternatives at other locations";
         }
       } else {
+        console.log('HERE')
         message =
           "The Car you chose is already booked, here is an alternative at other location";
       }
+      
+      const curZipCode = v.rentalLocation.address.zipcode.toString().substring(0, 2);
+      
       const alternates = await Vehicle.find()
         .and([{ type: v.type }, { availability: true }])
         .populate("type")
-        .populate("rentalLocation");
-      if (alternates.length > 0) {
+        .populate("rentalLocation").populate({ 
+          path: 'rentalLocation',
+          populate: {
+            path: 'address',
+            model: 'Address'
+          } 
+       });
+
+        const a = alternates.filter((a) => {
+          return a.rentalLocation.address.zipcode.includes(curZipCode)
+        })
+      if (a.length > 0) {
         return res.json({
           message,
-          vehicles: [{ ...alternates[0]._doc }]
+          vehicles: [{ ...a[0]._doc }]
         });
       } else {
         message =
-          "No matching vehicle found, please choose some other combination";
+          "This vehicle is not available at this location and no replacement vehicle found, please choose some other combination";
         return res.json({
           message
         });
@@ -165,10 +187,10 @@ router.patch("/:reservationId", async (req, res) => {
     let totalPrice = 0;
 
     const initialSeconds =
-      Date.parse(reservation.expectedReturnTime) -
+      Date.now() -
       Date.parse(reservation.pickupTime);
     const initialHours = parseFloat(initialSeconds / (60 * 60 * 1000));
-
+      console.log(initialHours)
     if (initialHours <= 1) {
       totalPrice = initialHours * vehicleType.hour1;
     } else if (initialHours <= 6) {

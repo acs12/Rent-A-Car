@@ -12,15 +12,19 @@ import DDFactory from "../Common/Navigation-Related/DropDownItemFactory";
 import VehicleCell from "../Dashboard/Cells/VehicleCell";
 import {Redirect} from 'react-router-dom'
 import VehicleDetailCell from './Cells/VehiclePriceDetail'
+import Grid from "@material-ui/core/Grid";
+import DateTimePicker from 'react-datetime-picker';
 
 class VehicleDetail extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { error: "" };
+    this.state = { error: "", date: new Date() };
     this.getVehicle();
     this.handleDropDownSearchText = this.handleDropDownSearchText.bind(this);
     this.submitBooking = this.submitBooking.bind(this);
     this.handleAction = this.handleAction.bind(this);
+    this.handlePickupTimeAction = this.handlePickupTimeAction.bind(this);
+    this.handleReturnTimeAction = this.handleReturnTimeAction.bind(this);
     navigator.geolocation.getCurrentPosition((position)=> {
       console.log(position)
     });
@@ -38,14 +42,23 @@ class VehicleDetail extends React.Component {
   }
 
   handleAction(e) {
+      
     e.preventDefault();
-
-    if (e.target.value === 'pickupLocation'){
-
-    }
     
     this.setState({
       [e.target.name]: e.target.value
+    });
+  }
+
+  handlePickupTimeAction(e) {
+    this.setState({
+      pickupTime : e
+    });
+  }
+
+  handleReturnTimeAction(e) {
+    this.setState({
+      expectedReturnTime : e
     });
   }
 
@@ -77,13 +90,18 @@ class VehicleDetail extends React.Component {
       pickupTime: this.state.pickupTime,
       expectedReturnTime: this.state.expectedReturnTime
     };
+
     this.props.book(values, result => {
       if (result.data !== undefined && result.data.message) {
         this.setState({ error: result.data.message });
       }else {
-        this.setState({
-          redirectVar : <Redirect to={"/reservations"} />
-        })
+        if (result.status === 200){
+          this.setState({
+            redirectVar : <Redirect to={"/reservations"} />
+          })
+        }else {
+          this.setState({ error: 'Something went wrong!' });
+        }
       }
     });
   }
@@ -148,6 +166,9 @@ class VehicleDetail extends React.Component {
             {this.props.selectedVehicle.type !== undefined && <VehicleDetailCell vehicle = {this.props.selectedVehicle}/>}
             </div>
             <div className = 'col-8' >
+
+      {this.props.vehicles !== undefined && this.props.vehicles.length == 0 && <div>
+
             <div >
             <DropDown
               title={"Pickup Location"}
@@ -166,37 +187,46 @@ class VehicleDetail extends React.Component {
 
           {this.state.returnLocationID !== undefined && (
 
-              <MDBInput
-                name="pickupTime"
-                type="date"
-                label="Start Date"
-                onChange={this.handleAction}
-                style = {{width : "30%"}}
-                outline
-              />
+            <div> 
+
+            <DateTimePicker
+            name="pickupTime"
+            label="Start Date"
+            onChange={this.handlePickupTimeAction}
+            value={this.state.date}
+            style = {{width : "50%"}}
+            />
+              </div>
           )}
 
           {this.state.pickupTime !== undefined && (
 
-              <MDBInput
-                name="expectedReturnTime"
-                type="date"
-                label="End Date"
-                onChange={this.handleAction}
-                style = {{width : "30%"}}
-                outline
-              />
+
+            <div> 
+
+            <DateTimePicker
+            name="expectedReturnTime"
+            label="End Date"
+            onChange={this.handleReturnTimeAction}
+            value={this.state.date}
+            style = {{width : "50%"}}
+            />
+              </div>
           )}
-          <h4>{this.state.error}</h4>
           {(this.state.expectedReturnTime &&
               <button className="btn btn-primary" onClick={this.submitBooking}>
                 Book
               </button>
             )}
-
+            </div>}
+            <h4>{this.state.error}</h4>
+            <div style={{ margin: "16px", padding: 8 }}>
+            <Grid container spacing={1}>
           {this.props.vehicles.map(v => {
             return <VehicleCell bookVehicle = {this.submitBooking} vehicle={v} />;
           })}
+          </Grid>
+            </div>
             </div>
           </div>
         </div>

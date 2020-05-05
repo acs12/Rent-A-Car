@@ -46,14 +46,12 @@ class VehicleBrowser extends React.Component {
     // if (this.props.bookVehicle !== undefined) {
     //   return this.props.bookVehicle(this.props.vehicle);
     // }
-    this.setState(
-      {
-        moveToVehicleDetail: true, 
-      },
-      () => {
-        this.props.setCurrentVehicle(e);
-      }
-    );
+
+    this.props.setCurrentVehicle(e, () => {
+      this.setState({
+        moveToVehicleDetail: true
+      })    
+    });
   }
 
   render() {
@@ -71,7 +69,7 @@ class VehicleBrowser extends React.Component {
     let navLink = undefined;
 
     if (this.state.moveToVehicleDetail) {
-      navLink = <Redirect to={`vehicledetail/${this.props.selectedVehicle._id}`} />;
+      navLink = <Redirect to={`/vehicledetail/${this.props.selectedVehicle._id}`} />;
     }
     return (
       <div>
@@ -90,11 +88,12 @@ class VehicleBrowser extends React.Component {
                 style={{ margin: "16px auto", padding: 8, width: "50%" }}
                 onChange={this.handleSearchText}
               />
-              <DropDown
+              {!this.props.noFilter && <DropDown
                 title={this.props.selectedLocation.name}
                 items={items}
                 searchHandler={this.handleDropDownSearchText}
-              />
+              />}
+              
             </div>
           </div>
           <div style={{ margin: "16px", padding: 8 }}>

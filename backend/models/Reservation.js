@@ -12,7 +12,7 @@ const reservationSchema = new Schema({
      pickupTime:{ type: Date, required: true}, 
      returnTime:{ type: Date},
      status : {type : String},
-     totalPrice : {type : Number},
+     totalPrice : {type : Number, default : 0},
      expectedReturnTime:{ type: Date, required: true},
      returned:{ type: Boolean, required:true, default : false}
      

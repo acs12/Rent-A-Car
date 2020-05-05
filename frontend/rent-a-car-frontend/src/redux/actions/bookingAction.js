@@ -24,7 +24,7 @@ export function book(values, callback) {
 export function cancelBooking(id, callback) {
   axios.defaults.withCredentials = true;
   // axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-  const request = axios.post(`${URL}/reservations/cancel/${id}`);
+  const request = axios.put(`${URL}/reservations/cancelReservation/${id}`);
 
   return dispatch => {
     request.then(res => {
@@ -40,10 +40,10 @@ export function cancelBooking(id, callback) {
   };
 }
 
-export function returnCar(values, callback) {
+export function returnCar(id, values, callback) {
   axios.defaults.withCredentials = true;
   // axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-  const request = axios.post(`${URL}/reservations`, values);
+  const request = axios.patch(`${URL}/reservations/${id}`, values);
 
   return dispatch => {
     request.then(res => {
@@ -51,10 +51,10 @@ export function returnCar(values, callback) {
         type: SUBMITCAR,
         payload: res.data
       });
-      callback(res);
+      callback(null, res);
     });
     request.catch(res => {
-      callback(res);
+      callback(res, null);
     });
   };
 }

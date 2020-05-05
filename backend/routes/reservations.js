@@ -17,7 +17,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 router.get("/userReservations/:userID/", async (req, res) => {
   try {
     const { userID } = { ...req.params, ...req.query };
@@ -61,7 +60,7 @@ router.post("/", async (req, res) => {
     });
     let v = await Vehicle.findOne(reservation.vehicle);
     let message = "";
-    console.log(v)
+    console.log(v);
     if (reservation.pickupTime - Date.now() < 86400000) {
       if (v.availability === true) {
         if (
@@ -107,27 +106,25 @@ router.post("/", async (req, res) => {
   }
 });
 
-
-router.get('/:reservationId', async (req,res) => {
-    try{
-        const reservation = await Reservation.findById(req.params.reservationId);
-        res.json(reservation);
-    }
-    catch (err){
-        res.json({ message: err});
-    }
+router.get("/:reservationId", async (req, res) => {
+  try {
+    const reservation = await Reservation.findById(req.params.reservationId);
+    res.json(reservation);
+  } catch (err) {
+    res.json({ message: err });
+  }
 });
 
-router.delete('/:reservationId', async (req, res) => {
-    try{
-        const removedReservation = await Reservation.remove({_id: req.params.reservationId});
-        res.json(removedReservation);
-    }
-    catch (err) {
-        res.json({message: err});
-    }
+router.delete("/:reservationId", async (req, res) => {
+  try {
+    const removedReservation = await Reservation.remove({
+      _id: req.params.reservationId
+    });
+    res.json(removedReservation);
+  } catch (err) {
+    res.json({ message: err });
+  }
 });
-
 
 router.put("/cancelReservation/:reservationId", async (req, res) => {
   try {
@@ -141,52 +138,98 @@ router.put("/cancelReservation/:reservationId", async (req, res) => {
         model: "VehicleType"
       }
     });
-    const charge = reservation.vehicle.type.hourlyRate
-    reservation.status = "Cancelled"    
-    reservation.returnTime = currentTime
-    reservation.returned = true
+    const charge = reservation.vehicle.type.hourlyRate;
+    reservation.status = "Cancelled";
+    reservation.returnTime = currentTime;
+    reservation.returned = true;
     const pickupTime = Date.parse(reservation.pickupTime);
     const seconds = (currentTime - pickupTime) / 1000;
     if (seconds < 3600) {
-      reservation.totalPrice = charge
+      reservation.totalPrice = charge;
     }
-    await reservation.save()
-    res.json({message : "Reservation Cancelled!", reservation})
+    await reservation.save();
+    res.json({ message: "Reservation Cancelled!", reservation });
   } catch (error) {}
 });
 
-//update a user
 router.patch("/:reservationId", async (req, res) => {
   try {
-    const updatedReservation = await Reservation.updateOne(
-      { _id: req.params.reservationId },
-      { $set: { returned: true } }
+    const { rating, condition } = req.body;
+    const reservation = await Reservation.findById(req.params.reservationId)
+      .populate("vehicle")
+      .populate("type");
+    let vehicle = await Vehicle.findById(reservation.vehicle._id);
+    const vehicleType = await VehicleType.findById(
+      reservation.vehicle.type._id
     );
+    let totalPrice = 0;
 
-    new Rating({
-      rating: req.body.rating,
-      comment: req.body.comment,
-      vehicle: r.vehicle
-    });
-  } catch (err) {
-    req.json({ message: err });
-  }
+    const initialSeconds =
+      Date.parse(reservation.expectedReturnTime) -
+      Date.parse(reservation.pickupTime);
+    const initialHours = parseFloat(initialSeconds / (60 * 60 * 1000));
 
-  v = await Vehicle.findById(r.vehicle);
-  f = await VehicleType.findById(v.type);
-  if (Date.now > r.expectedReturnTime) {
-    res.json({ message: "Successfully Return!" });
-    res.json({
-      message:
-        "Your late return fee is" +
-        String(((Date.now - r.expectedReturnTime) / 86400000) * f.lateFee)
-    });
-    res.json({ message: "Thank you! See you next time!" });
-  } else {
-    res.json({ message: "Successfully Return!" });
-    res.json({ message: "Thank you! See you next time!" });
+    if (initialHours <= 1) {
+      totalPrice = initialHours * vehicleType.hour1;
+    } else if (initialHours <= 6) {
+      totalPrice = initialHours * vehicleType.hour6;
+    } else if (initialHours <= 11) {
+      totalPrice = initialHours * vehicleType.hour11;
+    } else if (initialHours <= 16) {
+      totalPrice = initialHours * vehicleType.hour16;
+    } else if (initialHours <= 24) {
+      totalPrice = initialHours * vehicleType.day1;
+    } else if (initialHours <= 48) {
+      totalPrice = initialHours * vehicleType.day2;
+    } else if (initialHours <= 72) {
+      totalPrice = initialHours * vehicleType.day3;
+    }
+
+    if (Date.parse(reservation.expectedReturnTime) < Date.now()) {
+      const seconds = Date.now() - Date.parse(reservation.expectedReturnTime);
+      const hours = seconds / (60 * 60 * 1000);
+      const lateFees = hours * vehicleType.lateFee;
+      totalPrice += lateFees;
+    }
+
+    if (rating !== null && rating !== undefined) {
+      const vehicleRating = new Rating({ ...req.body, vehicle: vehicle });
+      await vehicleRating.save();
+      await Vehicle.findByIdAndUpdate(
+        reservation.vehicle._id,
+        { $push: { ratings: vehicleRating } },
+        { $set: { availability: true } }
+      );
+    } else {
+      await Vehicle.findByIdAndUpdate(reservation.vehicle._id, {
+        $set: { availability: true }
+      });
+    }
+
+    if (condition !== null) {
+      await Vehicle.findByIdAndUpdate(reservation.vehicle._id, {
+        $set: { condition: condition }
+      });
+    }
+
+    const updatedReservation = await Reservation.findByIdAndUpdate(
+      req.params.reservationId,
+      {
+        totalPrice: totalPrice.toFixed(2),
+        status: "Returned",
+        returned: true,
+        returnTime: Date.now()
+      },
+      { new: true }
+    ).populate('vehicle').populate({
+        path: 'vehicle.type',
+        model: 'VehicleType'
+    }).populate('pickupLocation').populate('returnLocation');
+    res.json({ success: true, reservation: updatedReservation });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error });
   }
 });
-
 
 module.exports = router;

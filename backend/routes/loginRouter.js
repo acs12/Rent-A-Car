@@ -8,7 +8,12 @@ loginRouter.post("/", async (req, res) => {
   if (!user) {
     res.status(401).json({ message: "User not found" });
   } else if (bcrypt.compareSync(req.body.password, user.password)) {
-    res.status(200).json(user);
+    if (user.isValidated || user.manager || user.admin){
+      res.status(200).json(user);
+    }else {
+      res.status(200).json({message : 'Please wait your account is being validated!'});
+    }
+    
   } else {
     res.status(403).json({ message: "Invalid Credentials" });
   }

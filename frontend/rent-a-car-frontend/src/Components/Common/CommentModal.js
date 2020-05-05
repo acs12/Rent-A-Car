@@ -16,14 +16,14 @@ class Popup extends React.Component {
   render() {
     return (
         <MDBContainer>
-          <MDBModal isOpen={this.state.isOpen} toggle={this.toggle}>
-            <MDBModalHeader toggle={this.toggle}>{this.props.title}</MDBModalHeader>
+          <MDBModal isOpen={true} >
+            <MDBModalHeader >{this.props.title}</MDBModalHeader>
             <MDBModalBody>
               {this.props.children}
             </MDBModalBody>
             <MDBModalFooter>
-              <MDBBtn color="secondary" onClick={this.toggle}>Close</MDBBtn>
-              <MDBBtn color="primary">Return Car</MDBBtn>
+              <MDBBtn color="secondary" onClick={this.props.onClose}>Close</MDBBtn>
+              <MDBBtn color="primary" onClick={this.props.onSubmit}>Return Car</MDBBtn>
             </MDBModalFooter>
           </MDBModal>
         </MDBContainer>

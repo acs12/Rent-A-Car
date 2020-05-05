@@ -19,108 +19,97 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
-    storage: storage,
-})
+  storage: storage
+});
 
-app.use('../uploads', express.static(path.join(__dirname, '/uploads')));
-
+app.use("../uploads", express.static(path.join(__dirname, "/uploads")));
 
 //get all user
-router.get('/', async (req, res) => {
-    try {
-        const users = await User.find();
-        res.json(users);
-    }
-    catch (err) {
-        res.json({ message: err });
-    }
+router.get("/", async (req, res) => {
+  //TODO: Add exclude for current user
+
+  try {
+    const users = await User.find(
+      { _id: { $ne: "5eb126f427ea1c3582e18ca6" } },
+      { admin: false },
+      { manager: false }
+    );
+    res.json(users);
+  } catch (err) {
+    res.json({ message: err });
+  }
 });
 
 //create a user
-router.post('/', upload.single("drivingLicense"), async (req, res) => {
-    console.log(req.body)
-    User.findOne
-        (
-            {
-                emailAddress: req.body.emailAddress
-            }
-        )
-        .exec()
-        .then(result => {
-            console.log(result)
-            if (result) {
-                res.json({ message : "Id Already Exists"})
-            }
-            else {
-                const salt = bcrypt.genSaltSync(10);
-                const password = bcrypt.hashSync(req.body.password, salt);
-                console.log(req.body)
-                if (req.body.admin === true) {
-                    const user = new User({
-                        emailAddress: req.body.emailAddress,
-                        password: password,
-                        admin: true,
-                        manager: false
+router.post("/", upload.single("drivingLicense"), async (req, res) => {
+  console.log(req.body);
+  User.findOne({
+    emailAddress: req.body.emailAddress
+  })
+    .exec()
+    .then(async result => {
+      if (result) {
+        res.json({ message: "Id Already Exists" });
+      } else {
+        const salt = bcrypt.genSaltSync(10);
+        const password = bcrypt.hashSync(req.body.password, salt);
 
-                    });
-                    try {
-                        const savedUser = user.save();
-                        res.json(savedUser);
-                    }
-                    catch (err) {
-                        res.json({ message: err });
-                    }
-                }
-                else if (req.body.manager === true) {
-                    const user = new User({
-                        emailAddress: req.body.emailAddress,
-                        password: password,
-                        manager: true,
-                        admin: false
+        if (req.body.admin === true) {
+          const user = new User({
+            emailAddress: req.body.emailAddress,
+            password: password,
+            admin: true,
+            manager: false
+          });
+          try {
+            const savedUser = await user.save();
+            res.json(savedUser);
+          } catch (err) {
+            res.json({ message: err });
+          }
+        } else if (req.body.manager === true) {
+          const user = new User({
+            emailAddress: req.body.emailAddress,
+            password: password,
+            manager: true,
+            admin: false
+          });
+          try {
+            const savedUser = await user.save();
+            res.json(savedUser);
+          } catch (err) {
+            res.json({ message: err });
+          }
+        } else {
+          var host = req.hostname;
+          var filepath = req.protocol + "://" + host + ":5000/" + req.file.path;
+          req.body.dlImage = filepath;
 
-                    });
-                    try {
-                        const savedUser = user.save();
-                        res.json(savedUser);
-                    }
-                    catch (err) {
-                        res.json({ message: err });
-                    }
-                }
-                else {
-
-                    var host = req.hostname;
-                    var filepath = req.protocol + "://" + host + ':5000/' + req.file.path;
-                    req.body.dlImage = filepath
-
-                    const user = new User({
-                        admin: req.body.admin,
-                        manager: req.body.manager,
-                        name: req.body.name,
-                        password: password,
-                        dlImage: req.body.dlImage,
-                        emailAddress: req.body.emailAddress,
-                        creditCardInfo: req.body.creditCardInfo,
-                        residenceAddress: req.body.residenceAddress,
-                        phoneNumber: req.body.phoneNumber,
-                        isValidated : false
-
-                    });
-                    try {
-                        const savedUser = user.save();
-                        res.json(savedUser);
-                    }
-                    catch (err) {
-                        res.json({ message: err });
-                    }
-                }
-
-            }
-        })
-        .catch(err => {
-            console.log(err)
-            res.json(err)
-        })
+          const user = new User({
+            admin: req.body.admin,
+            manager: req.body.manager,
+            name: req.body.name,
+            password: password,
+            dlImage: req.body.dlImage,
+            emailAddress: req.body.emailAddress,
+            creditCardInfo: req.body.creditCardInfo,
+            residenceAddress: req.body.residenceAddress,
+            phoneNumber: req.body.phoneNumber,
+            isValidated: false
+          });
+          try {
+            const savedUser = await user.save();
+            res.json({ message: "Please wait while you're being validated" });
+          } catch (err) {
+            res.json({ message: err });
+          }
+        }
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.json(err);
+    });
 });
 
 //get a specific user
@@ -146,9 +135,11 @@ router.delete("/:userId", async (req, res) => {
 //update a user
 router.patch("/:userId", async (req, res) => {
   try {
-    let dataToUpdate = {...req.body}
+    let dataToUpdate = { ...req.body };
     if (req.body.extendCard !== undefined) {
-      dataToUpdate = {accountExpiry : new Date(+new Date() + 180*24*60*60*1000)}
+      dataToUpdate = {
+        accountExpiry: new Date(+new Date() + 180 * 24 * 60 * 60 * 1000)
+      };
     }
     await User.findByIdAndUpdate(req.params.userId, {
       $set: {
@@ -163,28 +154,32 @@ router.patch("/:userId", async (req, res) => {
 });
 
 //validate user
-router.post('/isValid', (req, res) => {
-    console.log("req",req.body)
-    User.updateOne({
-        _id : req.body._id
-    },{
-        $set : {
-            isValidated : req.body.isValidated
-        }
-    }).exec()
-    .then(result =>{
-            User.find().exec()
-            .then(result => {
-                console.log("inside Final")
-                res.send(result)
-            })
-            .catch(err=>{
-                res.send(err)
-            })
+router.post("/isValid", (req, res) => {
+  console.log("req", req.body);
+  User.updateOne(
+    {
+      _id: req.body._id
+    },
+    {
+      $set: {
+        isValidated: req.body.isValidated
+      }
+    }
+  )
+    .exec()
+    .then(result => {
+      User.find()
+        .exec()
+        .then(result => {
+          res.send(result);
+        })
+        .catch(err => {
+          res.send(err);
+        });
     })
-    .catch(err =>{
-        res.json({message : err})
-    })
+    .catch(err => {
+      res.json({ message: err });
+    });
 });
 
 module.exports = router;

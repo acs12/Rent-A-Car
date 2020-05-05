@@ -65,11 +65,10 @@ class AdminLocation extends Component {
     let data = {
       name: this.state.name,
       address: this.state.address,
-      capacity: this.state.capacity
+      capacity: this.state.capacity, 
+      zipcode : this.state.zipcode
     };
-    console.log("data", data);
     await this.props.addLocation(data, res => {
-      console.log(res);
       if (this.state.toggle === true) {
         this.setState({
           toggle: false
@@ -128,9 +127,9 @@ class AdminLocation extends Component {
         this.props.location.locations.length === 0
       ) {
         locationDetails = (
-          <div>
+          <div className = 'card' style = {{margin : "16px auto"}}>
             <br></br>
-            <h3>No Locations to display</h3>
+            <div><h4>No Locations to display</h4></div>
             <br></br>
             <button
               onClick={this.changeToggle}
@@ -145,10 +144,10 @@ class AdminLocation extends Component {
         );
       } else {
         locationDetails = (
-          <div style={{ margin: 16 }}>
+          <div>
             <button
               onClick={this.changeToggle}
-              style={{ textAlign: "center" }}
+              style = {{margin : "16px auto", width : "20%"}}
               className="btn btn-primary"
             >
               Add Location
@@ -163,17 +162,15 @@ class AdminLocation extends Component {
                 ></EditLocation>
               </div>
             ))}
-            <br></br>
-            <br></br>
-            <br></br>
           </div>
         );
       }
     } else {
       locationDetails = (
-        <div className="card" style={{ margin: 16, padding: 16 }}>
+        <div className="card" style={{ padding: 16, margin: "16px auto", width : "50%" }}>
+        <div style={{ width: "60%", margin: "16px auto" }}>
           <form onSubmit={this.addLocation}>
-            <b>Enter Location Details :</b>
+          <div><h4>Enter Location Details</h4></div>
             <div className="form-group">
               <input
                 onChange={this.changeHandler}
@@ -181,6 +178,7 @@ class AdminLocation extends Component {
                 className="form-control"
                 name="name"
                 placeholder="Enter location name."
+                required
               />
               <br></br>
             </div>
@@ -192,6 +190,20 @@ class AdminLocation extends Component {
                 className="form-control"
                 name="address"
                 placeholder="Enter location address."
+                required
+              />
+              <br></br>
+            </div>
+
+            <div className="form-group">
+              <input
+                onChange={this.changeHandler}
+                type="text"
+                className="form-control"
+                name="zipcode"
+                placeholder="Enter Zip-Code"
+                pattern = "[0-9]{5}"
+                required
               />
               <br></br>
             </div>
@@ -203,6 +215,7 @@ class AdminLocation extends Component {
                 className="form-control"
                 name="capacity"
                 placeholder="Enter location capacity."
+                required
               />
               <br></br>
             </div>
@@ -220,6 +233,7 @@ class AdminLocation extends Component {
             <br></br>
             <br></br>
           </form>
+        </div>
         </div>
       );
     }

@@ -1,4 +1,5 @@
 import { FETCHBOOKINGS } from "../types/typeFetch";
+import { SUBMITCAR } from "../types/typeSelect";
 
 const initialState = {
   reservation: {},
@@ -16,6 +17,13 @@ const bookingReducer = (state = initialState, action) => {
           action.payload.reservation !== null ? action.payload.reservation : {},
         reservationHistory: action.payload.reservationHistory
       };
+      case SUBMITCAR: 
+      return {
+        ...state, 
+        reservation : {},
+        reservationHistory: state.reservationHistory.concat(action.payload.reservation)
+      }
+
     default:
       return state;
   }

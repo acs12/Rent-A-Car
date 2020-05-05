@@ -8,15 +8,20 @@ import {
   fetchLocations,
   fetchVehicleForLocationWithID
 } from "../../redux/actions/fetchAction";
-import { setCurrentLocation } from "../../redux/actions/setAction";
+import { setCurrentLocation, setCurrentVehicle } from "../../redux/actions/setAction";
+import { Redirect } from 'react-router-dom'
+
 import { connect } from "react-redux";
+import Grid from "@material-ui/core/Grid";
 
 class VehicleBrowser extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {}
     this.handleSearchText = this.handleSearchText.bind(this);
     this.handleDropDownSearchText = this.handleDropDownSearchText.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.moveToVehicleSelection = this.moveToVehicleSelection.bind(this);
   }
 
   handleSearchText(e) {
@@ -31,10 +36,24 @@ class VehicleBrowser extends React.Component {
   }
 
   handleClick(e) {
-    this.props.setCurrentLocation(e.target.value)
+    this.props.setCurrentLocation(e.target.value);
     this.props.fetchVehicleForLocationWithID(e.target.value, result => {
       console.log(result);
     });
+  }
+
+  moveToVehicleSelection(e) {
+    // if (this.props.bookVehicle !== undefined) {
+    //   return this.props.bookVehicle(this.props.vehicle);
+    // }
+    this.setState(
+      {
+        moveToVehicleDetail: true, 
+      },
+      () => {
+        this.props.setCurrentVehicle(e);
+      }
+    );
   }
 
   render() {
@@ -49,32 +68,41 @@ class VehicleBrowser extends React.Component {
     });
 
     let items = DDFactory(temp);
+    let navLink = undefined;
+
+    if (this.state.moveToVehicleDetail) {
+      navLink = <Redirect to={`vehicledetail/${this.props.selectedVehicle._id}`} />;
+    }
     return (
       <div>
-        <div className="list-container">
-          <h1 align={"center"}>
+      {navLink}
+        <div>
+          <h1 align={"center"} style={{ margin: "16px 0px" }}>
             <b>{this.props.title}</b>
           </h1>
-          <div className="md-form my-0 vehicleBox finderBox">
-            <input
-              class="form-inline d-flex justify-content-center md-form form-sm mt-0"
-              type="text"
-              placeholder="Search for Vehicles"
-              aria-label="Search"
-              onChange={this.handleSearchText}
-            />
-            <div>
+          <div style={{ margin: "16px auto", width: "50%" }}>
+            <div className="md-form my-0 finderBox">
+              <input
+                class="form-inline d-flex justify-content-center md-form form-sm mt-0"
+                type="text"
+                placeholder="Search for Vehicles"
+                aria-label="Search"
+                style={{ margin: "16px auto", padding: 8, width: "50%" }}
+                onChange={this.handleSearchText}
+              />
               <DropDown
-                title = {this.props.selectedLocation.name}
+                title={this.props.selectedLocation.name}
                 items={items}
                 searchHandler={this.handleDropDownSearchText}
               />
             </div>
           </div>
-          <div>
-            {this.props.vehicles.map(v => {
-              return <VehicleCell vehicle={v} />;
-            })}
+          <div style={{ margin: "16px", padding: 8 }}>
+            <Grid container spacing={1}>
+              {this.props.vehicles.map(v => {
+                return <div style={{ margin: "8px" }}><VehicleCell moveToVehicleSelection = {this.moveToVehicleSelection} vehicle={v} /></div>
+              })}
+            </Grid>
           </div>
         </div>
       </div>
@@ -94,13 +122,15 @@ const mapStateToProps = state => {
     return {
       vehicles: searchedVehicles,
       locations: state.locations.data,
-      selectedLocation : state.locations.selectedLocation
+      selectedLocation: state.locations.selectedLocation,
+      selectedVehicle : state.vehicles.selectedVehicle
     };
   }
   return {
     vehicles: state.vehicles.data,
-    locations: state.locations.data, 
-    selectedLocation : state.locations.selectedLocation
+    locations: state.locations.data,
+    selectedLocation: state.locations.selectedLocation,
+    selectedVehicle : state.vehicles.selectedVehicle
   };
 };
 
@@ -108,5 +138,6 @@ export default connect(mapStateToProps, {
   setVehicleSearchText,
   fetchLocations,
   setCurrentLocation,
-  fetchVehicleForLocationWithID
+  fetchVehicleForLocationWithID,
+  setCurrentVehicle
 })(VehicleBrowser);

@@ -4,7 +4,8 @@ import axios from 'axios';
 import { deleteUser, getUser } from '../../redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
-
+import Navigationbar from "../Common/Navigation-Related/Navigation";
+import ItemFactory from "../Common/Navigation-Related/NavItemFactory";
 //Define a Login Component
 class ApproveUser extends Component {
     //call the constructor method
@@ -36,6 +37,9 @@ class ApproveUser extends Component {
         })
     }
 
+    logoutUser = (e) => {
+        e.preventDefault()
+    }
 
     delete = async (e, id, isValid) => {
         e.preventDefault();
@@ -52,6 +56,14 @@ class ApproveUser extends Component {
 
 
     render() {
+        let tempItems = [
+            {
+              name: "Users",
+              to: "/approveUser",
+              active: true
+            }
+          ];
+          let items = ItemFactory(tempItems);
         console.log(this.state)
         let redirectVar = null;
         // if (!localStorage.getItem("token")) {
@@ -108,6 +120,7 @@ class ApproveUser extends Component {
 
         return (
             <div>
+            <Navigationbar navItems={items} profileAction = {'/myProfile'}/>
                 {redirectVar}
                 {userDetails}
 

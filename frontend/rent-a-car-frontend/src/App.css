@@ -44,8 +44,9 @@
 }
 
 body {
-  background-image: url('/cp-car.jpg');
+  background-image: url('/vcar.jpg');
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
+  font-family: Georgia, 'Times New Roman', Times, serif
 }

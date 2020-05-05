@@ -114,19 +114,11 @@ class EditLocation extends Component {
       console.log("Inside if in change existing location details");
       existLocationDetails = (
         <div>
-          <div className="card">
+          <div className = 'card' style = {{margin : "16px auto", width : "40%"}}>
             <div className="card-body" style={{ textAlign: "left" }}>
-              <button
-                type="button"
-                className="btn btn-danger"
-                style={{ float: "right" }}
-                onClick={this.delete}
-              >
-                Delete
-              </button>
               <h4 className="card-title"> Name : {this.props.item.name}</h4>
               <h5 className="card-subtitle mb-2 text-muted">
-                Address : {this.props.item.address}
+                Address : {this.props.item.address.address}
               </h5>
               <h5 className="card-subtitle mb-2 text-muted">
                 Capacity : {this.state.capacity}
@@ -141,6 +133,13 @@ class EditLocation extends Component {
               >
                 Edit
               </button>
+              <button
+              type="button"
+              className="btn btn-danger"
+              onClick={this.delete}
+            >
+              Delete
+            </button>
               <br></br>
             </div>
           </div>
@@ -169,7 +168,7 @@ class EditLocation extends Component {
                 type="text"
                 className="form-control"
                 name="address"
-                placeholder={this.props.item.address}
+                placeholder={this.props.item.address.address}
               />
               <br></br>
             </div>

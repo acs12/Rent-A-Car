@@ -81,6 +81,34 @@ class Vehicle extends Component {
     });
   };
 
+  changeHandlerForButton = e => {
+    e.preventDefault()
+    if (this.state.rentalLocation){
+      console.log(this.state.rentalLocation)
+      document.getElementById(e.target.value).className = 'btn btn-success'
+      document.getElementById(this.state.rentalLocation).className = 'btn btn-info'
+    }else {
+      document.getElementById(e.target.value).className = 'btn btn-success'
+    }
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  }
+
+  changeHandlerForVehicleType = e => {
+    e.preventDefault()
+    if (this.state.type){
+      document.getElementById(this.state.type).className = 'btn btn-info'
+      document.getElementById(e.target.value).className = 'btn btn-success'
+    }else {
+      document.getElementById(e.target.value).className = 'btn btn-success'
+    }
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  }
+
+
   addVehicle = async e => {
     e.preventDefault();
     let data = {
@@ -105,8 +133,10 @@ class Vehicle extends Component {
           toggle: true
         });
       }
-      // this.componentDidMount()
-      // this.componentDidUpdate(this.props.vehicle)
+
+      // var isValidZip = /(^\d{5}$)|(^\d{5}-\d{4}$)/.test("90210");
+      this.componentDidMount()
+      this.componentDidUpdate(this.props.vehicle)
     });
   };
 
@@ -155,9 +185,10 @@ class Vehicle extends Component {
             return (
               <button
                 className="btn btn-info"
-                onClick={this.changeHandler}
+                onClick={this.changeHandlerForButton}
                 name="rentalLocation"
                 value={x._id}
+                id = {x._id}
               >
                 {x.name}
               </button>
@@ -173,9 +204,10 @@ class Vehicle extends Component {
           return (
             <button
               className="btn btn-info"
-              onClick={this.changeHandler}
+              onClick={this.changeHandlerForVehicleType}
               name="type"
               value={x._id}
+              id = {x._id}
             >
               {x.category}
             </button>
@@ -187,17 +219,17 @@ class Vehicle extends Component {
     if (this.state.toggle === false) {
       if (this.state.vehicles.length === 0) {
         vehicleDetails = (
-          <div>
+          <div className = 'card' style = {{margin : "16px auto", width : "40%"}}>
+          <br></br>
+            <h3>No Vehicle to display</h3>
+            <br></br>
             <button
               onClick={this.changeToggle}
-              style={{ textAlign: "center" }}
+              style = {{margin : "16px auto", width : "60%"}}
               className="btn btn-primary"
             >
               Add Vehicle
             </button>
-            <h3>No Vehicle to display</h3>
-            <br></br>
-            <br></br>
             <br></br>
           </div>
         );
@@ -223,22 +255,12 @@ class Vehicle extends Component {
         );
       }
     } else {
-      console.log(this.state);
       vehicleDetails = (
-        <div className="card" style={{ padding: 16, margin: 16 }}>
-          <div style={{ width: "40%", margin: "16px auto" }}>
+        <div className="card" style={{ padding: 16, margin: "16px auto", width : "50%" }}>
+        <div style={{ width: "60%", margin: "16px auto" }}>
             <form onSubmit={this.addVehicle}>
-              <br></br>
-              <button
-                type="button"
-                className="btn btn-danger"
-                style={{ float: "right" }}
-                onClick={this.changeToggle}
-              >
-                X
-              </button>
-              <br></br>
-              <b>Enter Vehicle Details :</b>
+            <br></br>
+            <div><h4>Enter Vehicle Details </h4></div>
               <div className="form-group">
                 <input
                   onChange={this.changeHandler}
@@ -246,6 +268,7 @@ class Vehicle extends Component {
                   className="form-control"
                   name="carname"
                   placeholder="Enter vehicle name."
+                  required
                 />
                 <br></br>
               </div>
@@ -257,6 +280,7 @@ class Vehicle extends Component {
                   className="form-control"
                   name="make"
                   placeholder="Enter brand of car."
+                  required
                 />
                 <br></br>
               </div>
@@ -268,6 +292,7 @@ class Vehicle extends Component {
                   className="form-control"
                   name="modelYear"
                   placeholder="Enter vehicle's model year."
+                  required
                 />
                 <br></br>
               </div>
@@ -279,29 +304,28 @@ class Vehicle extends Component {
                   className="form-control"
                   name="currentMileage"
                   placeholder="Enter current mileage of car."
+                  required
                 />
                 <br></br>
               </div>
 
-              <div className="form-group">
-                <input
-                  onChange={this.changeHandler}
-                  type="text"
-                  className="form-control"
-                  name="condition"
-                  placeholder="Enter condition of car(good, needs cleaning, needs maintenance)."
-                />
-                <br></br>
-              </div>
+              <div class="form-group">
+              <select class="form-control"  id = 'condition-select' name = 'condition' onChange = {this.changeHandler}>
+              <option value = 'Good' selected >Good</option>
+              <option value = 'Needs Cleaning'>Needs Cleaning</option>
+              <option value = 'Needs Maintainence'>Needs Maintainence</option>
+              </select>
+            </div>
 
               <div className="form-group">
-                Enter when was car vehicle last serviced :
+                Enter when was car vehicle last serviced
                 <input
                   onChange={this.changeHandler}
                   type="date"
                   className="form-control"
                   name="timeLastServiced"
                   placeholder="Enter when was vehicle last serviced."
+                  required
                 />
                 <br></br>
               </div>
@@ -320,6 +344,15 @@ class Vehicle extends Component {
               <button type="submit" className="btn btn-success">
                 Save
               </button>
+
+              <button
+              type="button"
+              className="btn btn-danger"
+              onClick={this.changeToggle}
+            >
+              Cancel
+            </button>
+
               <br></br>
               <br></br>
             </form>

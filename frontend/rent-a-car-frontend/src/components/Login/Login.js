@@ -39,9 +39,13 @@ class Login extends Component {
     this.setState({ isLoading: true });
     await this.props.login(data, res => {
       if (res.status === 200) {
-        localStorage.setItem("id", res.data._id);
-        localStorage.setItem("admin", res.data.admin);
-        localStorage.setItem("manager", res.data.manager);
+        if (res.data.message !== undefined) {
+          this.setState({ isLoading: false, error : res.data.message});
+        }else {
+          localStorage.setItem("id", res.data._id);
+          localStorage.setItem("admin", res.data.admin);
+          localStorage.setItem("manager", res.data.manager);
+        }
         this.setState({ isLoading: false });
       } else {            
         this.setState({ isLoading: false, error  :'Invalid Credentials!'});
@@ -55,7 +59,7 @@ class Login extends Component {
       if (localStorage.getItem("admin") === "true") {
         redirectVar = <Redirect to="/adminLocation" />;
       } else if (localStorage.getItem("manager") === "true") {
-        redirectVar = <Redirect to="" />;
+        redirectVar = <Redirect to="/approveUser"/>;
       } else {
         redirectVar = <Redirect to="/dashboard" />;
       }

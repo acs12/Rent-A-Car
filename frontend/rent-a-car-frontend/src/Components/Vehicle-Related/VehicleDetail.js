@@ -11,7 +11,7 @@ import { book } from "../../redux/actions/bookingAction";
 import DDFactory from "../Common/Navigation-Related/DropDownItemFactory";
 import VehicleCell from "../Dashboard/Cells/VehicleCell";
 import {Redirect} from 'react-router-dom'
-
+import VehicleDetailCell from './Cells/VehiclePriceDetail'
 
 class VehicleDetail extends React.Component {
   constructor(props) {
@@ -21,6 +21,9 @@ class VehicleDetail extends React.Component {
     this.handleDropDownSearchText = this.handleDropDownSearchText.bind(this);
     this.submitBooking = this.submitBooking.bind(this);
     this.handleAction = this.handleAction.bind(this);
+    navigator.geolocation.getCurrentPosition((position)=> {
+      console.log(position)
+    });
   }
 
   async getVehicle() {
@@ -36,16 +39,19 @@ class VehicleDetail extends React.Component {
 
   handleAction(e) {
     e.preventDefault();
+
+    if (e.target.value === 'pickupLocation'){
+
+    }
+    
     this.setState({
       [e.target.name]: e.target.value
     });
   }
 
   submitBooking(e) {
-
     let vehicleID = this.props.match.params.vid
     let pickupLocationID = this.state.pickupLocationID
-    console.log('######################## VEHICLE', e)
     if (e.carname !== undefined){
       vehicleID = e._id
       pickupLocationID = e.rentalLocation._id
@@ -136,23 +142,13 @@ class VehicleDetail extends React.Component {
       <div>
       {this.state.redirectVar}
         <Navigationbar navItems={items} />
-        <div className="vehicleBrowser">
-          <div className="card carContainer">
-            <div className="carDetails">
-              Carname : {this.props.selectedVehicle.carname}
+        <div className="list-container">
+          <div className = 'row'>
+            <div className = 'col-4'>
+            {this.props.selectedVehicle.type !== undefined && <VehicleDetailCell vehicle = {this.props.selectedVehicle}/>}
             </div>
-            <div className="carDetails">
-              Rental Location :{" "}
-              {this.props.selectedVehicle.rentalLocation !== undefined &&
-                this.props.selectedVehicle.rentalLocation.name}
-            </div>
-            <div className="carDetails">
-              Hourly Rate :{" "}
-              {this.props.selectedVehicle.type !== undefined &&
-                this.props.selectedVehicle.type.hourlyRate}
-            </div>
-          </div>
-          <div className = "carContainer">
+            <div className = 'col-8' >
+            <div >
             <DropDown
               title={"Pickup Location"}
               items={dditems}
@@ -161,40 +157,38 @@ class VehicleDetail extends React.Component {
           </div>
 
           {this.state.pickupLocationID !== undefined && (
-            <div className = "carContainer">
             <DropDown
               title={"Return Location"}
               items={returnddItems}
               searchHandler={this.handleDropDownSearchText}
             />
-            </div>
           )}
 
           {this.state.returnLocationID !== undefined && (
-            <div className = "carContainer">
+
               <MDBInput
                 name="pickupTime"
                 type="date"
                 label="Start Date"
                 onChange={this.handleAction}
+                style = {{width : "30%"}}
                 outline
               />
-              </div>
           )}
 
           {this.state.pickupTime !== undefined && (
-            <div className = "carContainer">
+
               <MDBInput
                 name="expectedReturnTime"
                 type="date"
                 label="End Date"
                 onChange={this.handleAction}
+                style = {{width : "30%"}}
                 outline
               />
-              </div>
           )}
           <h4>{this.state.error}</h4>
-          {(
+          {(this.state.expectedReturnTime &&
               <button className="btn btn-primary" onClick={this.submitBooking}>
                 Book
               </button>
@@ -203,6 +197,8 @@ class VehicleDetail extends React.Component {
           {this.props.vehicles.map(v => {
             return <VehicleCell bookVehicle = {this.submitBooking} vehicle={v} />;
           })}
+            </div>
+          </div>
         </div>
       </div>
     );

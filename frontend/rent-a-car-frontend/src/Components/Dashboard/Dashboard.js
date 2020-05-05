@@ -5,6 +5,7 @@ import VehicleBrowser from "../Dashboard/VehicleBrowser";
 import { fetchVehicles } from "../../redux/actions/fetchAction";
 import { connect } from "react-redux";
 import ReactPaginate from 'react-paginate';
+import Pagination from "@material-ui/lab/Pagination";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -45,21 +46,15 @@ class Dashboard extends React.Component {
     return (
       <div>
         <Navigationbar navItems={items} />
-        <div className="vehicleBrowser">
+        <div className="list-container">
           <VehicleBrowser title={"San Jose"} />
-          <ReactPaginate
-          previousLabel="Prev"
-          nextLabel="Next"
-          breakLabel="..."
-          breakClassName="break-me"
-          pageCount={this.props.totalVehicles/20.0}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={0}
-          onPageChange={this.handlePageClick}
-          containerClassName="pagination"
-          subContainerClassName="pages pagination"
-          activeClassName="active"
-        />
+          <Pagination
+              count={Math.floor(this.props.totalVehicles/20.0)}
+              variant="outlined"
+              shape="rounded"
+              style={{ backgroundColor: "#ffa000;", width : "10%", margin : "16px auto" }}
+              onChange={this.handlePageClick}
+            />
         </div>
       </div>
     );

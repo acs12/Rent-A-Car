@@ -26,7 +26,7 @@ class DropDown extends React.Component {
   render() {
     return (
       <MDBDropdown>
-        <MDBDropdownToggle caret>{this.props.title}</MDBDropdownToggle>
+        <MDBDropdownToggle id = {this.props.id} caret>{this.props.title}</MDBDropdownToggle>
         <MDBDropdownMenu>
           <div class="md-form">
             <input
@@ -34,6 +34,7 @@ class DropDown extends React.Component {
               type="text"
               placeholder="Search"
               aria-label="Search"
+              style = {{margin : 8, overflow : "hidden", width : "80%"}}
               onChange = {this.watchSearchText}
             />
           </div>

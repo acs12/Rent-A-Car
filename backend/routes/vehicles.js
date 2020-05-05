@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const hardCount = 20;
-const Vehicle = require('../models/Vehicle');
-const RentalLocation = require('../models/RentalLocation');
+const Vehicle = require("../models/Vehicle");
+const RentalLocation = require("../models/RentalLocation");
 
 //get all vehicles
 router.get("/", async (req, res) => {
@@ -20,13 +20,13 @@ router.get("/", async (req, res) => {
       const total = await Vehicle.countDocuments();
       return res.send({ total: total, vehicles: vehicles });
     } else {
-    const vehicles =await Vehicle.find()
+      const vehicles = await Vehicle.find()
         .skip(skipCount)
         .limit(hardCount)
         .populate("type")
         .populate("rentalLocation");
-        const total = await Vehicle.countDocuments();
-        return res.send({ total: total, vehicles: vehicles });
+      const total = await Vehicle.countDocuments();
+      return res.send({ total: total, vehicles: vehicles });
     }
   } catch (error) {
     res.send(error);
@@ -34,51 +34,52 @@ router.get("/", async (req, res) => {
 });
 
 //create a user
-router.post('/', async (req, res) => {
-    console.log("req for adding vehicle", req.body)
-    v = new Vehicle({
-        carname: req.body.carname,
-        type: req.body.type,
-        make: req.body.make,
-        modelYear: req.body.modelYear,
-        currentMileage: req.body.currentMileage,
-        condition: req.body.condition,
-        timeLastServiced: req.body.timeLastServiced,
-        availability: true,
-        rentalLocation: req.body.rentalLocation
+router.post("/", async (req, res) => {
+  
+  v = new Vehicle({
+    carname: req.body.carname,
+    type: req.body.type,
+    make: req.body.make,
+    modelYear: req.body.modelYear,
+    currentMileage: req.body.currentMileage,
+    condition: req.body.condition,
+    timeLastServiced: req.body.timeLastServiced,
+    availability: true,
+    rentalLocation: req.body.rentalLocation
+  });
 
-    })
+  r = await RentalLocation.findById(req.body.rentalLocation);
 
-    r = RentalLocation.findById(req.body.rentalLocation);
-    
-    if (r.capacity > r.numOfVehicles)
-    {
-        v.save()
-        .then(result => {
-            Vehicle.find()
-                .exec()
-                .then(result => {
-                    res.send(result)
-                })
-        }) 
-            .catch(err => {
-            res.send(err)
-        })
-
-       await RentalLocation.findByIdAndUpdate(req.body.rentalLocation,
-            
-        {$inc:{numOfVehicles:1}})
-       }
-    else{
-        res.json({message : "The park of this rental location is full now, please add to another location"})
-    }
-        
+  if (r.numOfVehicles < r.capacity ) {
+    v.save()
+      .then(result => {
+        Vehicle.find()
+          .exec()
+          .then( async (result) => {
+            await RentalLocation.findByIdAndUpdate(
+              req.body.rentalLocation,
+              { $inc: { numOfVehicles: 1 } }
+            );
+            return res.send({ success: true, vehicles: result });
+          });
+      })
+      .catch(err => {
+        return res.send(err);
+      });
+  } else {
+    res.json({
+      message:
+        "The park of this rental location is full now, please add to another location"
     });
+  }
+});
 
 //get a specific user
 router.get("/:vehicleId", async (req, res) => {
   try {
-    const vehicle = await Vehicle.findById(req.params.vehicleId).populate("rentalLocation").populate("type");
+    const vehicle = await Vehicle.findById(req.params.vehicleId)
+      .populate("rentalLocation")
+      .populate("type");
     res.json(vehicle);
   } catch (err) {
     res.json({ message: err });

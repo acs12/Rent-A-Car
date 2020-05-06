@@ -2,6 +2,22 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const loginRouter = express.Router();
+const secret = "ThisisCMPE202PROJECTAABM";
+const jwt = require('jsonwebtoken');
+const {auth, checkAuth } = require('../config/passport');
+auth()
+
+const signWithJWT = (user, callback) => {
+  jwt.sign(user, secret, { expiresIn: 36000 }, (error, token) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      const obj = { ...user };
+      obj.token = token;
+      callback(null, obj);
+    }
+  });
+};
 
 loginRouter.post("/", async (req, res) => {
   let user = await User.findOne({ emailAddress: req.body.emailAddress });
@@ -9,13 +25,18 @@ loginRouter.post("/", async (req, res) => {
     res.status(401).json({ message: "User not found" });
   } else if (bcrypt.compareSync(req.body.password, user.password)) {
     if (user.isValidated || user.manager || user.admin){
-      res.status(200).json(user);
+      signWithJWT(Object.assign({}, user._doc), (error, result) => {
+        if (error) {
+          return res.json({ message: error });
+        }
+        return res.json(result);
+      })
     }else {
-      res.status(200).json({message : 'Please wait your account is being validated!'});
+      return res.status(200).json({message : 'Please wait your account is being validated!'});
     }
     
   } else {
-    res.status(403).json({ message: "Invalid Credentials" });
+    return res.status(403).json({ message: "Invalid Credentials" });
   }
 });
 module.exports = loginRouter;

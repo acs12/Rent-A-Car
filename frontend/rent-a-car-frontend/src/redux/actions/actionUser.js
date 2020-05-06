@@ -1,16 +1,17 @@
 import { DELETE_USER, GET_USER} from '../types/adminUser';
 import axios from 'axios';
-import URL from '../../constants';
-
-
+import {URL, headers} from '../../constants';
 
 export function getUser(callback) {
     // console.log(values);
-    console.log("Inside Get User")
     axios.defaults.withCredentials = true;
 
     const request = axios
-        .get(`${URL}/users`);
+        .get(`${URL}/users`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {

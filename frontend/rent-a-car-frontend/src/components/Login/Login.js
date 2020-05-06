@@ -38,10 +38,12 @@ class Login extends Component {
     };
     this.setState({ isLoading: true });
     await this.props.login(data, res => {
+      console.log(res)
       if (res.status === 200) {
         if (res.data.message !== undefined) {
           this.setState({ isLoading: false, error : res.data.message});
         }else {
+          localStorage.setItem('token', res.data.token)
           localStorage.setItem("id", res.data._id);
           localStorage.setItem("admin", res.data.admin);
           localStorage.setItem("manager", res.data.manager);
@@ -55,7 +57,7 @@ class Login extends Component {
 
   render() {
     let redirectVar = null;
-    if (localStorage.getItem("id")) {
+    if (localStorage.getItem("token")) {
       if (localStorage.getItem("admin") === "true") {
         redirectVar = <Redirect to="/adminLocation" />;
       } else if (localStorage.getItem("manager") === "true") {
@@ -67,8 +69,7 @@ class Login extends Component {
     return (
       <div className="backgroundImage">
         {redirectVar}
-
-        <div className="card entryPages">
+        <div className="card entryPages" >
           <form onSubmit={this.submitLogin}>
             <div style={{ textAlign: "center" }}>
               <h1>Rent-A-Car</h1>
@@ -86,6 +87,7 @@ class Login extends Component {
                 className="form-control"
                 name="email"
                 placeholder="Enter Email Address"
+                style = {{width : "60%", margin : "16px auto"}}
                 required
               />
             </div>
@@ -97,6 +99,7 @@ class Login extends Component {
                 className="form-control"
                 name="password"
                 placeholder="Enter Password"
+                style = {{width : "60%", margin : "16px auto"}}
                 required
               />
             </div>

@@ -1,6 +1,6 @@
 import { LOGIN, SIGNUP } from '../types/typeSignin';
 import axios from 'axios';
-import URL from '../../constants';
+import {URL, headers} from '../../constants';
 
 
 

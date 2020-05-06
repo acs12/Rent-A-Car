@@ -1,6 +1,6 @@
 import { FETCHVEHICLES, FETCHLOCATIONS, FETCHCURRENTVEHICLE, FETCHLOCATIONVEHICLES, FETCHUSER, FETCHBOOKINGS } from '../types/typeFetch';
 import axios from 'axios';
-import URL from '../../constants';
+import {URL, headers} from '../../constants';
 
 export function fetchVehicles(pageNum, callback) {
     axios.defaults.withCredentials = true;

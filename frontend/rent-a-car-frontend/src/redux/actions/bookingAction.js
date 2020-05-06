@@ -1,6 +1,6 @@
 import { CONFIRMBOOKING, CANCELBOOKING, SUBMITCAR } from "../types/typeSelect";
 import axios from "axios";
-import URL from "../../constants";
+import {URL, headers} from "../../constants";
 
 export function book(values, callback) {
   axios.defaults.withCredentials = true;

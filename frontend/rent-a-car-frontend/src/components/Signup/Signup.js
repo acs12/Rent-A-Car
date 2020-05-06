@@ -70,7 +70,11 @@ class Signup extends Component {
         if (res.data.message) {
           this.setState({ error: res.data.message });
         } else {
-          this.setState({ redirectVar: <Redirect to="dashboard" /> });
+          localStorage.setItem("id", res.data._id);
+            localStorage.setItem("admin", res.data.admin);
+            localStorage.setItem("manager", res.data.manager);
+            localStorage.setItem('token', res.data.token)
+          this.setState({ redirectVar: <Redirect to="/adminLocation" /> });
         }
       });
     } else if (this.state.type === "Manager") {
@@ -84,7 +88,11 @@ class Signup extends Component {
         if (res.data.message) {
           this.setState({ error: res.data.message });
         } else {
-          this.setState({ redirectVar: <Redirect to="dashboard" /> });
+            localStorage.setItem("id", res.data._id);
+            localStorage.setItem("admin", res.data.admin);
+            localStorage.setItem("manager", res.data.manager);
+            localStorage.setItem('token', res.data.token)
+          this.setState({ redirectVar: <Redirect to="/approveUser" /> });
         }
       });
     } else {
@@ -100,10 +108,12 @@ class Signup extends Component {
         creditCardInfo: this.state.creditCard
       };
       await this.props.signup(data, res => {
+        console.log('CHECK', res)
         if (res.status === 200) {
           if (res.data.message) {
             this.setState({ error: res.data.message });
           } else {
+            localStorage.setItem('token', res.data.token)
             localStorage.setItem("id", res.data._id);
             localStorage.setItem("admin", res.data.admin);
             localStorage.setItem("manager", res.data.manager);
@@ -197,13 +207,13 @@ class Signup extends Component {
           </div>
 
           <div className="form-group">
-            Enter Picture of Driving License
+            Upload Driving License
             <input
               onChange={this.changeFileHandler}
               type="file"
               className="form-control"
               name="drivingLicense"
-              placeholder="Enter the picture of Driving License"
+              placeholder="Upload Driving License"
               required
             />
           </div>
@@ -284,8 +294,10 @@ class Signup extends Component {
             </MDBDropdownMenu>
           </MDBDropdown>
           <br></br>
-
-          {formElement}
+        <div style = {{width : "70%", margin : "16px auto"}}>
+        {formElement}
+        </div>
+          
 
           <br></br>
           <br></br>

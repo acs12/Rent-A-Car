@@ -1,6 +1,6 @@
 import { ADD_LOCATION, DELETE_LOCATION, EDIT_LOCATION, GET_LOCATION ,VEHICLE_NAMES} from '../types/locationType';
 import axios from 'axios';
-import URL from '../../constants';
+import {URL, headers} from '../../constants';
 
 
 

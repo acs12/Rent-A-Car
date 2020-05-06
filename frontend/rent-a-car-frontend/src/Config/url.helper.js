@@ -1,3 +1,7 @@
 const baseURL = 'http://localhost:3000/'
-
-export default {baseURL}
+const headers = {
+    headers: {
+      Authorization: `Bearer ${(getUserObject() === null || getUserObject() === undefined) ? '' : getUserObject().token}`,
+    },
+  };
+export default {baseURL, headers}

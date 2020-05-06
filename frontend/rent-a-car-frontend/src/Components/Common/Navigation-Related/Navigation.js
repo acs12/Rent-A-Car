@@ -8,6 +8,7 @@ import {
   MDBNavItem,
   MDBNavLink
 } from "mdbreact";
+import Button from '@material-ui/core/Button';
 
 const Navigationbar = props => {
   return (
@@ -15,16 +16,32 @@ const Navigationbar = props => {
       <MDBNavbarBrand>Rent A Car</MDBNavbarBrand>
       <MDBNavbarNav left={true}>{props.navItems}</MDBNavbarNav>
       <MDBNavbarNav right={true}>
-        <MDBNavItem avatar ml-auto nav-flex-icons>
-          <MDBNavLink to='/myProfile'>
-            <img
-              src="https://mdbootstrap.com/img/Photos/Avatars/avatar-1.jpg"
-              class="rounded-circle z-depth-0"
-              alt="avatar image"
-              height="35"
-            />
-          </MDBNavLink>
-        </MDBNavItem>
+
+      {!localStorage.getItem('admin')  && !localStorage.getItem('manager') && 
+      <MDBNavItem avatar ml-auto nav-flex-icons>
+      <MDBNavLink to='/myProfile'>
+        <img
+          src="https://mdbootstrap.com/img/Photos/Avatars/avatar-1.jpg"
+          class="rounded-circle z-depth-0"
+          alt="avatar image"
+          height="35"
+        />
+      </MDBNavLink>
+    </MDBNavItem>    
+    }
+
+    {(localStorage.getItem('admin') || localStorage.getItem('manager')) && 
+    <Button size="small" color="warning" onClick = {(e)=> {
+      localStorage.removeItem('token')
+      localStorage.removeItem('id')
+      localStorage.removeItem('admin')
+      localStorage.removeItem('manager')
+      window.open('/', "_self");
+    }} >
+            Logout
+          </Button>
+  }
+
       </MDBNavbarNav>
     </MDBNavbar>
 

@@ -7,8 +7,10 @@ const RentalLocation = require("../models/RentalLocation");
 const VehicleType = require("../models/VehicleType");
 const Rating = require("../models/Rating");
 const perPage = 20;
+const {auth, checkAuth } = require('../config/passport');
+auth()
 
-router.get("/", async (req, res) => {
+router.get("/", checkAuth,async (req, res) => {
   try {
     const reservations = await reservations.find();
     res.json(reservations);
@@ -17,7 +19,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/userReservations/:userID/", async (req, res) => {
+router.get("/userReservations/:userID/",checkAuth, async (req, res) => {
   try {
     const { userID } = { ...req.params, ...req.query };
     const reservation = await Reservation.findOne()
@@ -47,7 +49,7 @@ router.get("/userReservations/:userID/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", checkAuth,async (req, res) => {
   try {
     const reservation = new Reservation({
       user: req.body.user,
@@ -128,7 +130,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/:reservationId", async (req, res) => {
+router.get("/:reservationId", checkAuth,async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.reservationId);
     res.json(reservation);
@@ -137,7 +139,7 @@ router.get("/:reservationId", async (req, res) => {
   }
 });
 
-router.delete("/:reservationId", async (req, res) => {
+router.delete("/:reservationId", checkAuth,async (req, res) => {
   try {
     const removedReservation = await Reservation.remove({
       _id: req.params.reservationId
@@ -148,7 +150,7 @@ router.delete("/:reservationId", async (req, res) => {
   }
 });
 
-router.put("/cancelReservation/:reservationId", async (req, res) => {
+router.put("/cancelReservation/:reservationId", checkAuth,async (req, res) => {
   try {
     const currentTime = Date.now();
     const reservation = await Reservation.findById(
@@ -174,7 +176,7 @@ router.put("/cancelReservation/:reservationId", async (req, res) => {
   } catch (error) {}
 });
 
-router.patch("/:reservationId", async (req, res) => {
+router.patch("/:reservationId", checkAuth,async (req, res) => {
   try {
     const { rating, condition } = req.body;
     const reservation = await Reservation.findById(req.params.reservationId)

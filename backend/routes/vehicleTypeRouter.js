@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const Type = require('../models/VehicleType');
+const {auth, checkAuth } = require('../config/passport');
+auth()
 
 
 //get all vehicles
-router.get('/', async (req, res) => {
+router.get('/', checkAuth, async (req, res) => {
     try {
         const types = await Type.find();
         res.json(types);
@@ -15,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 //create a user
-router.post('/', (req, res) => {
+router.post('/', checkAuth, (req, res) => {
     console.log("Req Body", req)
     new Type({
         category: req.body.category,
@@ -48,7 +50,7 @@ router.post('/', (req, res) => {
 
 
 //delete a user
-router.post('/delete', async (req, res) => {
+router.post('/delete', checkAuth, async (req, res) => {
 
     Type.remove({
         _id: req.body._id
@@ -68,7 +70,7 @@ router.post('/delete', async (req, res) => {
 });
 
 //update a user 
-router.post('/update', async (req, res) => {
+router.post('/update', checkAuth, async (req, res) => {
     Type.updateOne(
         { _id: req.body._id },
         {

@@ -4,10 +4,12 @@ const RentalLocation = require("../models/RentalLocation");
 const Vehicles = require("../models/Vehicle");
 const Address = require("../models/Address")
 const Reservation = require("../models/Reservation")
+const {auth, checkAuth } = require('../config/passport');
+auth()
 
 const paginated = 20;
 //get all user
-router.get("/", async (req, res) => {
+router.get("/", checkAuth,async (req, res) => {
   const { searchText, pageNum } = req.query;
   const skipCount = pageNum * paginated;
   try {
@@ -34,7 +36,7 @@ router.get("/", async (req, res) => {
 });
 
 
-router.post("/", async (req, res) => {
+router.post("/", checkAuth,async (req, res) => {
   const address = new Address ({...req.body});
   await address.save()
   const rentalLocation = new RentalLocation({
@@ -58,7 +60,7 @@ router.post("/", async (req, res) => {
 });
 
 //get a specific user
-router.get("/:rentalLocationId", async (req, res) => {
+router.get("/:rentalLocationId", checkAuth,async (req, res) => {
   try {
     const rentalLocationVehicles = await Vehicles.find({
       rentalLocation: req.params.rentalLocationId
@@ -75,7 +77,7 @@ router.get("/:rentalLocationId", async (req, res) => {
 });
 
 //delete a user
-router.post("/delete", async (req, res) => {
+router.post("/delete", checkAuth,async (req, res) => {
   try {
     r = Reservation.find({returnLocation: req.body._id})
     if ((req.body._id in Reservation.distinct('returnLocation')) && r.returned == false ){
@@ -104,7 +106,7 @@ router.post("/delete", async (req, res) => {
 });
 
 //update a user
-router.post("/update", async (req, res) => {
+router.post("/update", checkAuth,async (req, res) => {
   console.log("req", req.body);
   await RentalLocation.updateOne(
     { _id: req.body._id },
@@ -128,7 +130,7 @@ router.post("/update", async (req, res) => {
 });
 
 //get Location Names
-router.get("/allLocations/IDs", async (req, res) => {
+router.get("/allLocations/IDs", checkAuth,async (req, res) => {
   RentalLocation.find()
     .select("name")
     .exec()

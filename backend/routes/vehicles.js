@@ -4,9 +4,11 @@ const router = express.Router();
 const hardCount = 20;
 const Vehicle = require("../models/Vehicle");
 const RentalLocation = require("../models/RentalLocation");
+const {auth, checkAuth } = require('../config/passport');
+auth()
 
 //get all vehicles
-router.get("/", async (req, res) => {
+router.get("/", checkAuth,async (req, res) => {
   try {
     const { pageNum, searchText } = req.query;
     const skipCount = hardCount * pageNum;
@@ -46,7 +48,7 @@ router.get("/", async (req, res) => {
 });
 
 //create a user
-router.post("/", async (req, res) => {
+router.post("/", checkAuth,async (req, res) => {
   
   v = new Vehicle({
     carname: req.body.carname,
@@ -87,7 +89,7 @@ router.post("/", async (req, res) => {
 });
 
 //get a specific user
-router.get("/:vehicleId", async (req, res) => {
+router.get("/:vehicleId",checkAuth,async (req, res) => {
   try {
     const vehicle = await Vehicle.findById(req.params.vehicleId)
       .populate("rentalLocation")
@@ -99,7 +101,7 @@ router.get("/:vehicleId", async (req, res) => {
 });
 
 //delete a user
-router.post("/delete", async (req, res) => {
+router.post("/delete", checkAuth,async (req, res) => {
   
   try {
     if (req.body.availability == true)
@@ -251,7 +253,7 @@ router.post("/update", async (req, res) => {
 });
 
 //get vehicle Name
-router.post("/allVehicles/IDs", async (req, res) => {
+router.post("/allVehicles/IDs", checkAuth,async (req, res) => {
   await Vehicle.find({
     rentalLocation: { $ne: req.body.locationId }
   })

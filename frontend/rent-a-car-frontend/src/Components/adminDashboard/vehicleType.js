@@ -337,7 +337,7 @@ class VehicleType extends Component {
         <Navigationbar navItems={items} />
         <MDBContainer>
           <MDBCol></MDBCol>
-          <MDBCol style={{ textAlign: "center" }}>{typeDetails}</MDBCol>
+          <MDBCol style={{ textAlign: "center" }} md="6">{typeDetails}</MDBCol>
           <MDBCol></MDBCol>
         </MDBContainer>
       </div>

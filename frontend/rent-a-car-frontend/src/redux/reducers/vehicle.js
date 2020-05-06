@@ -1,10 +1,7 @@
 import { ADD_VEHICLE, GET_VEHICLE, EDIT_VEHICLE, DELETE_VEHICLE } from "../types/vehicle";
 
 const initialState = {
-  data: {
-    total : 0,
-    vehicles : []
-  }
+  vehicles: []
 };
 
 const adminVehicleReducer = (state = initialState, action) => {
@@ -13,28 +10,34 @@ const adminVehicleReducer = (state = initialState, action) => {
       console.log("AP", action.payload)
       return {
         ...state,
-        data: action.payload
+        vehicles: action.payload.vehicles
       };
 
     case GET_VEHICLE:
-      console.log("AP", action.payload)
+      console.log("Get Vehicle AP", action.payload)
       return {
         ...state,
-        data: action.payload
+        vehicles: action.payload.vehicles
+        // vehicles : action.payload
       };
 
     case EDIT_VEHICLE:
-      console.log("AP", action.payload)
+      console.log("Edit Vehicle AP", action.payload)
       return {
         ...state,
-        data: action.payload
+        vehicles: action.payload
       };
 
     case DELETE_VEHICLE:
-      console.log("AP", action.payload)
-      return {
-        ...state,
-        data: action.payload
+      if (action.payload.message) {
+        alert(action.payload.message)
+      }
+      else {
+        console.log("AP", action.payload)
+        return {
+          ...state,
+          vehicles: action.payload
+        }
       };
     default:
       return state;

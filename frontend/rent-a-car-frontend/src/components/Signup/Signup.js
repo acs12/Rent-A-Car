@@ -71,9 +71,9 @@ class Signup extends Component {
           this.setState({ error: res.data.message });
         } else {
           localStorage.setItem("id", res.data._id);
-            localStorage.setItem("admin", res.data.admin);
-            localStorage.setItem("manager", res.data.manager);
-            localStorage.setItem('token', res.data.token)
+          localStorage.setItem("admin", res.data.admin);
+          localStorage.setItem("manager", res.data.manager);
+          localStorage.setItem('token', res.data.token)
           this.setState({ redirectVar: <Redirect to="/adminLocation" /> });
         }
       });
@@ -88,10 +88,10 @@ class Signup extends Component {
         if (res.data.message) {
           this.setState({ error: res.data.message });
         } else {
-            localStorage.setItem("id", res.data._id);
-            localStorage.setItem("admin", res.data.admin);
-            localStorage.setItem("manager", res.data.manager);
-            localStorage.setItem('token', res.data.token)
+          localStorage.setItem("id", res.data._id);
+          localStorage.setItem("admin", res.data.admin);
+          localStorage.setItem("manager", res.data.manager);
+          localStorage.setItem('token', res.data.token)
           this.setState({ redirectVar: <Redirect to="/approveUser" /> });
         }
       });
@@ -276,28 +276,29 @@ class Signup extends Component {
             <h4>Sign Up</h4>
           </div>
           <br></br>
-
-          <MDBDropdown>
-            <MDBDropdownToggle caret color="success">
-              {this.state.type}
-            </MDBDropdownToggle>
-            <MDBDropdownMenu basic>
-              <MDBDropdownItem value="Admin" onClick={this.typeHandler}>
-                Admin
+          <div style = {{textAlign : "center"}}>
+            <MDBDropdown >
+              <MDBDropdownToggle caret color="success">
+                {this.state.type}
+              </MDBDropdownToggle>
+              <MDBDropdownMenu basic>
+                <MDBDropdownItem value="Admin" onClick={this.typeHandler}>
+                  Admin
               </MDBDropdownItem>
-              <MDBDropdownItem value="User" onClick={this.typeHandler}>
-                User
+                <MDBDropdownItem value="User" onClick={this.typeHandler}>
+                  User
               </MDBDropdownItem>
-              <MDBDropdownItem value="Manager" onClick={this.typeHandler}>
-                Manager
+                <MDBDropdownItem value="Manager" onClick={this.typeHandler}>
+                  Manager
               </MDBDropdownItem>
-            </MDBDropdownMenu>
-          </MDBDropdown>
+              </MDBDropdownMenu>
+            </MDBDropdown>
+          </div>
           <br></br>
-        <div style = {{width : "70%", margin : "16px auto"}}>
-        {formElement}
-        </div>
-          
+          <div style={{ width: "70%", margin: "16px auto" }}>
+            {formElement}
+          </div>
+
 
           <br></br>
           <br></br>

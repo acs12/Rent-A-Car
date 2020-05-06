@@ -105,7 +105,7 @@ router.post("/", upload.single("drivingLicense"), async (req, res) => {
           }
         } else {
           var host = req.hostname;
-          var filepath = req.protocol + "://" + host + ":5000/" + req.file.path;
+          var filepath = req.protocol + "://" + host + ":3000/" + req.file.path;
           req.body.dlImage = filepath;
 
           const user = new User({
@@ -176,6 +176,7 @@ router.patch("/:userId", async (req, res) => {
   }
 });
 
+
 //validate user
 router.post("/isValid", (req, res) => {
   console.log("req", req.body);
@@ -204,5 +205,35 @@ router.post("/isValid", (req, res) => {
       res.json({ message: err });
     });
 });
+
+//UpdateFee
+router.post("/updateFee", (req, res) => {
+  console.log("Inside update fee req", req.body);
+  User.updateOne(
+    {
+      _id: req.body._id
+    },
+    {
+      $set: {
+        membershipFee: req.body.Fee
+      }
+    }
+  )
+    .exec()
+    .then(result => {
+      User.find()
+        .exec()
+        .then(result => {
+          res.send(result);
+        })
+        .catch(err => {
+          res.send(err);
+        });
+    })
+    .catch(err => {
+      res.json({ message: err });
+    });
+});
+
 
 module.exports = router;

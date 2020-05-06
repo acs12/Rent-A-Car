@@ -49,7 +49,7 @@ router.get("/", checkAuth,async (req, res) => {
 
 //create a user
 router.post("/", checkAuth,async (req, res) => {
-  
+  // console.log("req.body ",req.body)
   v = new Vehicle({
     carname: req.body.carname,
     type: req.body.type,
@@ -102,9 +102,10 @@ router.get("/:vehicleId",checkAuth,async (req, res) => {
 
 //delete a user
 router.post("/delete", checkAuth,async (req, res) => {
-  
+  // console.log("In delete Vehicles",req.body)
   try {
-    const vehicle = await Vehicle.findById(req.body.vehicleId)
+    const vehicle = await Vehicle.findById(req.body._id)
+    console.log("VA",vehicle.availability)
     if (vehicle.availability)
     {
       Vehicle.remove({ _id: req.body._id })

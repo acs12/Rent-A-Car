@@ -36,7 +36,9 @@ class VehicleType extends Component {
       day1: "",
       day2: "",
       day3: "",
-      lateFee: ""
+      lateFee: "",
+      currentPage: 1,
+      itemsPerPage: 3
     };
     //Bind the handlers to this class
     this.changeHandler = this.changeHandler.bind(this);
@@ -84,7 +86,7 @@ class VehicleType extends Component {
       day3: this.state.day3,
       lateFee: this.state.lateFee
     };
-    this.setState({isProgressing : true})
+    this.setState({ isProgressing: true })
     await this.props.addVehicleType(data, res => {
       console.log(res);
       if (this.state.toggle === true) {
@@ -96,7 +98,7 @@ class VehicleType extends Component {
           toggle: true
         });
       }
-      this.setState({isProgressing : false})
+      this.setState({ isProgressing: false })
       this.componentDidUpdate(this.props.vehicleTypes);
     });
   };
@@ -114,7 +116,30 @@ class VehicleType extends Component {
     }
   };
 
+  handleClick(e) {
+    console.log(e)
+    this.setState({
+      currentPage: Number(e)
+    });
+  }
+
   render() {
+    let redirectVar = null;
+    if (!localStorage.getItem("token") || localStorage.getItem("admin") === "false") {
+      localStorage.removeItem("token")
+      localStorage.removeItem("admin")
+      localStorage.removeItem("manager")
+      localStorage.removeItem("id")
+      redirectVar = <Redirect to="/" />
+    }
+    const currentPage = this.state.currentPage;
+    const itemsPerPage = this.state.itemsPerPage
+
+    const indexOfLastTodo = currentPage * itemsPerPage;
+    const indexOfFirstTodo = indexOfLastTodo - itemsPerPage;
+    console.log("IOL", indexOfLastTodo)
+    console.log("IOF", indexOfFirstTodo)
+
     let tempItems = [
       {
         name: "Rental Locations",
@@ -143,13 +168,13 @@ class VehicleType extends Component {
     if (this.state.toggle === false) {
       if (this.props.vehicleTypes.length === 0) {
         typeDetails = (
-          <div className = 'card' style = {{margin : "16px auto", width : "40%"}}>
+          <div className='card' style={{ margin: "16px auto", width: "40%" }}>
             <br></br>
             <h3>No Vehicles Types to display</h3>
             <br></br>
             <button
               onClick={this.changeToggle}
-              style = {{margin : "16px auto", width : "60%"}}
+              style={{ margin: "16px auto", width: "60%" }}
               className="btn btn-primary"
             >
               Add Vehicle Type
@@ -158,23 +183,25 @@ class VehicleType extends Component {
           </div>
         );
       } else {
+        const currentItems = this.state.getVehicleTypeDetails.slice(indexOfFirstTodo, indexOfLastTodo);
+
         typeDetails = (
           <div style={{ margin: 16 }}>
             <br></br>
             <button
-            onClick={this.changeToggle}
-            style={{ textAlign: "center" }}
-            className="btn btn-primary"
-          >
-            Add Vehicle Type
+              onClick={this.changeToggle}
+              style={{ textAlign: "center" }}
+              className="btn btn-primary"
+            >
+              Add Vehicle Type
           </button>
-            {this.state.getVehicleTypeDetails.map(x => (
-                <div className = 'card' style = {{margin : 16}} > 
-              <EditVehicleType
-                key={x._id}
-                item={x}
-                action={this.update}
-              ></EditVehicleType>
+            {currentItems.map(x => (
+              <div className='card' style={{ margin: 16 }} >
+                <EditVehicleType
+                  key={x._id}
+                  item={x}
+                  action={this.update}
+                ></EditVehicleType>
               </div>
             ))}
             <br></br>
@@ -185,160 +212,185 @@ class VehicleType extends Component {
       }
     } else {
       typeDetails = (
-        <div className="card" style={{ padding: 16, margin: "16px auto", width : "50%" }}>
-        <div style={{ width: "60%", margin: "16px auto" }}>
-        <form onSubmit={this.addType}>
-          <br></br>
-          <div><h4>Enter Vehicle Details </h4></div>
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="typeOfVehicle"
-              placeholder="Enter vehicle type."
-              required
-            />
-            <br></br>
-          </div>
+        <div className="card" style={{ padding: 16, margin: "16px auto", width: "50%" }}>
+          <div style={{ width: "60%", margin: "16px auto" }}>
+            <form onSubmit={this.addType}>
+              <br></br>
+              <div><h4>Enter Vehicle Details </h4></div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="typeOfVehicle"
+                  placeholder="Enter vehicle type."
+                  required
+                />
+                <br></br>
+              </div>
 
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="hourlyRate"
-              placeholder="Enter hourly rate for this vehicle type."
-              required
-            />
-            <br></br>
-          </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="hourlyRate"
+                  placeholder="Enter hourly rate for this vehicle type."
+                  required
+                />
+                <br></br>
+              </div>
 
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="hourlyRate1"
-              placeholder="Enter hourly rate for 1-5 hours."
-              required
-            />
-            <br></br>
-          </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="hourlyRate1"
+                  placeholder="Enter hourly rate for 1-5 hours."
+                  required
+                />
+                <br></br>
+              </div>
 
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="hourlyRate2"
-              placeholder="Enter hourly rate for 6-10 hours."
-              required
-            />
-            <br></br>
-          </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="hourlyRate2"
+                  placeholder="Enter hourly rate for 6-10 hours."
+                  required
+                />
+                <br></br>
+              </div>
 
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="hourlyRate3"
-              placeholder="Enter hourly rate for 11-15 hours."
-              required
-            />
-            <br></br>
-          </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="hourlyRate3"
+                  placeholder="Enter hourly rate for 11-15 hours."
+                  required
+                />
+                <br></br>
+              </div>
 
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="hourlyRate4"
-              placeholder="Enter hourly rate for 16-20 hours."
-              required
-            />
-            <br></br>
-          </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="hourlyRate4"
+                  placeholder="Enter hourly rate for 16-20 hours."
+                  required
+                />
+                <br></br>
+              </div>
 
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="day1"
-              placeholder="Enter rate for a day."
-              required
-            />
-            <br></br>
-          </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="day1"
+                  placeholder="Enter rate for a day."
+                  required
+                />
+                <br></br>
+              </div>
 
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="day2"
-              placeholder="Enter rate for 2 days."
-              required
-            />
-            <br></br>
-          </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="day2"
+                  placeholder="Enter rate for 2 days."
+                  required
+                />
+                <br></br>
+              </div>
 
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="day3"
-              placeholder="Enter rate for 3 days."
-              required
-            />
-            <br></br>
-          </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="day3"
+                  placeholder="Enter rate for 3 days."
+                  required
+                />
+                <br></br>
+              </div>
 
-          <div className="form-group">
-            <input
-              onChange={this.changeHandler}
-              type="text"
-              className="form-control"
-              name="lateFee"
-              placeholder="Enter late fee charge for this vehicle."
-              required
-            />
-            <br></br>
-          </div>
-          {this.state.isProgressing && <button class="btn btn-primary" type="button" disabled>
-          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          <span class="sr-only">Loading...</span>
-        </button>}
-        {!this.state.isProgressing && 
-          <button type="submit" className="btn btn-primary">
-            Save
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="lateFee"
+                  placeholder="Enter late fee charge for this vehicle."
+                  required
+                />
+                <br></br>
+              </div>
+              {this.state.isProgressing && <button class="btn btn-primary" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span class="sr-only">Loading...</span>
+              </button>}
+              {!this.state.isProgressing &&
+                <button type="submit" className="btn btn-primary">
+                  Save
           </button>
-        }
-          <button
-            type="button"
-            className="btn btn-danger"
-            onClick={this.changeToggle}
-          >
-            Cancel
+              }
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={this.changeToggle}
+              >
+                Cancel
           </button>
-          <br></br>
-          <br></br>
-        </form>
-        </div>
+              <br></br>
+              <br></br>
+            </form>
+          </div>
         </div>
       );
     }
+
+    const pageNumbers = [];
+
+    for (let i = 0; i <= Math.ceil(this.state.getVehicleTypeDetails.length / itemsPerPage) + 1; i++) {
+      pageNumbers.push(i);
+    }
+
+    let renderPageNumbers = null;
+
+    renderPageNumbers = (
+      <nav aria-label="Page navigation example" class="pagebar">
+        <ul class="pagination">
+          {pageNumbers.map((i) => <li class="page-item" style={{ color: "white" }}><a key={i} id={i} onClick={() => { this.handleClick(i) }} style={{ color: "white" }} class="page-link" href="#">{i}</a></li>)}
+        </ul>
+      </nav>
+    );
+
     return (
       <div>
+        {redirectVar}
         <Navigationbar navItems={items} />
         <MDBContainer>
           <MDBCol></MDBCol>
           <MDBCol style={{ textAlign: "center" }} md="6">{typeDetails}</MDBCol>
           <MDBCol></MDBCol>
+          <MDBRow >
+            <MDBCol></MDBCol>
+            <MDBCol style={{ textAlign: "left" }}>
+              {renderPageNumbers}
+            </MDBCol>
+            <MDBCol></MDBCol>
+          </MDBRow>
         </MDBContainer>
       </div>
     );

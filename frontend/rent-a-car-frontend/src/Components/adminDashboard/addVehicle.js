@@ -39,7 +39,9 @@ class Vehicle extends Component {
       condition: "",
       timeLastServiced: "",
       rentalLocation: "",
-      vehicles: []
+      vehicles: [],
+      currentPage: 1,
+      itemsPerPage: 3
     };
     //Bind the handlers to this class
     this.changeHandler = this.changeHandler.bind(this);
@@ -55,22 +57,22 @@ class Vehicle extends Component {
         {
           vehicles: this.props.vehicle
         },
-        () => {}
+        () => { }
       );
     }
   }
 
   componentDidMount = async () => {
     await this.props.getVehicle(res => {
-      console.log("Get vehicles",res);
+      console.log("Get vehicles", res);
     });
 
     await this.props.getLocation(res => {
-      console.log("get Location",res);
+      console.log("get Location", res);
     });
 
     await this.props.getVehicleType(res => {
-      console.log("get Vehicle Types",res);
+      console.log("get Vehicle Types", res);
     });
   };
 
@@ -83,11 +85,11 @@ class Vehicle extends Component {
 
   changeHandlerForButton = e => {
     e.preventDefault()
-    if (this.state.rentalLocation){
+    if (this.state.rentalLocation) {
       console.log(this.state.rentalLocation)
       document.getElementById(e.target.value).className = 'btn btn-success'
       document.getElementById(this.state.rentalLocation).className = 'btn btn-info'
-    }else {
+    } else {
       document.getElementById(e.target.value).className = 'btn btn-success'
     }
     this.setState({
@@ -97,10 +99,10 @@ class Vehicle extends Component {
 
   changeHandlerForVehicleType = e => {
     e.preventDefault()
-    if (this.state.type){
+    if (this.state.type) {
       document.getElementById(this.state.type).className = 'btn btn-primary'
       document.getElementById(e.target.value).className = 'btn btn-primary'
-    }else {
+    } else {
       document.getElementById(e.target.value).className = 'btn btn-secondary'
     }
     this.setState({
@@ -153,7 +155,31 @@ class Vehicle extends Component {
     }
   };
 
+  handleClick(e) {
+    console.log(e)
+    this.setState({
+      currentPage: Number(e)
+    });
+  }
+
   render() {
+    let redirectVar = null;
+    if (!localStorage.getItem("token") || localStorage.getItem("admin") === "false") {
+      localStorage.removeItem("token")
+      localStorage.removeItem("admin")
+      localStorage.removeItem("manager")
+      localStorage.removeItem("id")
+      redirectVar = <Redirect to="/" />
+    }
+
+    const currentPage = this.state.currentPage;
+    const itemsPerPage = this.state.itemsPerPage
+
+    const indexOfLastTodo = currentPage * itemsPerPage;
+    const indexOfFirstTodo = indexOfLastTodo - itemsPerPage;
+    console.log("IOL", indexOfLastTodo)
+    console.log("IOF", indexOfFirstTodo)
+
     let tempItems = [
       {
         name: "Rental Locations",
@@ -188,7 +214,7 @@ class Vehicle extends Component {
                 onClick={this.changeHandlerForButton}
                 name="rentalLocation"
                 value={x._id}
-                id = {x._id}
+                id={x._id}
               >
                 {x.name}
               </button>
@@ -207,7 +233,7 @@ class Vehicle extends Component {
               onClick={this.changeHandlerForVehicleType}
               name="type"
               value={x._id}
-              id = {x._id}
+              id={x._id}
             >
               {x.category}
             </button>
@@ -219,13 +245,13 @@ class Vehicle extends Component {
     if (this.state.toggle === false) {
       if (this.state.vehicles.length === 0) {
         vehicleDetails = (
-          <div className = 'card' style = {{margin : "16px auto", width : "40%"}}>
-          <br></br>
+          <div className='card' style={{ margin: "16px auto", width: "40%" }}>
+            <br></br>
             <h3>No Vehicle to display</h3>
             <br></br>
             <button
               onClick={this.changeToggle}
-              style = {{margin : "16px auto", width : "60%"}}
+              style={{ margin: "16px auto", width: "60%" }}
               className="btn btn-primary"
             >
               Add Vehicle
@@ -234,6 +260,8 @@ class Vehicle extends Component {
           </div>
         );
       } else {
+        const currentItems = this.state.vehicles.slice(indexOfFirstTodo, indexOfLastTodo);
+
         vehicleDetails = (
           <div style={{ margin: 16 }}>
             <button
@@ -243,7 +271,7 @@ class Vehicle extends Component {
             >
               Add Vehicle
             </button>
-            {this.state.vehicles.map(x => (
+            {currentItems.map(x => (
               <div style={{ margin: 16 }}>
                 <EditVehicle key={x._id} item={x}></EditVehicle>
               </div>
@@ -256,11 +284,11 @@ class Vehicle extends Component {
       }
     } else {
       vehicleDetails = (
-        <div className="card" style={{ padding: 16, margin: "16px auto", width : "50%" }}>
-        <div style={{ width: "60%", margin: "16px auto" }}>
+        <div className="card" style={{ padding: 16, margin: "16px auto", width: "50%" }}>
+          <div style={{ width: "60%", margin: "16px auto" }}>
             <form onSubmit={this.addVehicle}>
-            <br></br>
-            <div><h4>Enter Vehicle Details </h4></div>
+              <br></br>
+              <div><h4>Enter Vehicle Details </h4></div>
               <div className="form-group">
                 <input
                   onChange={this.changeHandler}
@@ -310,12 +338,12 @@ class Vehicle extends Component {
               </div>
 
               <div class="form-group">
-              <select class="form-control"  id = 'condition-select' name = 'condition' onChange = {this.changeHandler}>
-              <option onClick={this.changeHandler} name ='condition' value = 'Good' selected >Good</option>
-              <option onClick={this.changeHandler} name ='condition'value = 'Needs Cleaning'>Needs Cleaning</option>
-              <option onClick={this.changeHandler} name ='condition' value = 'Needs Maintainence'>Needs Maintainence</option>
-              </select>
-            </div>
+                <select class="form-control" id='condition-select' name='condition' onChange={this.changeHandler}>
+                  <option onClick={this.changeHandler} name='condition' value='Good' selected >Good</option>
+                  <option onClick={this.changeHandler} name='condition' value='Needs Cleaning'>Needs Cleaning</option>
+                  <option onClick={this.changeHandler} name='condition' value='Needs Maintainence'>Needs Maintainence</option>
+                </select>
+              </div>
 
               <div className="form-group">
                 Enter when was car vehicle last serviced
@@ -346,11 +374,11 @@ class Vehicle extends Component {
               </button>
 
               <button
-              type="button"
-              className="btn btn-danger"
-              onClick={this.changeToggle}
-            >
-              Cancel
+                type="button"
+                className="btn btn-danger"
+                onClick={this.changeToggle}
+              >
+                Cancel
             </button>
 
               <br></br>
@@ -360,13 +388,39 @@ class Vehicle extends Component {
         </div>
       );
     }
+
+    const pageNumbers = [];
+
+    for (let i = 0; i <= Math.ceil(this.state.vehicles.length / itemsPerPage) + 1; i++) {
+      pageNumbers.push(i);
+    }
+
+    let renderPageNumbers = null;
+
+    renderPageNumbers = (
+      <nav aria-label="Page navigation example" class="pagebar">
+        <ul class="pagination">
+          {pageNumbers.map((i) => <li class="page-item" style={{ color: "white" }}><a key={i} id={i} onClick={() => { this.handleClick(i) }} style={{ color: "white" }} class="page-link" href="#">{i}</a></li>)}
+        </ul>
+      </nav>
+    );
+
     return (
       <div>
+        {redirectVar}
         <Navigationbar navItems={items} />
         <MDBContainer>
           <MDBCol md="4"></MDBCol>
-          <MDBCol style={{ textAlign: "center" }} md = "6">{vehicleDetails}</MDBCol>
-          <MDBCol md= "4"></MDBCol>
+          <MDBCol style={{ textAlign: "center" }} md="6">{vehicleDetails}</MDBCol>
+          <MDBCol md="4"></MDBCol>
+          <MDBRow >
+            <MDBCol md="4"></MDBCol>
+            <MDBCol md="2" style={{ textAlign: "left" }}>
+              {renderPageNumbers}
+            </MDBCol>
+            <MDBCol md="6"></MDBCol>
+
+          </MDBRow>
         </MDBContainer>
       </div>
     );

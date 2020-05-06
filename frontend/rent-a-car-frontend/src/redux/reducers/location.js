@@ -1,10 +1,7 @@
 import { ADD_LOCATION, GET_LOCATION, EDIT_LOCATION, DELETE_LOCATION, VEHICLE_NAMES } from "../types/locationType";
 
 const initialState = {
-  data: {
-    total : 0,
-    locations : []
-  },
+  locations: [],
   vehicleNames: []
 };
 
@@ -14,28 +11,33 @@ const adminLocationReducer = (state = initialState, action) => {
       console.log("AP", action.payload)
       return {
         ...state,
-        data: action.payload
+        locations: action.payload.locations
       };
 
     case GET_LOCATION:
       console.log("AP", action.payload)
       return {
         ...state,
-        data: action.payload
+        locations: action.payload.locations
       };
 
     case EDIT_LOCATION:
       console.log("AP", action.payload)
       return {
         ...state,
-        data: action.payload
+        locations: action.payload
       };
 
     case DELETE_LOCATION:
-      console.log("AP", action.payload)
-      return {
-        ...state,
-        data: action.payload
+      if (action.payload.message) {
+        alert(action.payload.message)
+      }
+      else {
+        console.log("AP", action.payload)
+        return {
+          ...state,
+          locations: action.payload
+        }
       };
 
     case VEHICLE_NAMES:

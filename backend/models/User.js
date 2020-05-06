@@ -14,7 +14,8 @@ const userSchema = new Schema({
     accountExpiry : {type : Date, default : () => new Date(+new Date() + 180*24*60*60*1000) }, //Add 6 Months
     residenceAddress:{ type: String},
     phoneNumber:{type: Number},
-    isValidated : {type : Boolean}
+    isValidated : {type : Boolean},
+    membershipFee : {type : Number}
 });
 
 module.exports = mongoose.model('User',userSchema);

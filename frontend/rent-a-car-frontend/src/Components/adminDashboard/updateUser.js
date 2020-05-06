@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import axios from 'axios';
-import { deleteUser, getUser } from '../../redux';
+import { deleteUser, getUser,updateFee } from '../../redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import Navigationbar from "../Common/Navigation-Related/Navigation";
@@ -15,10 +15,11 @@ class User extends Component {
         super(props);
         //maintain the state required for this component
         this.state = {
-            user: []
+            user: [],
         }
         //Bind the handlers to this class
         this.delete = this.delete.bind(this)
+        this.membershipFee = this.membershipFee.bind(this)
     }
 
     componentDidMount = () => {
@@ -38,6 +39,19 @@ class User extends Component {
         })
     }
 
+    membershipFee = async (e, id) => {
+
+        e.preventDefault();
+        let data = {
+            _id: id,
+            Fee : e.target.value 
+        }
+        await this.props.updateFee(data, res => {
+            console.log(res)
+        })
+        this.componentDidMount()
+
+    }
 
     delete = async (e, id, isValid) => {
         e.preventDefault();
@@ -96,6 +110,18 @@ class User extends Component {
                                 <div className="col-md-4 card">
                                     <div className="card-body">
                                         <h4 className="card-title">{x.name}</h4>
+                                        <br/>
+                                        <h5 className="card-subtitle mb-2 text-muted"> Membership Fee for 6 Months: {x.membershipFee}</h5>
+                                        <div className="form-group">
+                                            <input
+                                            className = "form-control"
+                                            type = "Number"
+                                            style = {{width : "100%"}}
+                                            onChange = {(e) => {this.membershipFee(e,x._id)}}
+                                            placeholder = "Enter Membership Fee for 6 Months in Dollars "
+                                            />
+                                        </div>
+                                        <br/>
                                         <button style={{ width: "50%", height: "50" }} className="btn btn-danger" type="button" onClick={(e) => { this.delete(e, x._id, false) }}>Invalidate</button>
                                         <br></br>
                                     </div>
@@ -144,4 +170,4 @@ class User extends Component {
 
 //export Login Component
 
-export default connect(null, { deleteUser, getUser })(User);
+export default connect(null, { deleteUser, getUser,updateFee })(User);

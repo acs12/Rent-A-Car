@@ -9,7 +9,11 @@ export function addVehicle(values, callback) {
     axios.defaults.withCredentials = true;
 
     const request = axios
-        .post(`${URL}/vehicles`, values);
+        .post(`${URL}/vehicles`, values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -32,7 +36,11 @@ export function getVehicle(callback) {
     axios.defaults.withCredentials = true;
 
     const request = axios
-        .get(`${URL}/vehicles`);
+        .get(`${URL}/vehicles`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -56,7 +64,11 @@ export function updateVehicle(values, callback) {
 
     axios.defaults.withCredentials = true;
     const request = axios
-        .post(`${URL}/vehicles/update`, values);
+        .post(`${URL}/vehicles/update`, values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -80,7 +92,11 @@ export function deleteVehicle(values, callback) {
 
     axios.defaults.withCredentials = true;
     const request = axios
-        .post(`${URL}/vehicles/delete`,values);
+        .post(`${URL}/vehicles/delete`,values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {

@@ -84,7 +84,7 @@ class ApproveUser extends Component {
                                 <div className="col-md-4 card">
                                     <div className="card-body">
                                         <h4 className="card-title">{x.name}</h4>
-                                        <img style={{ width: "15%", height: "5%" }} className="img-circle" alt="Oops" src={x.dlImage}/><br/>
+                                        <img style={{width : "70%" , height : "70%"}}  alt="Oops" src={x.dlImage}/><br/>
                                         <button style={{ width: "50%", height: "50" }} className="btn btn-danger" type="button" onClick={(e) => { this.delete(e, x._id, false) }}>Invalidate</button>
                                         <br></br>
                                     </div>
@@ -104,7 +104,8 @@ class ApproveUser extends Component {
                             <div className="col-md-4 card">
                                 <div className="card-body">
                                     <h4 className="card-title">{x.name}</h4>
-                                    <img style={{ width: "15%", height: "5%" }} className="img-circle" alt="Oops" src={x.dlImage}/><br/>
+                                    <br/>
+                                    <img style={{width : "70%" , height : "70%"}} alt="Oops" src={x.dlImage}/><br/><br/>
                                     <button style={{ width: "50%", height: "50" }} className="btn btn-success" type="button" onClick={(e) => { this.delete(e, x._id, true) }}>Validate</button>
                                     <br></br>
                                 </div>

@@ -9,7 +9,11 @@ export function addLocation(values, callback) {
     axios.defaults.withCredentials = true;
 
     const request = axios
-        .post(`${URL}/rentalLocations`, values);
+        .post(`${URL}/rentalLocations`, values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -32,7 +36,11 @@ export function getLocation(callback) {
     axios.defaults.withCredentials = true;
 
     const request = axios
-        .get(`${URL}/rentalLocations`);
+        .get(`${URL}/rentalLocations`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -57,7 +65,11 @@ export function updateLocation(values, callback) {
 
     axios.defaults.withCredentials = true;
     const request = axios
-        .post(`${URL}/rentalLocations/update`, values);
+        .post(`${URL}/rentalLocations/update`, values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -81,7 +93,11 @@ export function deleteLocation(values, callback) {
 
     axios.defaults.withCredentials = true;
     const request = axios
-        .post(`${URL}/rentalLocations/delete`,values);
+        .post(`${URL}/rentalLocations/delete`,values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -105,7 +121,11 @@ export function vehicleNames(values, callback) {
     axios.defaults.withCredentials = true;
 
     const request = axios
-        .post(`${URL}/vehicles/allVehicles/IDs`, values);
+        .post(`${URL}/vehicles/allVehicles/IDs`, values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {

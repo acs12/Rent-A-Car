@@ -33,14 +33,14 @@ class EditVehicle extends Component {
     // this.getVehicleNames = this.getVehicleNames.bind(this)
   }
 
-  componentDidMount = () => {
+  // componentDidMount = () => {
     // this.props.locationNames(res => {
     //     console.log(res.data)
     // }
     // this.props.vehicleTypeNames(res => {
     //     console.log(res.data)
     // }
-  };
+  // };
 
   changeHandler = e => {
     e.preventDefault();
@@ -183,6 +183,44 @@ class EditVehicle extends Component {
           </div>
         );
       }
+      else{
+        console.log("Inside if in change existing location details");
+        existVehicleDetails = (
+          <div>
+            <div className="card">
+              <div className="card-body" style={{ textAlign: "left" }}>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  style={{ float: "right" }}
+                  onClick={this.delete}
+                >
+                  Delete
+                </button>
+                <br></br>
+                <h4 className="card-title">
+                  {" "}
+                  Name : {this.props.item.carname}
+                </h4>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  Location : null
+                </h5>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  Type : {this.props.item.type.category}
+                </h5>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={this.changeExistingTypeToggle}
+                >
+                  Edit
+                </button>
+                <br></br>
+              </div>
+            </div>
+          </div>
+        );
+      }
     } else {
       console.log("Inside else in location details");
       existVehicleDetails = (
@@ -307,7 +345,7 @@ class EditVehicle extends Component {
 
 const mapStateToProps = state => {
   return {
-    location: state.adminLocation.data.locations,
+    location: state.adminLocation.locations,
     vehicleTypes: state.vehicleTypes.data
   };
 };

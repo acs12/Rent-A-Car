@@ -62,15 +62,15 @@ class Vehicle extends Component {
 
   componentDidMount = async () => {
     await this.props.getVehicle(res => {
-      console.log(res);
+      console.log("Get vehicles",res);
     });
 
     await this.props.getLocation(res => {
-      console.log(res);
+      console.log("get Location",res);
     });
 
     await this.props.getVehicleType(res => {
-      console.log(res);
+      console.log("get Vehicle Types",res);
     });
   };
 
@@ -98,10 +98,10 @@ class Vehicle extends Component {
   changeHandlerForVehicleType = e => {
     e.preventDefault()
     if (this.state.type){
-      document.getElementById(this.state.type).className = 'btn btn-info'
-      document.getElementById(e.target.value).className = 'btn btn-success'
+      document.getElementById(this.state.type).className = 'btn btn-primary'
+      document.getElementById(e.target.value).className = 'btn btn-primary'
     }else {
-      document.getElementById(e.target.value).className = 'btn btn-success'
+      document.getElementById(e.target.value).className = 'btn btn-secondary'
     }
     this.setState({
       [e.target.name]: e.target.value
@@ -311,9 +311,9 @@ class Vehicle extends Component {
 
               <div class="form-group">
               <select class="form-control"  id = 'condition-select' name = 'condition' onChange = {this.changeHandler}>
-              <option value = 'Good' selected >Good</option>
-              <option value = 'Needs Cleaning'>Needs Cleaning</option>
-              <option value = 'Needs Maintainence'>Needs Maintainence</option>
+              <option onClick={this.changeHandler} name ='condition' value = 'Good' selected >Good</option>
+              <option onClick={this.changeHandler} name ='condition'value = 'Needs Cleaning'>Needs Cleaning</option>
+              <option onClick={this.changeHandler} name ='condition' value = 'Needs Maintainence'>Needs Maintainence</option>
               </select>
             </div>
 
@@ -364,9 +364,9 @@ class Vehicle extends Component {
       <div>
         <Navigationbar navItems={items} />
         <MDBContainer>
-          <MDBCol></MDBCol>
-          <MDBCol style={{ textAlign: "center" }}>{vehicleDetails}</MDBCol>
-          <MDBCol></MDBCol>
+          <MDBCol md="4"></MDBCol>
+          <MDBCol style={{ textAlign: "center" }} md = "6">{vehicleDetails}</MDBCol>
+          <MDBCol md= "4"></MDBCol>
         </MDBContainer>
       </div>
     );
@@ -375,8 +375,8 @@ class Vehicle extends Component {
 
 const mapStateToProps = state => {
   return {
-    vehicle: state.adminVehicle.data.vehicles,
-    location: state.adminLocation.data.locations,
+    vehicle: state.adminVehicle.vehicles,
+    location: state.adminLocation.locations,
     vehicleTypes: state.vehicleTypes.data
   };
 };

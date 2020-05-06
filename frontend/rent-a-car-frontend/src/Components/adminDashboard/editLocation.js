@@ -31,27 +31,6 @@ class EditLocation extends Component {
     // this.getVehicleNames = this.getVehicleNames.bind(this)
   }
 
-  componentDidMount = async () => {
-    // let data = {
-    //     locationId: this.props.item._id
-    // }
-    // await this.props.vehicleNames(data, async res => {
-    //     console.log("re vehicle names",res)
-    //     let arr = ""
-    //     res.data.forEach(element => {
-    //         if(element.carname !== undefined){
-    //             arr = arr.concat(element.carname + ",")
-    //         }
-    //     });
-    //     console.log("Arr",arr)
-    //     console.log("length",Object.keys(res.data).length)
-    //     await this.setState({
-    //         vehicleArray: arr,
-    //         numOfVehicles : Object.keys(res.data).length
-    //     })
-    // })
-  };
-
   changeHandler = e => {
     this.setState({
       [e.target.name]: e.target.value

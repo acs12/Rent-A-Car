@@ -3,14 +3,9 @@ import "../../App.css";
 import axios from "axios";
 import {
   MDBContainer,
-  MDBRow,
   MDBCol,
-  MDBDropdown,
-  MDBDropdownToggle,
-  MDBDropdownMenu,
-  MDBDropdownItem
 } from "mdbreact";
-import { addLocation, deleteLocation, getLocation } from "../../redux";
+import { addLocation, getLocation } from "../../redux";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 import EditLocation from "./editLocation";
@@ -123,8 +118,8 @@ class AdminLocation extends Component {
     let locationDetails = null;
     if (this.state.toggle === false) {
       if (
-        this.props.location.locations === undefined &&
-        this.props.location.locations.length === 0
+        this.state.location === undefined &&
+        this.state.location.length === 0
       ) {
         locationDetails = (
           <div className = 'card' style = {{margin : "16px auto"}}>
@@ -153,7 +148,7 @@ class AdminLocation extends Component {
               Add Location
             </button>
 
-            {this.props.location.locations.map(x => (
+            {this.state.location.map(x => (
               <div style={{ margin: 16 }}>
                 <EditLocation
                   key={x._id}
@@ -252,7 +247,7 @@ class AdminLocation extends Component {
 
 const mapStateToProps = state => {
   return {
-    location: state.adminLocation.data
+    location: state.adminLocation.locations
   };
 };
 

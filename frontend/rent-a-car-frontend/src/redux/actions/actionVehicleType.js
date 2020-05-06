@@ -9,7 +9,11 @@ export function addVehicleType(values, callback) {
     axios.defaults.withCredentials = true;
 
     const request = axios
-        .post(`${URL}/vehicleType`, values);
+        .post(`${URL}/vehicleType`, values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -32,7 +36,11 @@ export function getVehicleType(callback) {
     axios.defaults.withCredentials = true;
 
     const request = axios
-        .get(`${URL}/vehicleType`);
+        .get(`${URL}/vehicleType`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -57,7 +65,11 @@ export function updateVehicleType(values, callback) {
 
     axios.defaults.withCredentials = true;
     const request = axios
-        .post(`${URL}/vehicleType/update`, values);
+        .post(`${URL}/vehicleType/update`, values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -81,7 +93,11 @@ export function deleteType(values, callback) {
 
     axios.defaults.withCredentials = true;
     const request = axios
-        .post(`${URL}/vehicleType/delete`,values);
+        .post(`${URL}/vehicleType/delete`,values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {

@@ -10,8 +10,12 @@ const reservationSchema = new Schema({
      pickupLocation:{type:Schema.Types.ObjectId, ref:'RentalLocation', required: true},
      returnLocation:{type: Schema.Types.ObjectId, ref:'RentalLocation', required: true},
      pickupTime:{ type: Date, required: true}, 
-     returnTime:{ type: Date, required: true},
-     lengthOfRental:{ type: Number, required: true}
+     returnTime:{ type: Date},
+     status : {type : String},
+     totalPrice : {type : Number, default : 0},
+     expectedReturnTime:{ type: Date, required: true},
+     returned:{ type: Boolean, required:true, default : false}
+     
      
 });
 

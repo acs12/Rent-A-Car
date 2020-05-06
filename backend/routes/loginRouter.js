@@ -1,25 +1,21 @@
-const express = require('express');
-
+const express = require("express");
+const bcrypt = require("bcrypt");
+const User = require("../models/User");
 const loginRouter = express.Router();
 
-
-loginRouter.post('/', async (req,res)=>{
-    
-        let user = await User.findOne({ username: req.body.username });
-        if (!user) {
-          return res
-            .status(401)
-            .json({ errors: [{ msg: 'Username not found' }] });
-        }
-
-    if (req.body.password === user.password){
-        res.status(200).json(user);
+loginRouter.post("/", async (req, res) => {
+  let user = await User.findOne({ emailAddress: req.body.emailAddress });
+  if (!user) {
+    res.status(401).json({ message: "User not found" });
+  } else if (bcrypt.compareSync(req.body.password, user.password)) {
+    if (user.isValidated || user.manager || user.admin){
+      res.status(200).json(user);
+    }else {
+      res.status(200).json({message : 'Please wait your account is being validated!'});
     }
-
-    else{
-        return res
-          .status(403)
-          .json({ errors: [{ msg: 'Invalid Credentials' }] });
-      }
-    });
+    
+  } else {
+    res.status(403).json({ message: "Invalid Credentials" });
+  }
+});
 module.exports = loginRouter;

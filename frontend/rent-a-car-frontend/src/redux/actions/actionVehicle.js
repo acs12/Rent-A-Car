@@ -1,6 +1,6 @@
 import { ADD_VEHICLE, DELETE_VEHICLE, EDIT_VEHICLE, GET_VEHICLE } from '../types/vehicle';
 import axios from 'axios';
-import URL from '../../constants';
+import {URL, headers} from '../../constants';
 
 
 

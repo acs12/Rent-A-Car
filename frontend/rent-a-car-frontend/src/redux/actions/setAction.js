@@ -2,7 +2,7 @@ import { SELECTCURRENTVEHICLE, SELECTLOCATION } from "../types/typeSelect";
 import {UPDATEUSER} from '../types/typeSignin'
 
 import axios from 'axios';
-import URL from '../../constants';
+import {URL, headers} from '../../constants';
 
 export function setCurrentVehicle(vehicle, callback) {
     return dispatch => {

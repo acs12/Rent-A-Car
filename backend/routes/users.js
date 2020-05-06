@@ -5,6 +5,10 @@ const User = require("../models/User");
 const multer = require("multer");
 var path = require("path");
 const bcrypt = require("bcrypt");
+const secret = "ThisisCMPE202PROJECTAABM";
+const jwt = require('jsonwebtoken');
+const {auth, checkAuth } = require('../config/passport');
+auth()
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -25,20 +29,29 @@ const upload = multer({
 app.use("../uploads", express.static(path.join(__dirname, "/uploads")));
 
 //get all user
-router.get("/", async (req, res) => {
-  //TODO: Add exclude for current user
-
+router.get("/", checkAuth, async (req, res) => {
+  
   try {
-    const users = await User.find(
-      { _id: { $ne: "5eb126f427ea1c3582e18ca6" } },
+    const users = await User.find().and([{ _id: { $ne: req.user._id } },
       { admin: false },
-      { manager: false }
-    );
+      { manager: false }]);
     res.json(users);
   } catch (err) {
     res.json({ message: err });
   }
 });
+
+const signWithJWT = (user, callback) => {
+  jwt.sign(user, secret, { expiresIn: 36000 }, (error, token) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      const obj = { ...user };
+      obj.token = token;
+      callback(null, obj);
+    }
+  });
+};
 
 //create a user
 router.post("/", upload.single("drivingLicense"), async (req, res) => {
@@ -63,7 +76,12 @@ router.post("/", upload.single("drivingLicense"), async (req, res) => {
           });
           try {
             const savedUser = await user.save();
-            res.json(savedUser);
+            signWithJWT(Object.assign({}, savedUser._doc), (error, result) => {
+              if (error) {
+                return res.json({ message: error });
+              }
+              return res.json(result);
+            })
           } catch (err) {
             res.json({ message: err });
           }
@@ -76,7 +94,12 @@ router.post("/", upload.single("drivingLicense"), async (req, res) => {
           });
           try {
             const savedUser = await user.save();
-            res.json(savedUser);
+            signWithJWT(Object.assign({}, savedUser._doc), (error, result) => {
+              if (error) {
+                return res.json({ message: error });
+              }
+              return res.json(result);
+            })
           } catch (err) {
             res.json({ message: err });
           }

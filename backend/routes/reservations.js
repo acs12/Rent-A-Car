@@ -190,7 +190,7 @@ router.patch("/:reservationId", async (req, res) => {
       Date.now() -
       Date.parse(reservation.pickupTime);
     const initialHours = parseFloat(initialSeconds / (60 * 60 * 1000));
-      console.log(initialHours)
+      
     if (initialHours <= 1) {
       totalPrice = initialHours * vehicleType.hour1;
     } else if (initialHours <= 6) {
@@ -219,12 +219,12 @@ router.patch("/:reservationId", async (req, res) => {
       await vehicleRating.save();
       await Vehicle.findByIdAndUpdate(
         reservation.vehicle._id,
-        { $push: { ratings: vehicleRating } },
-        { $set: { availability: true } }
+        { $push: { ratings: vehicleRating} },
+        { $set: { availability: true, rentalLocation : vehicle.rentalLocation  } }
       );
     } else {
       await Vehicle.findByIdAndUpdate(reservation.vehicle._id, {
-        $set: { availability: true }
+        $set: { availability: true, rentalLocation : vehicle.rentalLocation }
       });
     }
 

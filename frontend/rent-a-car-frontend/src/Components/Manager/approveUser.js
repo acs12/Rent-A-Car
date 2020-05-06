@@ -21,13 +21,15 @@ class ApproveUser extends Component {
     }
 
     componentDidMount = () => {
-        console.log("inside component did mount user")
-        this.props.getUser(res => {
-            console.log(res.data)
-            this.setState({
-                user: res.data
+        if (localStorage.getItem('token') !== undefined){
+            this.props.getUser(res => {
+                if (res.data !== undefined) {                
+                this.setState({
+                    user: res.data
+                })
+                }
             })
-        })
+        }
     }
 
     changeHandler = (e) => {

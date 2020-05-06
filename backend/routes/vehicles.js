@@ -104,7 +104,8 @@ router.get("/:vehicleId",checkAuth,async (req, res) => {
 router.post("/delete", checkAuth,async (req, res) => {
   
   try {
-    if (req.body.availability == true)
+    const vehicle = await Vehicle.findById(req.body.vehicleId)
+    if (vehicle.availability)
     {
       Vehicle.remove({ _id: req.body._id })
         .exec()

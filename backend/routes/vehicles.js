@@ -100,19 +100,32 @@ router.get("/:vehicleId", async (req, res) => {
 
 //delete a user
 router.post("/delete", async (req, res) => {
+  
   try {
-    Vehicle.remove({ _id: req.body._id })
-      .exec()
-      .then(result => {
-        Vehicle.find()
-          .exec()
-          .then(result => {
-            res.send(result);
-          });
+    if (req.body.availability == true)
+    {
+      Vehicle.remove({ _id: req.body._id })
+        .exec()
+        .then(result => {
+          Vehicle.find()
+            .exec()
+            .then(result => {
+              res.send(result);
+            });
+        });
+    }
+    else {
+      res.json({
+        message:
+          "Vehicle in use, cannot delete it"
       });
-  } catch (err) {
+  }
+  }
+    catch (err) {
     res.json({ message: err });
   }
+
+
 });
 
 //update a user

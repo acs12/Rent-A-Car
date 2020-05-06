@@ -3,6 +3,8 @@ const router = express.Router();
 const RentalLocation = require("../models/RentalLocation");
 const Vehicles = require("../models/Vehicle");
 const Address = require("../models/Address")
+const Reservation = require("../models/Reservation")
+
 const paginated = 20;
 //get all user
 router.get("/", async (req, res) => {
@@ -75,17 +77,27 @@ router.get("/:rentalLocationId", async (req, res) => {
 //delete a user
 router.post("/delete", async (req, res) => {
   try {
-    await RentalLocation.remove({
-      _id: req.body._id
-    })
-      .exec()
-      .then(result => {
-        RentalLocation.find()
-          .exec()
-          .then(result => {
-            res.send(result);
-          });
-      });
+    r = Reservation.find({returnLocation: req.body._id})
+    if ((req.body._id in Reservation.distinct('returnLocation')) && r.returned == false ){
+      
+      res.json({message:"There are cars to be returned at this location, can't delete now"})
+    }
+
+    else{
+      await RentalLocation.remove({
+        _id: req.body._id
+      })
+        .exec()
+        .then(result => {
+          RentalLocation.find()
+            .exec()
+            .then(result => {
+              res.send(result);
+            });
+        });
+      }
+    
+    
   } catch (err) {
     res.json({ message: err });
   }

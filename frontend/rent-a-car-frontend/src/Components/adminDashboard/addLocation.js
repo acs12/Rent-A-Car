@@ -4,6 +4,7 @@ import axios from "axios";
 import {
   MDBContainer,
   MDBCol,
+  MDBRow
 } from "mdbreact";
 import { addLocation, getLocation } from "../../redux";
 import { connect } from "react-redux";
@@ -26,7 +27,9 @@ class AdminLocation extends Component {
       address: "",
       capacity: "",
       numOfVehicles: "",
-      vehicles: []
+      vehicles: [],
+      currentPage: 1,
+      itemsPerPage: 3
     };
     //Bind the handlers to this class
     this.changeHandler = this.changeHandler.bind(this);
@@ -60,8 +63,8 @@ class AdminLocation extends Component {
     let data = {
       name: this.state.name,
       address: this.state.address,
-      capacity: this.state.capacity, 
-      zipcode : this.state.zipcode
+      capacity: this.state.capacity,
+      zipcode: this.state.zipcode
     };
     await this.props.addLocation(data, res => {
       if (this.state.toggle === true) {
@@ -90,7 +93,31 @@ class AdminLocation extends Component {
     }
   };
 
+  handleClick(e) {
+    console.log(e)
+    this.setState({
+      currentPage: Number(e)
+    });
+  }
+
   render() {
+    let redirectVar = null;
+    if (!localStorage.getItem("token") || localStorage.getItem("admin") === "false") {
+      localStorage.removeItem("token")
+      localStorage.removeItem("admin")
+      localStorage.removeItem("manager")
+      localStorage.removeItem("id")
+      redirectVar = <Redirect to="/" />
+    }
+
+    const currentPage = this.state.currentPage;
+    const itemsPerPage = this.state.itemsPerPage
+
+    const indexOfLastTodo = currentPage * itemsPerPage;
+    const indexOfFirstTodo = indexOfLastTodo - itemsPerPage;
+    console.log("IOL", indexOfLastTodo)
+    console.log("IOF", indexOfFirstTodo)
+
     let tempItems = [
       {
         name: "Rental Locations",
@@ -122,7 +149,7 @@ class AdminLocation extends Component {
         this.state.location.length === 0
       ) {
         locationDetails = (
-          <div className = 'card' style = {{margin : "16px auto"}}>
+          <div className='card' style={{ margin: "16px auto" }}>
             <br></br>
             <div><h4>No Locations to display</h4></div>
             <br></br>
@@ -138,17 +165,18 @@ class AdminLocation extends Component {
           </div>
         );
       } else {
+        const currentItems = this.state.location.slice(indexOfFirstTodo, indexOfLastTodo);
         locationDetails = (
           <div>
             <button
               onClick={this.changeToggle}
-              style = {{margin : "16px auto", width : "20%"}}
+              style={{ margin: "16px auto", width: "20%" }}
               className="btn btn-primary"
             >
               Add Location
             </button>
 
-            {this.state.location.map(x => (
+            {currentItems.map(x => (
               <div style={{ margin: 16 }}>
                 <EditLocation
                   key={x._id}
@@ -162,83 +190,109 @@ class AdminLocation extends Component {
       }
     } else {
       locationDetails = (
-        <div className="card" style={{ padding: 16, margin: "16px auto", width : "50%" }}>
-        <div style={{ width: "60%", margin: "16px auto" }}>
-          <form onSubmit={this.addLocation}>
-          <div><h4>Enter Location Details</h4></div>
-            <div className="form-group">
-              <input
-                onChange={this.changeHandler}
-                type="text"
-                className="form-control"
-                name="name"
-                placeholder="Enter location name."
-                required
-              />
-              <br></br>
-            </div>
+        <div className="card" style={{ padding: 16, margin: "16px auto", width: "50%" }}>
+          <div style={{ width: "60%", margin: "16px auto" }}>
+            <form onSubmit={this.addLocation}>
+              <div><h4>Enter Location Details</h4></div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="name"
+                  placeholder="Enter location name."
+                  required
+                />
+                <br></br>
+              </div>
 
-            <div className="form-group">
-              <input
-                onChange={this.changeHandler}
-                type="text"
-                className="form-control"
-                name="address"
-                placeholder="Enter location address."
-                required
-              />
-              <br></br>
-            </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="address"
+                  placeholder="Enter location address."
+                  required
+                />
+                <br></br>
+              </div>
 
-            <div className="form-group">
-              <input
-                onChange={this.changeHandler}
-                type="text"
-                className="form-control"
-                name="zipcode"
-                placeholder="Enter Zip-Code"
-                pattern = "[0-9]{5}"
-                required
-              />
-              <br></br>
-            </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="zipcode"
+                  placeholder="Enter Zip-Code"
+                  pattern="[0-9]{5}"
+                  required
+                />
+                <br></br>
+              </div>
 
-            <div className="form-group">
-              <input
-                onChange={this.changeHandler}
-                type="number"
-                className="form-control"
-                name="capacity"
-                placeholder="Enter location capacity."
-                required
-              />
-              <br></br>
-            </div>
+              <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="number"
+                  className="form-control"
+                  name="capacity"
+                  placeholder="Enter location capacity."
+                  required
+                />
+                <br></br>
+              </div>
 
-            <button type="submit" className="btn btn-primary">
-              Save
+              <button type="submit" className="btn btn-primary">
+                Save
             </button>
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={this.changeToggle}
-            >
-              Cancel
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={this.changeToggle}
+              >
+                Cancel
             </button>
-            <br></br>
-            <br></br>
-          </form>
-        </div>
+              <br></br>
+              <br></br>
+            </form>
+          </div>
         </div>
       );
     }
+
+    const pageNumbers = [];
+
+    for (let i = 0; i <= Math.ceil(this.state.location.length / itemsPerPage) + 1; i++) {
+      pageNumbers.push(i);
+    }
+
+    let renderPageNumbers = null;
+
+    renderPageNumbers = (
+      <nav aria-label="Page navigation example" class="pagebar">
+        <ul class="pagination">
+          {pageNumbers.map((i) => <li class="page-item" style={{ color: "white" }}><a key={i} id={i} onClick={() => { this.handleClick(i) }} style={{ color: "white" }} class="page-link" href="#">{i}</a></li>)}
+        </ul>
+      </nav>
+    );
+
     return (
       <div>
+        {redirectVar}
         <Navigationbar navItems={items} />
         <MDBContainer>
           <MDBCol></MDBCol>
           <MDBCol style={{ textAlign: "center" }}>{locationDetails}</MDBCol>
           <MDBCol></MDBCol>
+          <MDBRow >
+            <MDBCol></MDBCol>
+            <MDBCol style={{ textAlign: "left" }}>
+              {renderPageNumbers}
+            </MDBCol>
+            <MDBCol></MDBCol>
+          </MDBRow>
+
         </MDBContainer>
       </div>
     );

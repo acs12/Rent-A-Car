@@ -22,8 +22,8 @@ class Popup extends React.Component {
               {this.props.children}
             </MDBModalBody>
             <MDBModalFooter>
-              <MDBBtn color="secondary" onClick={this.props.onClose}>Close</MDBBtn>
-              <MDBBtn color="primary" onClick={this.props.onSubmit}>Return Car</MDBBtn>
+              <MDBBtn color="secondary" onClick={this.props.onClose}>{this.props.closeTitle}</MDBBtn>
+              <MDBBtn color="primary" onClick={this.props.onSubmit}>{this.props.submitTitle}</MDBBtn>
             </MDBModalFooter>
           </MDBModal>
         </MDBContainer>

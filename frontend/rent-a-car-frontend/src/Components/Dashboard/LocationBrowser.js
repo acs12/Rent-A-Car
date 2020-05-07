@@ -4,15 +4,14 @@ import LocationCell from "./Cells/LocationCell";
 import { setLocationSearchText } from "../../redux/actions/searchAction";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
-import {Redirect} from 'react-router-dom'
-
+import { Redirect } from "react-router-dom";
 
 class LocationBrowser extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {};
     this.handleSearchText = this.handleSearchText.bind(this);
-    this.moveToLocationDetail = this.moveToLocationDetail.bind(this)
+    this.moveToLocationDetail = this.moveToLocationDetail.bind(this);
   }
 
   handleSearchText(e) {
@@ -20,37 +19,43 @@ class LocationBrowser extends React.Component {
     this.props.setLocationSearchText(e.target.value);
   }
 
-  moveToLocationDetail(e){
+  moveToLocationDetail(e) {
     this.setState({
-      redirectVar : <Redirect to = {`/locations/${e._id}`} />
-    })
+      redirectVar: <Redirect to={`/locations/${e._id}`} />
+    });
   }
 
   render() {
     return (
       <div>
-      {this.state.redirectVar}
-        <div className="list-container">
-        <h1 align={"center"} style={{ margin: "16px 0px" }}>
-        <b>{this.props.title}</b>
-      </h1>
-          <div className="md-form my-0 vehicleBox finderBox">
-            <input
-              class="form-inline d-flex justify-content-center md-form form-sm mt-0"
-              type="text"
-              placeholder="Search by location"
-              aria-label="Search"
-              style={{ margin: "16px auto", padding: 8, width: "50%" }}
-              onChange={this.handleSearchText}
-            />
+        {this.state.redirectVar}
+        <div>
+          <div style={{ marginTop: "32px", width: "50%" }}>
+            <div className="md-form my-0 vehicleBox finderBox">
+              <input
+                class="form-inline d-flex justify-content-center md-form form-sm mt-0"
+                type="text"
+                placeholder="Search by location"
+                aria-label="Search"
+                style={{ width: "50%" }}
+                onChange={this.handleSearchText}
+              />
+            </div>
           </div>
-          
-            <Grid container spacing={4}>
+          <div style={{ margin: "16px", padding: 8 }}>
+          <Grid container spacing={4}>
             {this.props.locations.map(l => {
-              return <div style={{ margin: "8px" }}><LocationCell location={l} moveToLocationDetail = {this.moveToLocationDetail} /></div>
+              return (
+                <div style={{ margin: "8px" }}>
+                  <LocationCell
+                    location={l}
+                    moveToLocationDetail={this.moveToLocationDetail}
+                  />
+                </div>
+              );
             })}
-            </Grid>
-          
+          </Grid>
+          </div>
         </div>
       </div>
     );

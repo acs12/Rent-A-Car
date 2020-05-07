@@ -5,8 +5,9 @@ import { connect } from "react-redux";
 import "../../styles/profile.styles.css";
 import { fetchUser } from "../../redux/actions/fetchAction";
 import { updateUser } from "../../redux/actions/setAction";
-import { Redirect } from 'react-router-dom'
-
+import { Redirect } from "react-router-dom";
+import CommentModal from "../Common/CommentModal";
+import {deleteUser} from '../../redux/actions/actionUser'
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -16,6 +17,13 @@ class UserProfile extends React.Component {
     this.changeHandler = this.changeHandler.bind(this);
     this.onSubmitClick = this.onSubmitClick.bind(this);
     this.onLogoutClick = this.onLogoutClick.bind(this);
+    this.onExtendClick = this.onExtendClick.bind(this);
+    this.onSubmitExtendClick = this.onSubmitExtendClick.bind(this);
+    this.onTerminateClick = this.onTerminateClick.bind(this);
+    this.shoudlTerminate = this.shoudlTerminate.bind(this);
+  }
+
+  componentDidMount() {
     this.props.fetchUser(localStorage.getItem("id"), result => {
       console.log(result);
     });
@@ -38,35 +46,145 @@ class UserProfile extends React.Component {
     });
   }
 
+  shoudlTerminate(e) {
+    e.preventDefault();
+    let data = {
+      _id: this.props.user._id,
+      isValidated: false
+  }
+    this.props.deleteUser(data, (error, result) => {
+        this.onTerminateClick(e)
+        this.onLogoutClick(e)
+    })
+  }
+
+  onTerminateClick(e) {
+    e.preventDefault();
+    this.setState(prevState => {
+      return {
+        showTerminateModal : !prevState.showTerminateModal
+      };
+    });
+  }
+
   onLogoutClick(e) {
     e.preventDefault();
-    localStorage.removeItem('id')
-    localStorage.removeItem('admin')
-    localStorage.removeItem('manager')
+    localStorage.removeItem("id");
+    localStorage.removeItem("admin");
+    localStorage.removeItem("manager");
+    localStorage.removeItem("token");
     this.setState(prevState => {
       return {
         ...prevState,
-        shouldLogout: <Redirect to= "/" />
+        shouldLogout: <Redirect to="/" />
       };
     });
   }
 
   onSubmitClick(e) {
     e.preventDefault();
-    let formData = { userId: localStorage.getItem("id") };
+    let requestData = { userId: localStorage.getItem("id") };
     if (e.target.name === "extend-card") {
-      formData = { ...formData, extendCard: true };
+      requestData = { ...requestData, extendCard: true };
     } else {
-      formData = { ...formData, ...this.state };
+      requestData = { ...requestData, ...this.state };
     }
     if (this.state.shouldEdit) {
-      this.props.updateUser(formData, result => {
+      this.props.updateUser(requestData, result => {
         this.onEditClick(e);
       });
     }
   }
 
+  onSubmitExtendClick(e) {
+    e.preventDefault();
+    let requestData = { userId: localStorage.getItem("id") };
+    requestData = { ...requestData, extendCard: true };
+    if (this.state.showModal) {
+      this.props.updateUser(requestData, result => {
+        this.onExtendClick(e);
+      });
+    }
+  }
+
+  onExtendClick(e) {
+    e.preventDefault();
+    this.setState(prevState => {
+      return {
+        showModal: !prevState.showModal
+      };
+    });
+  }
+
+  formatDate(dateString) {
+    let date = new Date(dateString);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let ampm = hours >= 12 ? "pm" : "am";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    let strTime = hours + ":" + minutes + " " + ampm;
+    return (
+      date.getMonth() +
+      1 +
+      "/" +
+      date.getDate() +
+      "/" +
+      date.getFullYear() +
+      "  "
+    );
+  }
+
   render() {
+    const commentModal = (
+      <CommentModal
+        show={true}
+        title="Do you want to extend your membership?"
+        closeTitle={"Close"}
+        submitTitle={`Pay $${this.props.user.membershipFee}?`}
+        onClose={this.onExtendClick}
+        onSubmit={this.onSubmitExtendClick}
+      >
+        <div>
+          <h5>
+            Your current membership is valid upto{" "}
+            <b>{this.formatDate(this.props.user.accountExpiry)}</b>
+          </h5>
+        </div>
+        <div>
+          <h6>
+            Do you want to extend for 6 months using your card{" "}
+            <b>{this.props.user.creditCardInfo}</b>?
+          </h6>
+        </div>
+      </CommentModal>
+    );
+
+
+    const terminateModal = (
+      <CommentModal
+        show={true}
+        title="Are you sure?"
+        closeTitle={"Close"}
+        submitTitle={`Terminate Membership`}
+        onClose={this.onTerminateClick}
+        onSubmit={this.shoudlTerminate}
+      >
+        <div>
+          <h5>
+            Your current membership is valid upto{" "}
+            <b>{this.formatDate(this.props.user.accountExpiry)}</b>
+          </h5>
+        </div>
+        <div>
+          <h6>
+            Do you want to terminate your membership ?
+          </h6>
+        </div>
+      </CommentModal>
+    );
+
     let tempItems = [
       {
         name: "Vehicles",
@@ -94,28 +212,27 @@ class UserProfile extends React.Component {
           Address : {this.props.user.residenceAddress}
         </div>
         <div className="userDetails">
-          EmailID : {this.props.user.emailAddress}
+          Email : {this.props.user.emailAddress}
         </div>
-        <button className="btn btn-success" onClick={this.onEditClick}>
-          Edit
-        </button>
-        <button className="btn btn-red" onClick={this.onLogoutClick}>
-          Logout
-        </button>
+        <div style = {{width : "50%"}}>
+          <button className="btn btn-success" onClick={this.onEditClick}>
+            Edit
+          </button>
+          <button className="btn btn-default" onClick={this.onLogoutClick}>
+            Logout
+          </button>
 
-        <div className = 'buttonContainer'>
+          <button
+            name="extend-card"
+            className="btn btn-primary"
+            onClick={this.onExtendClick}
+          >
+            Extend Membership?
+          </button>
 
-        <button
-          name="extend-card"
-          className="btn btn-warn"
-          onClick={this.onSubmitClick}
-        >
-          Extend Membership by 6 Months?
-        </button>
-
-        <button name="terminate-card" className="btn btn-warning">
-          Terminate Membership
-        </button>
+          <button name="terminate-card" className="btn btn-red" onClick = {this.onTerminateClick}>
+            Terminate Membership
+          </button>
         </div>
       </div>
     );
@@ -181,7 +298,14 @@ class UserProfile extends React.Component {
     return (
       <div>
         {this.state.shouldLogout}
-        <Navigationbar navItems={items} profileAction = {'/myProfile'}/>
+        {this.state.showModal && commentModal}
+        {this.state.showTerminateModal && terminateModal}
+        
+        <Navigationbar
+          navItems={items}
+          profileAction={"/myProfile"}
+          isUser={true}
+        />
         <div className="userContainer card">
           {this.state.shouldEdit ? editLayout : displayLayout}
         </div>
@@ -196,4 +320,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, { fetchUser, updateUser })(UserProfile);
+export default connect(mapStateToProps, { fetchUser, updateUser, deleteUser })(UserProfile);

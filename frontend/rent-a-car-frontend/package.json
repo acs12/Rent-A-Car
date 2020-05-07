@@ -14,6 +14,7 @@
     "axios": "^0.19.2",
     "mdbreact": "^4.25.3",
     "react": "^16.13.0",
+    "react-datetime": "^2.16.3",
     "react-datetime-picker": "^3.0.2",
     "react-dom": "^16.13.0",
     "react-paginate": "^6.3.2",
@@ -26,7 +27,7 @@
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
-    "start": "SET PORT=5000 && react-scripts start",
+    "start": "PORT=5000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

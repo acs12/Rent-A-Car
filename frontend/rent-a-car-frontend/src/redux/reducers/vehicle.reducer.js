@@ -5,7 +5,9 @@ const initialState = {
   data: [],
   total: 0,
   searchText: '',
-  selectedVehicle : {}, 
+  selectedVehicle : {
+    ratings: []
+  }, 
 };
 
 const vehicleReducer = (state = initialState, action) => {

@@ -7,10 +7,10 @@ const RentalLocation = require("../models/RentalLocation");
 const VehicleType = require("../models/VehicleType");
 const Rating = require("../models/Rating");
 const perPage = 20;
-const {auth, checkAuth } = require('../config/passport');
-auth()
+const { auth, checkAuth } = require("../config/passport");
+auth();
 
-router.get("/", checkAuth,async (req, res) => {
+router.get("/", checkAuth, async (req, res) => {
   try {
     const reservations = await reservations.find();
     res.json(reservations);
@@ -19,7 +19,7 @@ router.get("/", checkAuth,async (req, res) => {
   }
 });
 
-router.get("/userReservations/:userID/",checkAuth, async (req, res) => {
+router.get("/userReservations/:userID/", checkAuth, async (req, res) => {
   try {
     const { userID } = { ...req.params, ...req.query };
     const reservation = await Reservation.findOne()
@@ -32,7 +32,8 @@ router.get("/userReservations/:userID/",checkAuth, async (req, res) => {
       .limit(1)
       .populate("vehicle")
       .populate("pickupLocation")
-      .populate("returnLocation");
+      .populate("returnLocation")
+      .populate("address");
     const reservationHistory = await Reservation.find()
       .and([
         {
@@ -42,14 +43,15 @@ router.get("/userReservations/:userID/",checkAuth, async (req, res) => {
       ])
       .populate("vehicle")
       .populate("pickupLocation")
-      .populate("returnLocation");
+      .populate("returnLocation")
+      .populate("address");
     res.json({ reservation, reservationHistory });
   } catch (err) {
     res.json({ message: err });
   }
 });
 
-router.post("/", checkAuth,async (req, res) => {
+router.post("/", checkAuth, async (req, res) => {
   try {
     const reservation = new Reservation({
       user: req.body.user,
@@ -60,19 +62,22 @@ router.post("/", checkAuth,async (req, res) => {
       expectedReturnTime: req.body.expectedReturnTime,
       status: "Reserved"
     });
-    let v = await Vehicle.findOne(reservation.vehicle).populate("type")
-    .populate("rentalLocation").populate({ 
-      path: 'rentalLocation',
-      populate: {
-        path: 'address',
-        model: 'Address'
-      } 
-   });
-   
+    let v = await Vehicle.findById(reservation.vehicle._id)
+      .populate("type")
+      .populate("rentalLocation")
+      .populate({
+        path: "rentalLocation",
+        populate: {
+          path: "address",
+          model: "Address"
+        }
+      });
+
     let message = "";
     if (reservation.pickupTime - Date.now() < 86400000) {
-      
+      console.log(v)
       if (v.availability === true) {
+        
         if (
           mongoose.Types.ObjectId(v.rentalLocation._id).equals(
             reservation.pickupLocation
@@ -87,27 +92,29 @@ router.post("/", checkAuth,async (req, res) => {
             "The Car you chose is not available at this location, here are some alternatives at other locations";
         }
       } else {
-        console.log('HERE')
         message =
           "The Car you chose is already booked, here is an alternative at other location";
       }
-      
-      const curZipCode = v.rentalLocation.address.zipcode.toString().substring(0, 2);
-      
+
+      const curZipCode = v.rentalLocation.address.zipcode
+        .toString()
+        .substring(0, 2);
+
       const alternates = await Vehicle.find()
         .and([{ type: v.type }, { availability: true }])
         .populate("type")
-        .populate("rentalLocation").populate({ 
-          path: 'rentalLocation',
+        .populate("rentalLocation")
+        .populate({
+          path: "rentalLocation",
           populate: {
-            path: 'address',
-            model: 'Address'
-          } 
-       });
+            path: "address",
+            model: "Address"
+          }
+        });
 
-        const a = alternates.filter((a) => {
-          return a.rentalLocation.address.zipcode.includes(curZipCode)
-        })
+      const a = alternates.filter(a => {
+        return a.rentalLocation.address.zipcode.includes(curZipCode);
+      });
       if (a.length > 0) {
         return res.json({
           message,
@@ -130,7 +137,7 @@ router.post("/", checkAuth,async (req, res) => {
   }
 });
 
-router.get("/:reservationId", checkAuth,async (req, res) => {
+router.get("/:reservationId", checkAuth, async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.reservationId);
     res.json(reservation);
@@ -139,7 +146,7 @@ router.get("/:reservationId", checkAuth,async (req, res) => {
   }
 });
 
-router.delete("/:reservationId", checkAuth,async (req, res) => {
+router.delete("/:reservationId", checkAuth, async (req, res) => {
   try {
     const removedReservation = await Reservation.remove({
       _id: req.params.reservationId
@@ -150,7 +157,7 @@ router.delete("/:reservationId", checkAuth,async (req, res) => {
   }
 });
 
-router.put("/cancelReservation/:reservationId", checkAuth,async (req, res) => {
+router.put("/cancelReservation/:reservationId", checkAuth, async (req, res) => {
   try {
     const currentTime = Date.now();
     const reservation = await Reservation.findById(
@@ -166,6 +173,8 @@ router.put("/cancelReservation/:reservationId", checkAuth,async (req, res) => {
     reservation.status = "Cancelled";
     reservation.returnTime = currentTime;
     reservation.returned = true;
+    
+    await Vehicle.findByIdAndUpdate(reservation.vehicle._id, {availability : true});
     const pickupTime = Date.parse(reservation.pickupTime);
     const seconds = (currentTime - pickupTime) / 1000;
     if (seconds < 3600) {
@@ -173,12 +182,15 @@ router.put("/cancelReservation/:reservationId", checkAuth,async (req, res) => {
     }
     await reservation.save();
     res.json({ message: "Reservation Cancelled!", reservation });
-  } catch (error) {}
+  } catch (error) {
+    res.json({ message: error });
+  }
 });
 
-router.patch("/:reservationId", checkAuth,async (req, res) => {
+router.patch("/:reservationId", checkAuth, async (req, res) => {
   try {
     const { rating, condition } = req.body;
+    
     const reservation = await Reservation.findById(req.params.reservationId)
       .populate("vehicle")
       .populate("type");
@@ -187,10 +199,8 @@ router.patch("/:reservationId", checkAuth,async (req, res) => {
       reservation.vehicle.type._id
     );
     let totalPrice = 0;
-
-    const initialSeconds =
-      Date.now() -
-      Date.parse(reservation.pickupTime);
+    
+    const initialSeconds = Date.now() - Date.parse(reservation.pickupTime);
     const initialHours = parseFloat(initialSeconds / (60 * 60 * 1000));
       
     if (initialHours <= 1) {
@@ -215,22 +225,26 @@ router.patch("/:reservationId", checkAuth,async (req, res) => {
       const lateFees = hours * vehicleType.lateFee;
       totalPrice += lateFees;
     }
-
+    
     if (rating !== null && rating !== undefined) {
       const vehicleRating = new Rating({ ...req.body, vehicle: vehicle });
       await vehicleRating.save();
       await Vehicle.findByIdAndUpdate(
         reservation.vehicle._id,
-        { $push: { ratings: vehicleRating} },
-        { $set: { availability: true, rentalLocation : vehicle.rentalLocation  } }
+        {rentalLocation: vehicle.rentalLocation},
+        { $push: { ratings: vehicleRating } },
+        { $set: { availability: true } }
       );
     } else {
-      await Vehicle.findByIdAndUpdate(reservation.vehicle._id, {
-        $set: { availability: true, rentalLocation : vehicle.rentalLocation }
+
+      await Vehicle.findByIdAndUpdate(reservation.vehicle._id,
+        {rentalLocation: vehicle.rentalLocation},
+         {
+        $set: { availability: true }
       });
     }
 
-    if (condition !== null) {
+    if (condition !== null && condition !== undefined) {
       await Vehicle.findByIdAndUpdate(reservation.vehicle._id, {
         $set: { condition: condition }
       });
@@ -245,10 +259,14 @@ router.patch("/:reservationId", checkAuth,async (req, res) => {
         returnTime: Date.now()
       },
       { new: true }
-    ).populate('vehicle').populate({
-        path: 'vehicle.type',
-        model: 'VehicleType'
-    }).populate('pickupLocation').populate('returnLocation');
+    )
+      .populate("vehicle")
+      .populate({
+        path: "vehicle.type",
+        model: "VehicleType"
+      })
+      .populate("pickupLocation")
+      .populate("returnLocation");
     res.json({ success: true, reservation: updatedReservation });
   } catch (error) {
     console.log(error);

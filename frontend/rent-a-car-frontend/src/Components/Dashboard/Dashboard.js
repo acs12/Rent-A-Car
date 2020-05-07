@@ -45,7 +45,7 @@ class Dashboard extends React.Component {
     let items = ItemFactory(tempItems);
     return (
       <div>
-        <Navigationbar navItems={items} />
+        <Navigationbar navItems={items} isUser = {true} />
         <div className="list-container">
           <VehicleBrowser title={"San Jose"} noFilter = {false}/>
           <Pagination

@@ -158,10 +158,11 @@ router.delete("/:userId", async (req, res) => {
 //update a user
 router.patch("/:userId", async (req, res) => {
   try {
+    const user = await User.findByIdAndUpdate(req.params.userId);
     let dataToUpdate = { ...req.body };
     if (req.body.extendCard !== undefined) {
       dataToUpdate = {
-        accountExpiry: new Date(+new Date() + 180 * 24 * 60 * 60 * 1000)
+        accountExpiry: new Date(+new Date(user.accountExpiry) + 180 * 24 * 60 * 60 * 1000)
       };
     }
     await User.findByIdAndUpdate(req.params.userId, {

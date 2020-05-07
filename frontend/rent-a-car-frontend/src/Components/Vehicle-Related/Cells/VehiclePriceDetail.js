@@ -34,10 +34,10 @@ export default function SimpleCard(props) {
             <b>{props.vehicle.carname}</b>
           </Typography>
           <Typography className={classes.pos} color="textSecondary">
-           Available at <b>{props.vehicle.rentalLocation.name}</b>
+           Available at <b>{props.vehicle.rentalLocation && props.vehicle.rentalLocation.name}</b>
           </Typography>
           <Typography className={classes.pos} variant="body2" component="p">
-          with hourly rate of <b>${props.vehicle.type.hourlyRate}</b>
+          with hourly rate of <b>${props.vehicle.type &&  props.vehicle.type.hourlyRate}</b>
           </Typography>
 
           <Typography className={classes.pos} variant="body2" component="p">

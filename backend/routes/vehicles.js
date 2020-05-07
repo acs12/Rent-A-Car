@@ -38,7 +38,7 @@ router.get("/", checkAuth,async (req, res) => {
             path: 'address',
             model: 'Address'
           } 
-       });
+       }).populate("ratings");;
       const total = await Vehicle.countDocuments();
       return res.send({ total: total, vehicles: vehicles });
     }
@@ -93,8 +93,8 @@ router.get("/:vehicleId",checkAuth,async (req, res) => {
   try {
     const vehicle = await Vehicle.findById(req.params.vehicleId)
       .populate("rentalLocation")
-      .populate("type");
-    res.json(vehicle);
+      .populate("type").populate("ratings");
+    return res.json(vehicle);
   } catch (err) {
     res.json({ message: err });
   }
@@ -105,7 +105,6 @@ router.post("/delete", checkAuth,async (req, res) => {
   // console.log("In delete Vehicles",req.body)
   try {
     const vehicle = await Vehicle.findById(req.body._id)
-    console.log("VA",vehicle.availability)
     if (vehicle.availability)
     {
       Vehicle.remove({ _id: req.body._id })

@@ -1,5 +1,4 @@
 .vehicleBrowser {
-  
 }
 
 .vehicleCell {
@@ -25,11 +24,12 @@
 }
 
 .list-container {
-    width: 98%;
-    height : 100%;
-    background-color: white;
-    border-radius: 4px;
-  margin: 8px auto;
+  width: 90%;
+  /* height: 100%; */
+  min-height: 450px;
+  background-color: white;
+  border-radius: 4px;
+  margin: 16px auto;
   padding: 8px;
 }
 
@@ -39,12 +39,11 @@
 }
 
 .vehicleButton {
-  
 }
 
 .finderBox {
-    display: flex;
-    justify-content: space-between
+  display: flex;
+  justify-content: space-between;
 }
 
 .pagination > li {
@@ -62,21 +61,21 @@
   padding: 6px 12px;
   line-height: 1.42857143;
   text-decoration: none;
-  color: #343A40;
+  color: #343a40;
   background-color: #fff;
   border: 1px solid #ddd;
   margin-left: -1px;
 }
 
-.pagination>li.active>a {
+.pagination > li.active > a {
   color: #fff;
-  background-color: #343A40;
-  border-color: #343A40;
+  background-color: #343a40;
+  border-color: #343a40;
 }
 
 /* Style the active class (and buttons on mouse-over) */
 .pagination > li > a:hover {
-  background-color:  #343A40;
+  background-color: #343a40;
   color: white;
 }
 .pagination > li:first-child > a,
@@ -85,13 +84,13 @@
   padding: 0px;
   border-bottom-left-radius: 4px;
   border-top-left-radius: 4px;
-  display: none!important;
+  display: none !important;
 }
 .pagination > li:last-child > a,
 .pagination > li:last-child > span {
   border-bottom-right-radius: 4px;
   margin-right: 0;
-  padding: 0px!important;
+  padding: 0px !important;
   border-top-right-radius: 4px;
-  display: none!important;
+  display: none !important;
 }

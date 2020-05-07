@@ -30,7 +30,7 @@ export function setCurrentVehicle(vehicle, callback) {
     console.log(user, userURL)
 
     const request = axios
-        .patch(userURL, user);
+        .patch(userURL, user, headers);
 
     return (dispatch) => {
         request.then((res) => {

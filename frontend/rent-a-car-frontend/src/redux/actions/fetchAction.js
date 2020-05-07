@@ -5,7 +5,7 @@ import {URL, headers} from '../../constants';
 export function fetchVehicles(pageNum, callback) {
     axios.defaults.withCredentials = true;
     const request = axios
-        .get(`${URL}/vehicles?pageNum=${pageNum}`);
+        .get(`${URL}/vehicles?pageNum=${pageNum}`, headers);
 
     return (dispatch) => {
         request.then((res) => {
@@ -24,7 +24,7 @@ export function fetchVehicles(pageNum, callback) {
 export function fetchVehicle(vid, callback) {
     axios.defaults.withCredentials = true;
     const request = axios
-        .get(`${URL}/vehicles/${vid}`);
+        .get(`${URL}/vehicles/${vid}`, headers);
 
     return (dispatch) => {
         request.then((res) => {
@@ -49,7 +49,7 @@ export function fetchLocations(searchText, pageNum, callback) {
         locationURL += `?pageNum=${pageNum}`
     }
     const request = axios
-        .get(locationURL);
+        .get(locationURL, headers);
 
     return (dispatch) => {
         request.then((res) => {
@@ -73,7 +73,7 @@ export function fetchVehicleForLocationWithID(id, callback) {
     axios.defaults.withCredentials = true;
     let locationURL = `${URL}/rentalLocations/${id}`
     const request = axios
-        .get(locationURL);
+        .get(locationURL, headers);
 
     return (dispatch) => {
         request.then((res) => {
@@ -93,7 +93,7 @@ export function fetchUser(id, callback) {
     axios.defaults.withCredentials = true;
     let locationURL = `${URL}/users/${id}`
     const request = axios
-        .get(locationURL);
+        .get(locationURL, headers);
 
     return (dispatch) => {
         request.then((res) => {
@@ -114,7 +114,7 @@ export function fetchMyBookings(id, callback) {
     axios.defaults.withCredentials = true;
     let bookingsURL = `${URL}/reservations/userReservations/${id}`
     const request = axios
-        .get(bookingsURL);
+        .get(bookingsURL, headers);
 
     return (dispatch) => {
         request.then((res) => {

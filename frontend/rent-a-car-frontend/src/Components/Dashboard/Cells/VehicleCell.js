@@ -124,10 +124,10 @@ export default function SimpleCard(props) {
             ${props.vehicle.type.hourlyRate}/hour
           </Typography>
           <Typography className={classes.pos} variant="body2" component="p">
-            Residing at {props.vehicle.rentalLocation.address.address}
+            Residing at {props.vehicle.rentalLocation && props.vehicle.rentalLocation.address.address}
           </Typography>
           <Typography className={classes.pos} variant="body2" component="p">
-            <b>{props.vehicle.rentalLocation.address.zipcode}</b>
+            <b>{props.vehicle.rentalLocation &&  props.vehicle.rentalLocation.address.zipcode}</b>
           </Typography>
 
           <Typography variant="body2" component="p">

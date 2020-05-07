@@ -75,17 +75,14 @@ class VehicleBrowser extends React.Component {
       <div>
       {navLink}
         <div>
-          <h1 align={"center"} style={{ margin: "16px 0px" }}>
-            <b>{this.props.title}</b>
-          </h1>
-          <div style={{ margin: "16px auto", width: "50%" }}>
+          <div style={{ marginTop: "32px", width: "50%" }}>
             <div className="md-form my-0 finderBox">
               <input
                 class="form-inline d-flex justify-content-center md-form form-sm mt-0"
                 type="text"
                 placeholder="Search for Vehicles"
                 aria-label="Search"
-                style={{ margin: "16px auto", padding: 8, width: "50%" }}
+                style={{ margin: "16px 16px", padding: 8, width: "50%" }}
                 onChange={this.handleSearchText}
               />
               {!this.props.noFilter && <DropDown
@@ -97,7 +94,7 @@ class VehicleBrowser extends React.Component {
             </div>
           </div>
           <div style={{ margin: "16px", padding: 8 }}>
-            <Grid container spacing={1}>
+            <Grid container>
               {this.props.vehicles.map(v => {
                 return <div style={{ margin: "8px" }}><VehicleCell moveToVehicleSelection = {this.moveToVehicleSelection} vehicle={v} /></div>
               })}

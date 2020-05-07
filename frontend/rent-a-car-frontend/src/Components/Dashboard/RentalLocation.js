@@ -44,7 +44,7 @@ class RentalLocation extends React.Component {
         let items = ItemFactory(tempItems);
         return(
             <div>
-            <Navigationbar navItems = {items}/>            
+            <Navigationbar navItems = {items} isUser = {true} />
             <div className="list-container">
             <LocationBrowser title = {'Search Locations'}/>
             <Pagination

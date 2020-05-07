@@ -5,7 +5,7 @@ import {URL, headers} from "../../constants";
 export function book(values, callback) {
   axios.defaults.withCredentials = true;
   // axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-  const request = axios.post(`${URL}/reservations`, values);
+  const request = axios.post(`${URL}/reservations`, values, headers);
 
   return dispatch => {
     request.then(res => {
@@ -24,12 +24,12 @@ export function book(values, callback) {
 export function cancelBooking(id, callback) {
   axios.defaults.withCredentials = true;
   // axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-  const request = axios.put(`${URL}/reservations/cancelReservation/${id}`);
+  const request = axios.put(`${URL}/reservations/cancelReservation/${id}`, {}, headers);
 
   return dispatch => {
     request.then(res => {
       dispatch({
-        type: CANCELBOOKING,
+        type: SUBMITCAR,
         payload: res.data
       });
       callback(res);
@@ -43,7 +43,7 @@ export function cancelBooking(id, callback) {
 export function returnCar(id, values, callback) {
   axios.defaults.withCredentials = true;
   // axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-  const request = axios.patch(`${URL}/reservations/${id}`, values);
+  const request = axios.patch(`${URL}/reservations/${id}`, values, headers);
 
   return dispatch => {
     request.then(res => {

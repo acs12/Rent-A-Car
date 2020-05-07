@@ -63,17 +63,12 @@ export function signup(values, callback) {
 
 
 export function login(values, callback) {
-    // console.log(values);
-
     axios.defaults.withCredentials = true;
-    // axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
     const request = axios
         .post(`${URL}/login`, values);
 
     return (dispatch) => {
         request.then((res) => {
-            // console.log("In signup user response:" + JSON.stringify(res));
-
             dispatch({
                 type: LOGIN,
                 payload: res.data

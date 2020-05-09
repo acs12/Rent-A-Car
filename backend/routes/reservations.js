@@ -136,9 +136,11 @@ router.post("/", checkAuth, async (req, res) => {
     } else {
       const savedReservation = await reservation.save();
       v.availability = false;
-      await RentalLocation.findByIdAndUpdate(req.body.returnLocation, {
-        $inc: { numOfVehicles: 1 }
-      });
+      if (req.body.returnLocation.toString() !== v.rentalLocation._id.toString()){
+        await RentalLocation.findByIdAndUpdate(req.body.returnLocation, {
+          $inc: { numOfVehicles: 1 }
+        });
+      }
       await v.save();
       return res.json(savedReservation);
     }
@@ -308,9 +310,10 @@ router.patch("/:reservationId", checkAuth, async (req, res) => {
       const lateFees = hours * vehicleType.lateFee;
       totalPrice += lateFees;
     }
-
+    console.log('RATING',rating)
     if (rating !== null && rating !== undefined) {
       const vehicleRating = new Rating({ ...req.body, vehicle: vehicle });
+      console.log('RATING DETAILS',vehicleRating)
       await vehicleRating.save();
       await Vehicle.updateOne(
         { _id: reservation.vehicle._id },
@@ -320,8 +323,9 @@ router.patch("/:reservationId", checkAuth, async (req, res) => {
             availability: true
           }
         },
-        { $push: { ratings: vehicleRating } }
       );
+      vehicle.ratings.push(vehicleRating)
+      await vehicle.save()
     } else {
       await Vehicle.updateOne(
         { _id: reservation.vehicle._id },

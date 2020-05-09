@@ -1,9 +1,10 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const loginRouter = express.Router();
 const secret = "ThisisCMPE202PROJECTAABM";
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto')
 const {auth, checkAuth } = require('../config/passport');
 auth()
 
@@ -21,9 +22,14 @@ const signWithJWT = (user, callback) => {
 
 loginRouter.post("/", async (req, res) => {
   let user = await User.findOne({ emailAddress: req.body.emailAddress });
+  const hash = crypto
+          .createHmac("sha256", secret)
+          .update(req.body.password)
+          .digest("hex");
+          console.log(user.password, hash)
   if (!user) {
     res.status(401).json({ message: "User not found" });
-  } else if (bcrypt.compareSync(req.body.password, user.password)) {
+  } else if (hash === user.password) {
     if (user.isValidated || user.manager || user.admin){
       signWithJWT(Object.assign({}, user._doc), (error, result) => {
         if (error) {

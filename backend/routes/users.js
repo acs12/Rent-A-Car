@@ -4,7 +4,8 @@ const router = express.Router();
 const User = require("../models/User");
 const multer = require("multer");
 var path = require("path");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
+const crypto = require('crypto')
 const secret = "ThisisCMPE202PROJECTAABM";
 const jwt = require('jsonwebtoken');
 const {auth, checkAuth } = require('../config/passport');
@@ -64,9 +65,15 @@ router.post("/", upload.single("drivingLicense"), async (req, res) => {
       if (result) {
         res.json({ message: "Id Already Exists" });
       } else {
-        const salt = bcrypt.genSaltSync(10);
-        const password = bcrypt.hashSync(req.body.password, salt);
 
+        const hash = crypto
+          .createHmac("sha256", secret)
+          .update(req.body.password)
+          .digest("hex");
+
+        // const salt = bcrypt.genSaltSync(10);
+        const password = hash;//bcrypt.hashSync(req.body.password, salt);
+        console.log(hash)
         if (req.body.admin === true) {
           const user = new User({
             emailAddress: req.body.emailAddress,

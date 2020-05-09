@@ -4,27 +4,27 @@ const router = express.Router();
 const User = require("../models/User");
 const multer = require("multer");
 var path = require("path");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
+const crypto = require('crypto')
 const secret = "ThisisCMPE202PROJECTAABM";
 const jwt = require('jsonwebtoken');
 const {auth, checkAuth } = require('../config/passport');
 auth()
 
+
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, "uploads/");
+  destination(req, file, cb) {
+    cb(null, path.join(__dirname, '../uploads/'));
   },
-  filename: function(req, file, callback) {
-    callback(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  }
+  filename(req, file, cb) {
+    const ext = '.png';
+    cb(null, Date.now() + Math.floor(Math.random() * 100) + ext);
+  },
 });
 
-const upload = multer({
-  storage: storage
-});
+const upload = multer({ storage }).any();
+
+
 
 app.use("../uploads", express.static(path.join(__dirname, "/uploads")));
 
@@ -54,8 +54,9 @@ const signWithJWT = (user, callback) => {
 };
 
 //create a user
-router.post("/", upload.single("drivingLicense"), async (req, res) => {
-  console.log(req.body);
+router.post("/", async (req, res) => {
+  upload(req, res, function (err) {
+    console.log(req.body);
   User.findOne({
     emailAddress: req.body.emailAddress
   })
@@ -64,9 +65,15 @@ router.post("/", upload.single("drivingLicense"), async (req, res) => {
       if (result) {
         res.json({ message: "Id Already Exists" });
       } else {
-        const salt = bcrypt.genSaltSync(10);
-        const password = bcrypt.hashSync(req.body.password, salt);
 
+        const hash = crypto
+          .createHmac("sha256", secret)
+          .update(req.body.password)
+          .digest("hex");
+
+        // const salt = bcrypt.genSaltSync(10);
+        const password = hash;//bcrypt.hashSync(req.body.password, salt);
+        console.log(hash)
         if (req.body.admin === true) {
           const user = new User({
             emailAddress: req.body.emailAddress,
@@ -105,7 +112,10 @@ router.post("/", upload.single("drivingLicense"), async (req, res) => {
           }
         } else {
           var host = req.hostname;
-          var filepath = req.protocol + "://" + host + ":3000/" + req.file.path;
+
+          let filep = req.file.path.split("/")
+          let newp = filep[(filep.length - 1)]
+          var filepath = req.protocol + "://" + host + ":3000/" + newp;
           req.body.dlImage = filepath;
 
           const user = new User({
@@ -133,6 +143,7 @@ router.post("/", upload.single("drivingLicense"), async (req, res) => {
       console.log(err);
       res.json(err);
     });
+  })
 });
 
 //get a specific user

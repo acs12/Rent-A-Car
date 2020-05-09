@@ -114,9 +114,10 @@ class Login extends Component {
                   <span class="sr-only">Loading...</span>
                 </div>
               )}
-              
+              <div>
+                <br/>
                 {this.state.error}
-              
+              </div>
               <br></br>
               <br></br>
 

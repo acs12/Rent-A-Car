@@ -276,6 +276,7 @@ router.patch("/:reservationId", checkAuth, async (req, res) => {
     const reservation = await Reservation.findById(req.params.reservationId)
       .populate("vehicle")
       .populate("type");
+    console.log("reservation",reservation)
     let vehicle = await Vehicle.findById(reservation.vehicle._id);
     const vehicleType = await VehicleType.findById(
       reservation.vehicle.type._id
@@ -315,7 +316,7 @@ router.patch("/:reservationId", checkAuth, async (req, res) => {
         { _id: reservation.vehicle._id },
         {
           $set: {
-            rentalLocation: vehicle.rentalLocation,
+            rentalLocation: reservation.returnLocation,
             availability: true
           }
         },
@@ -326,7 +327,7 @@ router.patch("/:reservationId", checkAuth, async (req, res) => {
         { _id: reservation.vehicle._id },
         {
           $set: {
-            rentalLocation: vehicle.rentalLocation,
+            rentalLocation: reservation.returnLocation,
             availability: true
           }
         }

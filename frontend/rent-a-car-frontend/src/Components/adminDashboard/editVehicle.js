@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "../../App.css";
 import axios from "axios";
-import { deleteVehicle, updateVehicle } from "../../redux";
+import {deleteVehicle, updateVehicle } from "../../redux";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 
@@ -79,12 +79,14 @@ class EditVehicle extends Component {
   };
 
   delete = async e => {
-    e.preventDefault();
+    // e.preventDefault();
     let data = {
       _id: this.state._id
     };
     await this.props.deleteVehicle(data, res => {
-      console.log(res);
+      console.log("res delete",res);
+      window.location.reload()
+
     });
   };
 
@@ -232,12 +234,11 @@ class EditVehicle extends Component {
               <button
                 type="button"
                 className="btn btn-danger"
-                style={{ float: "right" }}
+                style={{ float: "center" }}
                 onClick={this.changeExistingTypeToggle}
               >
                 X
               </button>
-              <br></br>
               <br></br>
               <b>Enter Vehicle Details :</b>
               <br></br>

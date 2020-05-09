@@ -108,20 +108,24 @@ router.post("/delete", checkAuth,async (req, res) => {
 //update a user
 router.post("/update", checkAuth,async (req, res) => {
   console.log("req", req.body);
+  const address = new Address ({...req.body});
+  await address.save()
+  console.log("address1",address)
+  
   await RentalLocation.updateOne(
     { _id: req.body._id },
     {
       $set: {
         name: req.body.name,
-        address: req.body.address,
+        address: address,
         capacity: req.body.capacity,
-        numOfVehicles: req.body.numOfVehicles
+        // numOfVehicles: req.body.numOfVehicles
       }
     }
   )
     .exec()
     .then(result => {
-      RentalLocation.find()
+      RentalLocation.find().populate('address')
         .exec()
         .then(result => {
           res.send(result);

@@ -47,7 +47,7 @@ class AdminLocation extends Component {
 
   componentDidMount = () => {
     this.props.getLocation(res => {
-      console.log(res);
+      console.log("res",res);
     });
     // this.props.getVehicle
   };

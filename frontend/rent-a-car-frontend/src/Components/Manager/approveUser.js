@@ -111,7 +111,7 @@ class ApproveUser extends Component {
                                 </div>
                                 <div className="col-md-4 card">
                                     <div className="card-body">
-                                        <h4 className="card-title">{x.name}</h4>
+                                        <h4 className="card-title">{x.name}</h4><br />
                                         <img style={{ width: "70%", height: "70%" }} alt="Oops" src={x.dlImage} /><br />
                                         <button style={{ width: "50%", height: "50" }} className="btn btn-danger" type="button" onClick={(e) => { this.delete(e, x._id, false) }}>Invalidate</button>
                                         <br></br>

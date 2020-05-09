@@ -21,7 +21,8 @@ class EditLocation extends Component {
       numOfVehicles: this.props.item.numOfVehicles,
       vehicles: this.props.item.vehicle,
       vehicleArray: [],
-      response: ""
+      response: "",
+      zipcode : this.props.item.address.zipcode
     };
     //Bind the handlers to this class
     this.delete = this.delete.bind(this);
@@ -45,7 +46,7 @@ class EditLocation extends Component {
       name: this.state.name,
       address: this.state.address,
       capacity: this.state.capacity,
-      numOfVehicles: this.state.numOfVehicles
+      zipcode : this.state.zipcode
     };
 
     await this.props.updateLocation(data, res => {
@@ -85,49 +86,93 @@ class EditLocation extends Component {
   };
 
   render() {
-    console.log(this.state);
+    console.log("Edit Location State", this.state);
     let redirectVar = null;
 
     let existLocationDetails = null;
     if (this.state.existingLocationStatus === false) {
-      console.log("Inside if in change existing location details");
-      existLocationDetails = (
-        <div>
-          <div className = 'card' style = {{margin : "16px auto", width : "40%"}}>
-            <div className="card-body" style={{ textAlign: "left" }}>
-              <h4 className="card-title"> Name : {this.props.item.name}</h4>
-              <h5 className="card-subtitle mb-2 text-muted">
-                Address : {this.props.item.address.address}
-              </h5>
-              <h5 className="card-subtitle mb-2 text-muted">
-                Capacity : {this.state.capacity}
-              </h5>
-              <h5 className="card-subtitle mb-2 text-muted">
-                Vehicles Assigned : {this.state.numOfVehicles}
-              </h5>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={this.changeExistingTypeToggle}
-              >
-                Edit
+      if (this.props.item.address === null) {
+        console.log("Inside if in change existing location details");
+        existLocationDetails = (
+          <div>
+            <div className='card' style={{ margin: "16px auto", width: "40%" }}>
+              <div className="card-body" style={{ textAlign: "left" }}>
+                <h4 className="card-title"> Name : {this.props.item.name}</h4>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  Address : null
+                </h5>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  ZipCode : null
+                </h5>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  Capacity : {this.state.capacity}
+                </h5>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  Vehicles Assigned : {this.state.numOfVehicles}
+                </h5>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={this.changeExistingTypeToggle}
+                >
+                  Edit
               </button>
-              <button
-              type="button"
-              className="btn btn-danger"
-              onClick={this.delete}
-            >
-              Delete
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={this.delete}
+                >
+                  Delete
             </button>
-              <br></br>
+                <br></br>
+              </div>
             </div>
           </div>
-        </div>
-      );
+        );
+      }
+      else {
+        console.log("Inside if in change existing location details");
+        existLocationDetails = (
+          <div>
+            <div className='card' style={{ margin: "16px auto", width: "40%" }}>
+              <div className="card-body" style={{ textAlign: "left" }}>
+                <h4 className="card-title"> Name : {this.props.item.name}</h4>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  Address : {this.props.item.address.address}
+                </h5>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  ZipCode : {this.props.item.address.zipcode}
+                </h5>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  Capacity : {this.state.capacity}
+                </h5>
+                <h5 className="card-subtitle mb-2 text-muted">
+                  Vehicles Assigned : {this.state.numOfVehicles}
+                </h5>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={this.changeExistingTypeToggle}
+                >
+                  Edit
+              </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={this.delete}
+                >
+                  Delete
+            </button>
+                <br></br>
+              </div>
+            </div>
+          </div>
+        );
+      }
     } else {
       console.log("Inside else in location details");
       existLocationDetails = (
-        <div className="card" style={{ padding: 16 }}>
+        <div className="card" style={{ padding: 16, margin: "16px auto", width: "40%" }}>
           <br></br>
           <form onSubmit={this.updateLocation}>
             <div className="form-group">
@@ -137,6 +182,7 @@ class EditLocation extends Component {
                 className="form-control"
                 name="name"
                 placeholder={this.props.item.name}
+                required
               />
               <br></br>
             </div>
@@ -148,9 +194,23 @@ class EditLocation extends Component {
                 className="form-control"
                 name="address"
                 placeholder={this.props.item.address.address}
+                required
               />
               <br></br>
             </div>
+
+            <div className="form-group">
+                <input
+                  onChange={this.changeHandler}
+                  type="text"
+                  className="form-control"
+                  name="zipcode"
+                  placeholder={this.props.item.address.zipcode}
+                  pattern="[0-9]{5}"
+                  required
+                />
+                <br></br>
+              </div>
 
             <div className="form-group">
               <input
@@ -159,6 +219,7 @@ class EditLocation extends Component {
                 className="form-control"
                 name="capacity"
                 placeholder={this.props.item.capacity}
+                required
               />
               <br></br>
             </div>
@@ -167,11 +228,11 @@ class EditLocation extends Component {
               Save
             </button>
             <button
-            type="button"
-            className="btn btn-danger"
-            onClick={this.changeExistingTypeToggle}
-          >
-            Cancel
+              type="button"
+              className="btn btn-danger"
+              onClick={this.changeExistingTypeToggle}
+            >
+              Cancel
           </button>
             <br></br>
           </form>

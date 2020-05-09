@@ -30,7 +30,11 @@ export function setCurrentVehicle(vehicle, callback) {
     console.log(user, userURL)
 
     const request = axios
-        .patch(userURL, user, headers);
+        .patch(userURL, user, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
 
     return (dispatch) => {
         request.then((res) => {

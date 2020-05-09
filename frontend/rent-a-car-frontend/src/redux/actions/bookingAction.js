@@ -5,7 +5,11 @@ import {URL, headers} from "../../constants";
 export function book(values, callback) {
   axios.defaults.withCredentials = true;
   // axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-  const request = axios.post(`${URL}/reservations`, values, headers);
+  const request = axios.post(`${URL}/reservations`, values, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  });
 
   return dispatch => {
     request.then(res => {
@@ -24,7 +28,11 @@ export function book(values, callback) {
 export function cancelBooking(id, callback) {
   axios.defaults.withCredentials = true;
   // axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-  const request = axios.put(`${URL}/reservations/cancelReservation/${id}`, {}, headers);
+  const request = axios.put(`${URL}/reservations/cancelReservation/${id}`, {}, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  });
 
   return dispatch => {
     request.then(res => {
@@ -43,7 +51,11 @@ export function cancelBooking(id, callback) {
 export function returnCar(id, values, callback) {
   axios.defaults.withCredentials = true;
   // axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-  const request = axios.patch(`${URL}/reservations/${id}`, values, headers);
+  const request = axios.patch(`${URL}/reservations/${id}`, values, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  });
 
   return dispatch => {
     request.then(res => {

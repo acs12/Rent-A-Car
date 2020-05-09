@@ -5,7 +5,11 @@ import {URL, headers} from '../../constants';
 export function fetchVehicles(pageNum, callback) {
     axios.defaults.withCredentials = true;
     const request = axios
-        .get(`${URL}/vehicles?pageNum=${pageNum}`, headers);
+        .get(`${URL}/vehicles?pageNum=${pageNum}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -24,7 +28,11 @@ export function fetchVehicles(pageNum, callback) {
 export function fetchVehicle(vid, callback) {
     axios.defaults.withCredentials = true;
     const request = axios
-        .get(`${URL}/vehicles/${vid}`, headers);
+        .get(`${URL}/vehicles/${vid}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -49,7 +57,11 @@ export function fetchLocations(searchText, pageNum, callback) {
         locationURL += `?pageNum=${pageNum}`
     }
     const request = axios
-        .get(locationURL, headers);
+        .get(locationURL, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -73,7 +85,11 @@ export function fetchVehicleForLocationWithID(id, callback) {
     axios.defaults.withCredentials = true;
     let locationURL = `${URL}/rentalLocations/${id}`
     const request = axios
-        .get(locationURL, headers);
+        .get(locationURL, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -93,7 +109,11 @@ export function fetchUser(id, callback) {
     axios.defaults.withCredentials = true;
     let locationURL = `${URL}/users/${id}`
     const request = axios
-        .get(locationURL, headers);
+        .get(locationURL, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {
@@ -114,7 +134,11 @@ export function fetchMyBookings(id, callback) {
     axios.defaults.withCredentials = true;
     let bookingsURL = `${URL}/reservations/userReservations/${id}`
     const request = axios
-        .get(bookingsURL, headers);
+        .get(bookingsURL, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
 
     return (dispatch) => {
         request.then((res) => {

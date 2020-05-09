@@ -111,7 +111,7 @@ class Signup extends Component {
         console.log('CHECK', res)
         if (res.status === 200) {
           if (res.data.message) {
-            this.setState({ error: <div className="alert alert-danger" role="alert">res.data.message</div> });
+            this.setState({ error: <div className="alert alert-danger" role="alert">{res.data.message}</div> });
           } else {
             localStorage.setItem('token', res.data.token)
             localStorage.setItem("id", res.data._id);

@@ -111,7 +111,7 @@ class Signup extends Component {
         console.log('CHECK', res)
         if (res.status === 200) {
           if (res.data.message) {
-            this.setState({ error: res.data.message });
+            this.setState({ error: <div className="alert alert-danger" role="alert">res.data.message</div> });
           } else {
             localStorage.setItem('token', res.data.token)
             localStorage.setItem("id", res.data._id);
@@ -276,7 +276,7 @@ class Signup extends Component {
             <h4>Sign Up</h4>
           </div>
           <br></br>
-          <div style = {{textAlign : "center"}}>
+          <div style={{ textAlign: "center" }}>
             <MDBDropdown >
               <MDBDropdownToggle caret color="success">
                 {this.state.type}
@@ -303,9 +303,12 @@ class Signup extends Component {
           <br></br>
           <br></br>
           <h4>{this.state.error}</h4>
-          <h5>
-            Already have an account? Go to <Link to="/"> Login Page</Link>
-          </h5>
+          <div style={{textAlign : "center"}}>
+            <h5>
+              Already have an account? Go to <Link to="/"> Login Page</Link>
+            </h5>
+          </div>
+
           <br></br>
         </form>
       </div>

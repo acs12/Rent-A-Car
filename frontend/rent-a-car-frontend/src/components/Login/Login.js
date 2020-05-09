@@ -41,16 +41,16 @@ class Login extends Component {
       console.log(res)
       if (res.status === 200) {
         if (res.data.message !== undefined) {
-          this.setState({ isLoading: false, error : res.data.message});
-        }else {
+          this.setState({ isLoading: false, error: res.data.message });
+        } else {
           localStorage.setItem('token', res.data.token)
           localStorage.setItem("id", res.data._id);
           localStorage.setItem("admin", res.data.admin);
           localStorage.setItem("manager", res.data.manager);
         }
         this.setState({ isLoading: false });
-      } else {            
-        this.setState({ isLoading: false, error  :'Invalid Credentials!'});
+      } else {
+        this.setState({ isLoading: false, error: <div className="alert alert-danger" role="alert">Invalid Credentials!</div> });
       }
     });
   };
@@ -61,7 +61,7 @@ class Login extends Component {
       if (localStorage.getItem("admin") === "true") {
         redirectVar = <Redirect to="/adminLocation" />;
       } else if (localStorage.getItem("manager") === "true") {
-        redirectVar = <Redirect to="/approveUser"/>;
+        redirectVar = <Redirect to="/approveUser" />;
       } else {
         redirectVar = <Redirect to="/dashboard" />;
       }
@@ -87,7 +87,7 @@ class Login extends Component {
                 className="form-control"
                 name="email"
                 placeholder="Enter Email Address"
-                style = {{width : "60%", margin : "16px auto"}}
+                style={{ width: "60%", margin: "16px auto" }}
                 required
               />
             </div>
@@ -99,7 +99,7 @@ class Login extends Component {
                 className="form-control"
                 name="password"
                 placeholder="Enter Password"
-                style = {{width : "60%", margin : "16px auto"}}
+                style={{ width: "60%", margin: "16px auto" }}
                 required
               />
             </div>
@@ -114,9 +114,9 @@ class Login extends Component {
                   <span class="sr-only">Loading...</span>
                 </div>
               )}
-              <div>
-              {this.state.error}
-              </div>
+              
+                {this.state.error}
+              
               <br></br>
               <br></br>
 

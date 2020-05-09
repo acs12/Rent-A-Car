@@ -7,7 +7,7 @@ const Reservation = require("../models/Reservation")
 const {auth, checkAuth } = require('../config/passport');
 auth()
 
-const paginated = 20;
+const paginated = 10;
 //get all user
 router.get("/", checkAuth,async (req, res) => {
   const { searchText, pageNum } = req.query;
@@ -66,7 +66,7 @@ router.get("/:rentalLocationId", checkAuth,async (req, res) => {
       rentalLocation: req.params.rentalLocationId
     })
       .populate("type")
-      .populate("rentalLocation");
+      .populate("rentalLocation").populate('ratings');
     return res.send({
       total: rentalLocationVehicles.length,
       vehicles: rentalLocationVehicles

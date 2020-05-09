@@ -61,9 +61,11 @@ export default function SimpleCard(props) {
       <CardActions>
         {props.reservation.returned === false && (
           <div>
-          <Button size="small" color="primary" onClick={onCarReturn}>
+          {props.reservation.pickupTime <= Date.now() && 
+            <Button size="small" color="primary" onClick={onCarReturn}>
             Return Car
           </Button>
+          }
           <Button size="small" color="primary" onClick={onCancelBooking}>
             Cancel Car
           </Button>

@@ -53,15 +53,21 @@ router.get("/userReservations/:userID/", checkAuth, async (req, res) => {
 
 router.post("/", checkAuth, async (req, res) => {
   try {
+    var pickupTimeEpoch = new Date(req.body.pickupTime);
+    pickupTimeEpoch = pickupTimeEpoch.getTime();
+
+    var returnTimeEpoch = new Date(req.body.expectedReturnTime);
+    returnTimeEpoch = returnTimeEpoch.getTime();
     const reservation = new Reservation({
       user: req.body.user,
       vehicle: req.body.vehicle,
       pickupLocation: req.body.pickupLocation,
       returnLocation: req.body.returnLocation,
-      pickupTime: req.body.pickupTime,
-      expectedReturnTime: req.body.expectedReturnTime,
+      pickupTime: pickupTimeEpoch,
+      expectedReturnTime: returnTimeEpoch,
       status: "Reserved"
     });
+
     let v = await Vehicle.findById(reservation.vehicle._id)
       .populate("type")
       .populate("rentalLocation")
@@ -73,33 +79,37 @@ router.post("/", checkAuth, async (req, res) => {
         }
       });
 
-    let message = "";
-    if (reservation.pickupTime - Date.now() < 86400000) {
-      console.log(v)
-      if (v.availability === true) {
-        
-        if (
-          mongoose.Types.ObjectId(v.rentalLocation._id).equals(
-            reservation.pickupLocation
-          )
-        ) {
-          const savedReservation = await reservation.save();
-          v.availability = false;
-          await v.save();
-          return res.json(savedReservation);
-        } else {
-          message =
-            "The Car you chose is not available at this location, here are some alternatives at other locations";
-        }
-      } else {
-        message =
-          "The Car you chose is already booked, here is an alternative at other location";
-      }
+    const selectedReturnLocation = await RentalLocation.findById(
+      req.body.returnLocation
+    );
 
-      const curZipCode = v.rentalLocation.address.zipcode
-        .toString()
-        .substring(0, 2);
+    let reservationsForUser = await Reservation.find({
+      user: req.body.user,
+      returned: false
+    });
 
+    if (reservationsForUser.length > 0) {
+      return res.json({
+        message: "You already have a reservation! Please complete that first"
+      });
+    }
+
+    if (
+      selectedReturnLocation.capacity <= selectedReturnLocation.numOfVehicles &&
+      selectedReturnLocation._id.toString() !== v.rentalLocation._id.toString()
+    ) {
+      return res.json({
+        message:
+          "The return location is at full capacity! Please chose another location to return to!"
+      });
+    }
+
+    let reservationsForVehicle = await Reservation.find({
+      vehicle: req.body.vehicle,
+      returned: false
+    });
+
+    if (reservationsForVehicle.length > 0) {
       const alternates = await Vehicle.find()
         .and([{ type: v.type }, { availability: true }])
         .populate("type")
@@ -112,26 +122,94 @@ router.post("/", checkAuth, async (req, res) => {
           }
         });
 
-      const a = alternates.filter(a => {
-        return a.rentalLocation.address.zipcode.includes(curZipCode);
-      });
-      if (a.length > 0) {
+      if (alternates.length > 0) {
         return res.json({
-          message,
-          vehicles: [{ ...a[0]._doc }]
+          message: "The vehicle is not available for the given time",
+          vehicles: [alternates[0]._doc]
         });
       } else {
-        message =
-          "This vehicle is not available at this location and no replacement vehicle found, please choose some other combination";
         return res.json({
-          message
+          message:
+            "The vehicle is not available for the given time, Please chose another vehicle!"
         });
       }
     } else {
-      return res.json({
-        message: "Reservation rejected, please book one day before pickup time"
+      const savedReservation = await reservation.save();
+      v.availability = false;
+      await RentalLocation.findByIdAndUpdate(req.body.returnLocation, {
+        $inc: { numOfVehicles: 1 }
       });
+      await v.save();
+      return res.json(savedReservation);
     }
+
+    // if (reservation.pickupTime - Date.now() < 43200000) {
+    //   if (v.availability === true) {
+    //     if (
+    //       mongoose.Types.ObjectId(v.rentalLocation._id).equals(
+    //         reservation.pickupLocation
+    //       )
+    //     ) {
+    //       const savedReservation = await reservation.save();
+    //       v.availability = false;
+    //       await v.save();
+    //       return res.json(savedReservation);
+    //     } else {
+    //       message =
+    //         "The Car you chose is not available at this location, here are some alternatives at other locations";
+    //     }
+    //   } else {
+    //     message =
+    //       "The Car you chose is already booked, here is an alternative at other location";
+    //   }
+
+    //   let curZipCode = 00000;
+    //   if (v.rentalLocation !== null) {
+    //     curZipCode = v.rentalLocation.address.zipcode
+    //       .toString()
+    //       .substring(0, 2);
+    //   }
+
+    // const alternates = await Vehicle.find()
+    //   .and([{ type: v.type }, { availability: true }])
+    //   .populate("type")
+    //   .populate("rentalLocation")
+    //   .populate({
+    //     path: "rentalLocation",
+    //     populate: {
+    //       path: "address",
+    //       model: "Address"
+    //     }
+    //   });
+
+    //   const a = alternates.filter(a => {
+    //     if (a.rentalLocation && a.rentalLocation.address.zipcode) {
+    //       return a.rentalLocation.address.zipcode
+    //         .toString()
+    //         .substring(0, 2)
+    //         .includes(curZipCode);
+    //     } else {
+    //       return false;
+    //     }
+    //   });
+
+    //   if (a.length > 0) {
+    //     return res.json({
+    //       message,
+    //       vehicles: [{ ...a[0]._doc }]
+    //     });
+    //   } else {
+    //     message =
+    //       "This vehicle is not available at this location and no replacement vehicle found, please choose some other combination";
+    //     return res.json({
+    //       message
+    //     });
+    //   }
+    // } else {
+    //   return res.json({
+    //     message: "Reservation rejected, please book one day before pickup time"
+    //   });
+    // }
   } catch (error) {
     return res.status(500).json({ message: error });
   }
@@ -173,9 +251,13 @@ router.put("/cancelReservation/:reservationId", checkAuth, async (req, res) => {
     reservation.status = "Cancelled";
     reservation.returnTime = currentTime;
     reservation.returned = true;
-    
-    await Vehicle.findByIdAndUpdate(reservation.vehicle._id, {availability : true});
-    const pickupTime = Date.parse(reservation.pickupTime);
+    await RentalLocation.findByIdAndUpdate(reservation.returnLocation, {
+      $inc: { numOfVehicles: -1 }
+    });
+    await Vehicle.findByIdAndUpdate(reservation.vehicle._id, {
+      availability: true
+    });
+    const pickupTime = new Date(reservation.pickupTime);
     const seconds = (currentTime - pickupTime) / 1000;
     if (seconds < 3600) {
       reservation.totalPrice = charge;
@@ -190,7 +272,7 @@ router.put("/cancelReservation/:reservationId", checkAuth, async (req, res) => {
 router.patch("/:reservationId", checkAuth, async (req, res) => {
   try {
     const { rating, condition } = req.body;
-    
+
     const reservation = await Reservation.findById(req.params.reservationId)
       .populate("vehicle")
       .populate("type");
@@ -199,10 +281,10 @@ router.patch("/:reservationId", checkAuth, async (req, res) => {
       reservation.vehicle.type._id
     );
     let totalPrice = 0;
-    
-    const initialSeconds = Date.now() - Date.parse(reservation.pickupTime);
+    const pickupTime = new Date(reservation.pickupTime);
+    const initialSeconds = Date.now() - pickupTime;
     const initialHours = parseFloat(initialSeconds / (60 * 60 * 1000));
-      
+
     if (initialHours <= 1) {
       totalPrice = initialHours * vehicleType.hour1;
     } else if (initialHours <= 6) {
@@ -218,30 +300,37 @@ router.patch("/:reservationId", checkAuth, async (req, res) => {
     } else if (initialHours <= 72) {
       totalPrice = initialHours * vehicleType.day3;
     }
-
-    if (Date.parse(reservation.expectedReturnTime) < Date.now()) {
-      const seconds = Date.now() - Date.parse(reservation.expectedReturnTime);
+    const returnTime = new Date(reservation.expectedReturnTime);
+    if (returnTime < Date.now()) {
+      const seconds = Date.now() - returnTime;
       const hours = seconds / (60 * 60 * 1000);
       const lateFees = hours * vehicleType.lateFee;
       totalPrice += lateFees;
     }
-    
+
     if (rating !== null && rating !== undefined) {
       const vehicleRating = new Rating({ ...req.body, vehicle: vehicle });
       await vehicleRating.save();
-      await Vehicle.findByIdAndUpdate(
-        reservation.vehicle._id,
-        {rentalLocation: vehicle.rentalLocation},
-        { $push: { ratings: vehicleRating } },
-        { $set: { availability: true } }
+      await Vehicle.updateOne(
+        { _id: reservation.vehicle._id },
+        {
+          $set: {
+            rentalLocation: vehicle.rentalLocation,
+            availability: true
+          }
+        },
+        { $push: { ratings: vehicleRating } }
       );
     } else {
-
-      await Vehicle.findByIdAndUpdate(reservation.vehicle._id,
-        {rentalLocation: vehicle.rentalLocation},
-         {
-        $set: { availability: true }
-      });
+      await Vehicle.updateOne(
+        { _id: reservation.vehicle._id },
+        {
+          $set: {
+            rentalLocation: vehicle.rentalLocation,
+            availability: true
+          }
+        }
+      );
     }
 
     if (condition !== null && condition !== undefined) {

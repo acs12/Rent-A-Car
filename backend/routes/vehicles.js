@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const hardCount = 20;
+const hardCount = 10;
 const Vehicle = require("../models/Vehicle");
 const RentalLocation = require("../models/RentalLocation");
 const {auth, checkAuth } = require('../config/passport');

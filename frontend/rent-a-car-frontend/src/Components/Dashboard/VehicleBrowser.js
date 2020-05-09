@@ -8,8 +8,11 @@ import {
   fetchLocations,
   fetchVehicleForLocationWithID
 } from "../../redux/actions/fetchAction";
-import { setCurrentLocation, setCurrentVehicle } from "../../redux/actions/setAction";
-import { Redirect } from 'react-router-dom'
+import {
+  setCurrentLocation,
+  setCurrentVehicle
+} from "../../redux/actions/setAction";
+import { Redirect } from "react-router-dom";
 
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
@@ -17,7 +20,7 @@ import Grid from "@material-ui/core/Grid";
 class VehicleBrowser extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {};
     this.handleSearchText = this.handleSearchText.bind(this);
     this.handleDropDownSearchText = this.handleDropDownSearchText.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -50,7 +53,7 @@ class VehicleBrowser extends React.Component {
     this.props.setCurrentVehicle(e, () => {
       this.setState({
         moveToVehicleDetail: true
-      })    
+      });
     });
   }
 
@@ -69,35 +72,47 @@ class VehicleBrowser extends React.Component {
     let navLink = undefined;
 
     if (this.state.moveToVehicleDetail) {
-      navLink = <Redirect to={`/vehicledetail/${this.props.selectedVehicle._id}`} />;
+      navLink = (
+        <Redirect to={`/vehicledetail/${this.props.selectedVehicle._id}`} />
+      );
     }
     return (
       <div>
-      {navLink}
+        {navLink}
         <div>
-          <div style={{ marginTop: "32px", width: "50%" }}>
-            <div className="md-form my-0 finderBox">
-              <input
-                class="form-inline d-flex justify-content-center md-form form-sm mt-0"
-                type="text"
-                placeholder="Search for Vehicles"
-                aria-label="Search"
-                style={{ margin: "16px 16px", padding: 8, width: "50%" }}
-                onChange={this.handleSearchText}
-              />
-              {!this.props.noFilter && <DropDown
-                title={this.props.selectedLocation.name}
-                items={items}
-                searchHandler={this.handleDropDownSearchText}
-              />}
-              
+          {this.props.vehicles.length !== 0 && (
+            <div style={{ marginTop: "32px", width: "50%" }}>
+              <div className="md-form my-0 finderBox">
+                <input
+                  class="form-inline d-flex justify-content-center md-form form-sm mt-0"
+                  type="text"
+                  placeholder="Search for Vehicles"
+                  aria-label="Search"
+                  style={{ margin: "16px 16px", padding: 8, width: "80%" }}
+                  onChange={this.handleSearchText}
+                />
+              </div>
             </div>
-          </div>
+          )}
           <div style={{ margin: "16px", padding: 8 }}>
             <Grid container>
               {this.props.vehicles.map(v => {
-                return <div style={{ margin: "8px" }}><VehicleCell moveToVehicleSelection = {this.moveToVehicleSelection} vehicle={v} /></div>
+                return (
+                  <div style={{ margin: "8px" }}>
+                    <VehicleCell
+                      moveToVehicleSelection={this.moveToVehicleSelection}
+                      vehicle={v}
+                    />
+                  </div>
+                );
               })}
+              {this.props.vehicles.length === 0 && (
+                <div>
+                  <h4>
+                    <b>No Vehicles Available</b>
+                  </h4>
+                </div>
+              )}
             </Grid>
           </div>
         </div>
@@ -119,14 +134,14 @@ const mapStateToProps = state => {
       vehicles: searchedVehicles,
       locations: state.locations.data,
       selectedLocation: state.locations.selectedLocation,
-      selectedVehicle : state.vehicles.selectedVehicle
+      selectedVehicle: state.vehicles.selectedVehicle
     };
   }
   return {
     vehicles: state.vehicles.data,
     locations: state.locations.data,
     selectedLocation: state.locations.selectedLocation,
-    selectedVehicle : state.vehicles.selectedVehicle
+    selectedVehicle: state.vehicles.selectedVehicle
   };
 };
 

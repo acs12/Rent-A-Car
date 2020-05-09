@@ -110,21 +110,43 @@ class VehicleDetail extends React.Component {
       e.preventDefault();
     }
     var threeDaysLater = new Date();
+    var oneDayLater = new Date();
     var numberOfDaysToAdd = 3;
     threeDaysLater.setDate(threeDaysLater.getDate() + numberOfDaysToAdd);
     threeDaysLater = Date.parse(threeDaysLater);
-    
+
     const selectedDate = Date.parse(this.state.expectedReturnTime);
+    const pickupDate = Date.parse(this.state.pickupTime);
+    oneDayLater.setDate(oneDayLater.getDate());
+    oneDayLater = Date.parse(oneDayLater);
     if (selectedDate > threeDaysLater) {
       return this.setState({
         error: "Please choose a return date withing 3 days!"
       });
     }
 
+    if (selectedDate <= new Date()) {
+      return this.setState({
+        error: "Please choose a valid return date!"
+      });
+    }
+
+    if (pickupDate <= new Date()) {
+      return this.setState({
+        error: "Please choose a valid pickup date!"
+      });
+    }
+
+    if (pickupDate >= selectedDate) {
+      return this.setState({
+        error: "Please choose a valid timeline"
+      });
+    }
+
     let values = {
       user: localStorage.getItem("id"),
       vehicle: vehicleID,
-      pickupLocation: pickupLocationID,
+      pickupLocation: this.props.selectedVehicle.rentalLocation._id,
       returnLocation: this.state.returnLocationID,
       pickupTime: this.state.pickupTime,
       expectedReturnTime: this.state.expectedReturnTime
@@ -218,47 +240,49 @@ class VehicleDetail extends React.Component {
             <div className="col-8">
               {this.props.vehicles !== undefined &&
                 this.props.vehicles.length == 0 && (
-                  <div>
-                    <div>
-                      <DropDown
-                        id="pickup-dd"
-                        title={this.state.pickupName}
-                        items={dditems}
-                        searchHandler={this.handleDropDownSearchText}
-                      />
-                    </div>
+                  <div style = {{margin : "16px auto", width : "80%"}}>
 
-                    {this.state.pickupLocationID !== undefined && (
-                      <DropDown
-                        id="return-dd"
-                        title={this.state.returnName}
-                        items={returnddItems}
-                        searchHandler={this.handleDropDownSearchText}
-                      />
-                    )}
+                      <div style={{ marginTop: 32 }}>
+                        <label>Select a Drop Location</label>
+                        <DropDown
+                          id="return-dd"
+                          title={this.state.returnName}
+                          items={returnddItems}
+                          searchHandler={this.handleDropDownSearchText}
+                        />
+                      </div>
+                    
                     {this.state.returnLocationID && (
-                      <div style={{ marginTop: 16 }}>
+                      <div style={{ marginTop: 32, width: "60%" }}>
+                        <label>What time will you pickup ?</label>
                         <Datetime onChange={this.handlePickupTimeAction} />
                       </div>
                     )}
 
                     {this.state.pickupTime && (
-                      <div style={{ marginTop: 16 }}>
-                        <Datetime onChange={this.handleReturnTimeAction} />
+                      <div style={{ marginTop: 32, width: "60%" }}>
+                      <label>What time will you return ?</label>
+                        <Datetime
+                          onChange={this.handleReturnTimeAction}
+                          style={{ width: "50%" }}
+                        />
                       </div>
                     )}
 
                     {this.state.expectedReturnTime && (
+                      <div style = {{marginTop : 32}}>
                       <button
                         className="btn btn-primary"
                         onClick={this.submitBooking}
                       >
-                        Book
+                        Book!
                       </button>
+                      </div>
                     )}
                   </div>
                 )}
-              <h4>{this.state.error}</h4>
+              
+              <div style = {{margin : "16px auto", width : "80%"}}><h4>{this.state.error}</h4></div>
               <div style={{ margin: "16px", padding: 8 }}>
                 <Grid container spacing={1}>
                   {this.props.vehicles.map(v => {

@@ -77,7 +77,7 @@ export default function SimpleCard(props) {
         Location has a capacity of <b>{props.location.capacity}</b>
         </Typography>
         <Typography className={classes.pos}variant="body2" component="p">
-          Location is at <b>{props.location.address.address}</b>
+          Location is at <b>{props.location.address && props.location.address.address}</b>
         </Typography>
         <Typography variant="body2" component="p">
           Vehicle count at location is <b>{props.location.numOfVehicles}</b>

@@ -15,7 +15,7 @@ const userSchema = new Schema({
     residenceAddress:{ type: String},
     phoneNumber:{type: Number},
     isValidated : {type : Boolean},
-    membershipFee : {type : Number}
+    membershipFee : {type : Number, default : 50}
 });
 
 module.exports = mongoose.model('User',userSchema);

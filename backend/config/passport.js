@@ -16,7 +16,7 @@ function auth() {
     new JwtStrategy(opts, (jwt_payload, callback) => {
       console.log('PAYLOAD', jwt_payload)
       const user_id = jwt_payload._id;
-      User.findById(user_id, (error, results) => {
+      User.findById(user_id,  (error, results) => {
         if (error) {
           return callback(err, false);
         }

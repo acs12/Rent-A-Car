@@ -48,13 +48,15 @@ class Dashboard extends React.Component {
         <Navigationbar navItems={items} isUser = {true} />
         <div className="list-container">
           <VehicleBrowser title={"San Jose"} noFilter = {false}/>
-          <Pagination
-              count={Math.floor(this.props.totalVehicles/20.0)}
+          {this.props.totalVehicles !== 0 && 
+            <Pagination
+              count={Math.floor(this.props.totalVehicles/10.0)}
               variant="outlined"
               shape="rounded"
               style={{ backgroundColor: "#ffa000;", width : "10%", margin : "16px auto" }}
               onChange={this.handlePageClick}
             />
+          }
         </div>
       </div>
     );

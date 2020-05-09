@@ -36,7 +36,7 @@ class Vehicle extends Component {
       make: "",
       modelYear: "",
       currentMileage: "",
-      condition: "",
+      condition: "Good",
       timeLastServiced: "",
       rentalLocation: "",
       vehicles: [],
@@ -284,9 +284,10 @@ class Vehicle extends Component {
       }
     } else {
       vehicleDetails = (
-        <div className="card" style={{ padding: 16, margin: "16px auto", width: "50%" }}>
+        <div className="card" style={{ padding: 16, margin: "16px auto", width: "100%" }}>
           <div style={{ width: "60%", margin: "16px auto" }}>
             <form onSubmit={this.addVehicle}>
+              <br></br>
               <br></br>
               <div><h4>Enter Vehicle Details </h4></div>
               <div className="form-group">
@@ -390,29 +391,27 @@ class Vehicle extends Component {
     }
 
     const pageNumbers = [];
-
-    for (let i = 0; i <= Math.ceil(this.state.vehicles.length / itemsPerPage) + 1; i++) {
-      pageNumbers.push(i);
-    }
-
     let renderPageNumbers = null;
+    if (this.state.vehicles.length > 0) {
+      for (let i = 0; i <= Math.ceil(this.state.vehicles.length / itemsPerPage) + 1; i++) {
+        pageNumbers.push(i);
+      }
 
-    renderPageNumbers = (
-      <nav aria-label="Page navigation example" class="pagebar">
-        <ul class="pagination">
-          {pageNumbers.map((i) => <li class="page-item" style={{ color: "white" }}><a key={i} id={i} onClick={() => { this.handleClick(i) }} style={{ color: "white" }} class="page-link" href="#">{i}</a></li>)}
-        </ul>
-      </nav>
-    );
+      renderPageNumbers = (
+        <nav aria-label="Page navigation example" class="pagebar">
+          <ul class="pagination">
+            {pageNumbers.map((i) => <li class="page-item" style={{ color: "white" }}><a key={i} id={i} onClick={() => { this.handleClick(i) }} style={{ color: "white" }} class="page-link" href="#">{i}</a></li>)}
+          </ul>
+        </nav>
+      );
+    }
 
     return (
       <div>
         {redirectVar}
         <Navigationbar navItems={items} />
         <MDBContainer>
-          <MDBCol md="4"></MDBCol>
-          <MDBCol style={{ textAlign: "center" }} md="6">{vehicleDetails}</MDBCol>
-          <MDBCol md="4"></MDBCol>
+          <MDBCol style={{ textAlign: "center" }} md="8">{vehicleDetails}</MDBCol>
           <MDBRow >
             <MDBCol md="4"></MDBCol>
             <MDBCol md="2" style={{ textAlign: "left" }}>

@@ -212,7 +212,7 @@ class VehicleType extends Component {
       }
     } else {
       typeDetails = (
-        <div className="card" style={{ padding: 16, margin: "16px auto", width: "50%" }}>
+        <div className="card" style={{ padding: 16, margin: "16px auto", width: "100%" }}>
           <div style={{ width: "60%", margin: "16px auto" }}>
             <form onSubmit={this.addType}>
               <br></br>

@@ -21,9 +21,8 @@ class RentalLocation extends React.Component {
           });
     }
 
-    handlePageClick = (data) => {
-        const { selected } = data;
-        this.getAllLocations('',selected);
+    handlePageClick = (data, pageNum) => {
+        this.getAllLocations('',pageNum);
       }
 
     render(){
@@ -52,7 +51,7 @@ class RentalLocation extends React.Component {
               count={Math.floor(this.props.totalVehicles/10.0)}
               variant="outlined"
               shape="rounded"
-              style={{ backgroundColor: "#ffa000;", width : "10%", margin : "16px auto" }}
+              style={{ backgroundColor: "#ffa000;", width : "50%", margin : "16px auto" }}
               onChange={this.handlePageClick}
             />
             }

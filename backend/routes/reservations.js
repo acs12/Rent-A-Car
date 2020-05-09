@@ -111,7 +111,7 @@ router.post("/", checkAuth, async (req, res) => {
 
     if (reservationsForVehicle.length > 0) {
       const alternates = await Vehicle.find()
-        .and([{ type: v.type }, { availability: true }])
+        .and([{ type: v.type }, { availability: true }, {_id : {$ne : req.body.vehicle}}])
         .populate("type")
         .populate("rentalLocation")
         .populate({

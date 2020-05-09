@@ -19,9 +19,8 @@ class Dashboard extends React.Component {
     });
   }
 
-  handlePageClick = (data) => {
-    const { selected } = data;
-    this.getAllVehicles(selected);
+  handlePageClick = (data, pageNum) => {
+    this.getAllVehicles(pageNum - 1);
   }
 
   render() {
@@ -50,10 +49,10 @@ class Dashboard extends React.Component {
           <VehicleBrowser title={"San Jose"} noFilter = {false}/>
           {this.props.totalVehicles !== 0 && 
             <Pagination
-              count={Math.floor(this.props.totalVehicles/10.0)}
+              count={Math.ceil(this.props.totalVehicles/10.0)}
               variant="outlined"
               shape="rounded"
-              style={{ backgroundColor: "#ffa000;", width : "10%", margin : "16px auto" }}
+              style={{ backgroundColor: "#ffa000;", width : "50%", margin : "16px auto" }}
               onChange={this.handlePageClick}
             />
           }

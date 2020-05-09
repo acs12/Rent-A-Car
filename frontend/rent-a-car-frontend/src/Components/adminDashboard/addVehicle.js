@@ -86,7 +86,6 @@ class Vehicle extends Component {
   changeHandlerForButton = e => {
     e.preventDefault()
     if (this.state.rentalLocation) {
-      console.log(this.state.rentalLocation)
       document.getElementById(e.target.value).className = 'btn btn-success'
       document.getElementById(this.state.rentalLocation).className = 'btn btn-info'
     } else {
@@ -100,8 +99,8 @@ class Vehicle extends Component {
   changeHandlerForVehicleType = e => {
     e.preventDefault()
     if (this.state.type) {
-      document.getElementById(this.state.type).className = 'btn btn-primary'
-      document.getElementById(e.target.value).className = 'btn btn-primary'
+      document.getElementById(e.target.value).className = 'btn btn-secondary'
+      document.getElementById(this.state.type).className = 'btn btn-info'
     } else {
       document.getElementById(e.target.value).className = 'btn btn-secondary'
     }

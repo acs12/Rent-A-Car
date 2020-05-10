@@ -70,6 +70,9 @@ Everything is set and you are good to go.
 
 ![Activity Diagram](https://user-images.githubusercontent.com/46435796/81486939-83b30880-920d-11ea-9fe8-5f4d20246e5f.jpg)
 
+### Deployment Diagram
+![UML Deployment Diagram](https://user-images.githubusercontent.com/26094255/81490416-09977980-9237-11ea-8742-57afc519b9bf.png)
+
 ## Built With
 
 * [React](https://reactjs.org/docs/getting-started.html) - The library used

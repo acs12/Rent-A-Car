@@ -1,10 +1,4 @@
-# Team AABM
-
-### Group Members
-* Ankit Thanekar
-* Aayush Sukhadia
-* Brian Hsu
-* Manish Arigala 
+# Rent-A-Car
 
 ### Project Idea
 Rent-A-Car is a full stack web application, which allows young people to rent cars of their choice. Our system has 3 roles namely User(i.e Young Adults), Admin and Manager. So, user will signup in out system by creating an account and will add his/her driving license's image. Manager's role is to validate the driving license of the user. In our system Admin can Add, Modify and Remove Rental Locations, Vehicles and different Categories of Vehicles. User can browse through different Vehicles and Location and can book one if avaialable in the given time slot. User can cancel the reservation or return after the reservation is completed. User can optionally provide the feedback and rating of his/her experience.
